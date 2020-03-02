@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private String selectedScaleType;
     private String selectedNote;
     private String selectedOctave;
+    private String selectedOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +31,16 @@ public class MainActivity extends AppCompatActivity {
         Spinner scaleType = findViewById(R.id.main_select_scale_type);
         Spinner note = findViewById(R.id.main_select_note);
         Spinner octave = findViewById(R.id.main_select_octave);
-        SpinnerListener spinnerListener = new SpinnerListener();
+        Spinner offset = findViewById(R.id.main_select_offset);
 
         octave.setSelection(4);
 
+        SpinnerListener spinnerListener = new SpinnerListener();
         waveForm.setOnItemSelectedListener(spinnerListener);
         scaleType.setOnItemSelectedListener(spinnerListener);
         note.setOnItemSelectedListener(spinnerListener);
         octave.setOnItemSelectedListener(spinnerListener);
+        offset.setOnItemSelectedListener(spinnerListener);
 
         // Open keyboard button, launch keyboard activity
         final Button keyboarButton = findViewById(R.id.open_keyboard);
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(SCALE_TYPE, selectedScaleType);
             intent.putExtra(NOTE, selectedNote);
             intent.putExtra(OCTAVE, selectedOctave);
+            intent.putExtra(OFFSET, selectedOffset);
             startActivity(intent);
         });
     }
@@ -71,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.main_select_octave:
                     selectedOctave = selected;
+                    break;
+                case R.id.main_select_offset:
+                    selectedOffset = selected;
                     break;
             }
         }

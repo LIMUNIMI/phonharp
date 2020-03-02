@@ -1,77 +1,43 @@
 package com.unimi.lim.hmi.keyboard;
 
-import android.os.Handler;
+import android.util.Log;
 
+import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
-import java.util.concurrent.locks.ReentrantLock;
+public abstract class KeyHandler {
 
-public class KeyHandler {
+    protected final static String TAG = "KEY_HANDLER";
 
-    private final static int DELAY = 30;
-
-    private int noteNum = -1;
-    private Synthesizer sinth;
+    protected int noteNum = -1;
+    private int keyOffset;
+    private Synthesizer synth;
     private Scale scale;
 
-    private final ReentrantLock lock = new ReentrantLock();
-    private Handler delayedPlayer = new Handler();
-    private Player player = new Player();
-    private boolean playQueued;
-
-    public KeyHandler(Synthesizer synthetizer, Scale scale) {
-        this.sinth = synthetizer;
+    public KeyHandler(Synthesizer synthetizer, Scale scale, int keyOffset) {
         this.scale = scale;
-
+        this.synth = synthetizer;
+        this.keyOffset = keyOffset;
     }
 
-    public void keyPressed(int keyNum) {
-        lock.lock();
-        try {
-            noteNum += keyNumToWeight(keyNum);
-            if(!playQueued) {
-                delayedPlayer.postDelayed(player, DELAY);
-                playQueued = true;
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
+    public abstract void keyPressed(int keyNum);
 
-    public void keyReleased(int keyNum) {
-        lock.lock();
-        try {
-            noteNum -= keyNumToWeight(keyNum);
-            if(!playQueued) {
-                delayedPlayer.postDelayed(player, DELAY);
-                playQueued = true;
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
+    public abstract void keyReleased(int keyNum);
 
-    private int keyNumToWeight(int keyNum) {
+    protected int keyNumToWeight(int keyNum) {
         return (int) Math.pow(2, keyNum);
     }
 
-    private class Player implements Runnable {
-
-        @Override
-        public void run() {
-            lock.lock();
-            try {
-                if (noteNum < 0) {
-                    sinth.release();
-                } else {
-                    sinth.press(scale.getNote(noteNum).getFrequency());
-                }
-            } finally {
-                playQueued = false;
-                lock.unlock();
-            }
+    protected void play() {
+        if (noteNum < 0) {
+            Log.d(TAG, "Releasing note");
+            synth.release();
+        } else {
+            Note note = scale.getNote(noteNum + keyOffset);
+            Log.d(TAG, "Playing note " + note.toString());
+            synth.press(note.getFrequency());
         }
-
     }
+
 }

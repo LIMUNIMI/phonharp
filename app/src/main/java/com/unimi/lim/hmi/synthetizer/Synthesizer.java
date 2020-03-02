@@ -6,6 +6,8 @@ public interface Synthesizer {
 
     void stop();
 
+    void setEnvelopData(double[] evenlopData);
+
     void press(double frequency);
 
     void release();

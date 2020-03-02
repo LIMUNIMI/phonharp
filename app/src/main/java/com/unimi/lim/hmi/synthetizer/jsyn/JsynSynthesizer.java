@@ -16,8 +16,8 @@ public class JsynSynthesizer implements Synthesizer {
     private final com.jsyn.Synthesizer synth;
     private final UnitOscillator osc;
     private final LineOut lineOut;
-    private final SegmentedEnvelope envelope;
     private final VariableRateMonoReader envPlayer;
+    private SegmentedEnvelope envelope;
 
     public JsynSynthesizer(WaveForm waveForm) {
 
@@ -46,16 +46,12 @@ public class JsynSynthesizer implements Synthesizer {
         osc.output.connect(0, lineOut.input, 0);
         osc.output.connect(0, lineOut.input, 1);
 
-        // Create an envelope and fill it with recognizable data.
-        double[] data = {
-                0.01, 0.9, // attack
-                0.05, 0.8, // decay
-                0.01, 0.0 // release
-        };
-        envelope = new SegmentedEnvelope(data);
-        // Hang at end of decay segment to provide a "sustain" segment.
-        envelope.setSustainBegin(1);
-        envelope.setSustainEnd(1);
+        // Default envelop configuration
+        setEnvelopData(new double[]{
+                0, 1, // attack
+                0, 1, // decay
+                0, 0 // release
+        });
 
         synth.add(envPlayer = new VariableRateMonoReader());
 
@@ -73,6 +69,14 @@ public class JsynSynthesizer implements Synthesizer {
     public void stop() {
         lineOut.stop();
         synth.stop();
+    }
+
+    @Override
+    public void setEnvelopData(double[] evenlopData) {
+        envelope = new SegmentedEnvelope(evenlopData);
+        // Hang at end of decay segment to provide a "sustain" segment.
+        envelope.setSustainBegin(1);
+        envelope.setSustainEnd(1);
     }
 
     @Override

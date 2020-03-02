@@ -3,6 +3,7 @@
     <string name="welcome_to_hybrid_musical_instrument_app">Hybrid Musical Instrument</string>
     <string name="select_wave">Select wave form</string>
     <string name="select_scale">Select scale</string>
+    <string name="select_offset">Select Offset</string>
     <string name="open_keyboard">Open Keyboard</string>
     <string name="key_frst">FRST</string>
     <string name="key_scnd">SCND</string>
@@ -32,6 +33,16 @@
     </string-array>
 
     <string-array name="octaves">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="offset">
         <item>0</item>
         <item>1</item>
         <item>2</item>

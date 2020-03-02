@@ -40,31 +40,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
-        android:id="@+id/main_select_octave"
-        android:layout_width="118dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="348dp"
-        android:entries="@array/octaves"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/main_select_note"
-        android:layout_width="118dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="300dp"
-        android:entries="@array/notes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
         android:id="@+id/main_select_scale_type"
         android:layout_width="118dp"
         android:layout_height="35dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="252dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="192dp"
         android:entries="@array/scale_types"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -74,8 +54,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="224dp"
+        android:layout_marginTop="200dp"
         android:text="@string/select_scale"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/main_select_note"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="240dp"
+        android:entries="@array/notes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/main_select_octave"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="288dp"
+        android:entries="@array/octaves"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/main_select_offset_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="356dp"
+        android:text="@string/select_offset"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/main_select_offset"
+        android:layout_width="118dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="348dp"
+        android:entries="@array/offset"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,8 +103,8 @@
         android:id="@+id/main_select_wave"
         android:layout_width="118dp"
         android:layout_height="35dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="166dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginTop="128dp"
         android:entries="@array/wave_types"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
