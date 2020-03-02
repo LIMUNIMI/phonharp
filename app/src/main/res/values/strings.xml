@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">HMI</string>
+    <string name="welcome_to_hybrid_musical_instrument_app">Hybrid Musical Instrument</string>
+    <string name="select_wave">Select wave form</string>
+    <string name="select_scale">Select scale</string>
+    <string name="open_keyboard">Open Keyboard</string>
+    <string name="key_frst">FRST</string>
+    <string name="key_scnd">SCND</string>
+    <string name="key_thrd">THRD</string>
+    <string name="key_frth">FRTH</string>
+    <string name="key_hold"></string>
+
+    <string-array name="wave_types">
+        <item>Sine</item>
+        <item>Square</item>
+        <item>Triangle</item>
+    </string-array>
+
+    <string-array name="notes">
+        <item>C</item>
+        <item>C#</item>
+        <item>D</item>
+        <item>D#</item>
+        <item>E</item>
+        <item>F</item>
+        <item>F#</item>
+        <item>G</item>
+        <item>G#</item>
+        <item>A</item>
+        <item>A#</item>
+        <item>B</item>
+    </string-array>
+
+    <string-array name="octaves">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="scale_types">
+        <item>Major</item>
+        <item>Minor</item>
+    </string-array>
+
+</resources>

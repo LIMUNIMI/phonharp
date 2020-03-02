@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false"
+    android:focusable="auto"
+    android:focusableInTouchMode="false"
+    tools:context=".KeyboardActivity">
+
+    <Button
+        android:id="@+id/key_hold1"
+        android:layout_width="409dp"
+        android:layout_height="724dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:backgroundTint="#FFFFFF"
+        android:enabled="false"
+        android:text="@string/key_hold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/key_frst"
+        android:layout_width="250dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="373dp"
+        android:text="@string/key_frst"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/key_scnd"
+        android:layout_width="250dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="248dp"
+        android:text="@string/key_scnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/key_frth"
+        android:layout_width="250dp"
+        android:layout_height="125dp"
+        android:layout_marginEnd="1dp"
+        android:text="@string/key_frth"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/key_thrd"
+        android:layout_width="250dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="123dp"
+        android:layout_marginEnd="1dp"
+        android:text="@string/key_thrd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
