@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@+id/key_frth" />
 
     <Button
-        android:id="@+id/key_half"
+        android:id="@+id/key_modifier"
         android:layout_width="0dp"
         android:layout_height="125dp"
         android:text="@string/key_half_tone"

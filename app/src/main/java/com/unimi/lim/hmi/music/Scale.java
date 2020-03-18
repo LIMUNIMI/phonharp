@@ -24,7 +24,24 @@ public class Scale {
         }
     }
 
+    /**
+     * Retrieve the note related to specified note number in current scale.
+     *
+     * @param noteNum the number of the note on the scale
+     * @return return the note related to specified note number in current scale.
+     */
     public Note getNote(int noteNum) {
+        return getNote(noteNum, 0);
+    }
+
+    /**
+     * Retrieve the note related to specified note number in current scale. A modifier can be applied to gets notes that are not on the scale (eg. +1 to get half note upper)
+     *
+     * @param noteNum  the number of the note on the scale
+     * @param modifier modifier to be applied on specified note number (eg. +1 to get the half note upper from specified note number)
+     * @return return the note related to specified note number in current scale. A modifier can be applied to gets notes that are not on the scale (eg. +1 to get half note upper)
+     */
+    public Note getNote(int noteNum, int modifier) {
         int octaveNum = noteNum / 7;
         int noteNumInOctave = noteNum % 7;
 
@@ -37,7 +54,7 @@ public class Scale {
         }
 
         // FIXME checks for out of bound
-        return Note.values()[startIdx + noteIdx];
+        return Note.values()[startIdx + noteIdx + modifier];
     }
 
 }

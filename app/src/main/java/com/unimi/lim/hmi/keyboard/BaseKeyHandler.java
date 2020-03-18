@@ -16,14 +16,8 @@ public class BaseKeyHandler extends KeyHandler {
         synth.setEnvelopData(ENVELOP);
     }
 
-    public synchronized void keyPressed(int keyNum) {
-        noteNum += keyNumToWeight(keyNum);
-        play();
+    @Override
+    protected void play() {
+        invokeSynth();
     }
-
-    public synchronized void keyReleased(int keyNum) {
-        noteNum -= keyNumToWeight(keyNum);
-        play();
-    }
-
 }

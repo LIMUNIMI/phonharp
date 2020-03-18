@@ -30,6 +30,11 @@ public class ScaleUnitTest {
     }
 
     @Test
+    public void majScaleNote05_isCorrect() {
+        assertEquals(Note.Cd4, majScale.getNote(0, 1));
+    }
+
+    @Test
     public void majScaleNote1_isCorrect() {
         assertEquals(Note.D4, majScale.getNote(1));
     }
@@ -80,6 +85,11 @@ public class ScaleUnitTest {
     @Test
     public void minScaleNote0_isCorrect() {
         assertEquals(Note.A3, minScale.getNote(0));
+    }
+
+    @Test
+    public void minScaleNote05_isCorrect() {
+        assertEquals(Note.Ad3, minScale.getNote(0, 1));
     }
 
     @Test

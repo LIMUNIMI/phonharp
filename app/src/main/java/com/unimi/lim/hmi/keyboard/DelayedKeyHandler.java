@@ -7,16 +7,16 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
 public class DelayedKeyHandler extends KeyHandler {
 
-    private final static int DELAY = 30;
+    private final static int DELAY = 50;
     private final static double[] ENVELOP = {
             0.001, 0.9, // attack
-            0.01, 0.8, // decay
-            0.001, 0.0 // release
+            0.001, 0.8, // decay
+            0.001, 0.0  // release
     };
 
     private Handler delayedPlayer = new Handler();
     private Player player = new Player();
-    private boolean playQueued;
+    private boolean delayedPlayInvoked;
 
     public DelayedKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
@@ -24,20 +24,10 @@ public class DelayedKeyHandler extends KeyHandler {
     }
 
     @Override
-    public void keyPressed(int keyNum) {
-        noteNum += keyNumToWeight(keyNum);
-        if (!playQueued) {
+    protected void play() {
+        if (!delayedPlayInvoked) {
             delayedPlayer.postDelayed(player, DELAY);
-            playQueued = true;
-        }
-    }
-
-    @Override
-    public void keyReleased(int keyNum) {
-        noteNum -= keyNumToWeight(keyNum);
-        if (!playQueued) {
-            delayedPlayer.postDelayed(player, DELAY);
-            playQueued = true;
+            delayedPlayInvoked = true;
         }
     }
 
@@ -45,8 +35,8 @@ public class DelayedKeyHandler extends KeyHandler {
 
         @Override
         public void run() {
-            play();
-            playQueued = false;
+            invokeSynth();
+            delayedPlayInvoked = false;
         }
 
     }

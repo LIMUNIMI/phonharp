@@ -11,6 +11,7 @@ public abstract class KeyHandler {
     protected final static String TAG = "KEY_HANDLER";
 
     protected int noteNum = -1;
+    private int keyModifier = 0;
     private int keyOffset;
     private Synthesizer synth;
     private Scale scale;
@@ -21,24 +22,42 @@ public abstract class KeyHandler {
         this.keyOffset = keyOffset;
     }
 
-    public abstract void keyPressed(int keyNum);
-
-    public abstract void keyReleased(int keyNum);
-
-    protected int keyNumToWeight(int keyNum) {
-        return (int) Math.pow(2, keyNum);
+    public void keyPressed(int keyNum) {
+        noteNum += keyNumToWeight(keyNum);
+        play();
     }
 
-    protected void play() {
+    public void keyReleased(int keyNum) {
+        noteNum -= keyNumToWeight(keyNum);
+        play();
+    }
+
+    public void modifierPressed() {
+        keyModifier = 0;
+        play();
+    }
+
+    public void modifierReleased() {
+        keyModifier = 1;
+        play();
+    }
+
+    protected abstract void play();
+
+    protected void invokeSynth() {
         long start = System.currentTimeMillis();
         if (noteNum < 0) {
             synth.release();
             Log.d(TAG, "Note released " + (System.currentTimeMillis() - start));
         } else {
-            Note note = scale.getNote(noteNum + keyOffset);
+            Note note = scale.getNote(noteNum + keyOffset, keyModifier);
             synth.press(note.getFrequency());
             Log.d(TAG, "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
         }
+    }
+
+    private int keyNumToWeight(int keyNum) {
+        return (int) Math.pow(2, keyNum);
     }
 
 }

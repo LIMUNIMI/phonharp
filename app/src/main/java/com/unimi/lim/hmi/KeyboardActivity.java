@@ -6,8 +6,10 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.unimi.lim.hmi.keyboard.BaseKeyHandler;
 import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
+import com.unimi.lim.hmi.keyboard.QueuedKeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
@@ -52,6 +54,10 @@ public class KeyboardActivity extends AppCompatActivity {
         findViewById(R.id.key_thrd).setOnTouchListener(keyListener);
         findViewById(R.id.key_frth).setOnTouchListener(keyListener);
 
+        // Note modifier listener
+        ModifierListener modifierListener = new ModifierListener();
+        findViewById(R.id.key_modifier).setOnTouchListener(modifierListener);
+
     }
 
     @Override
@@ -73,25 +79,23 @@ public class KeyboardActivity extends AppCompatActivity {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            boolean clicked = false;
+            boolean clicked = true;
             int keyNum = 0;
             switch (v.getId()) {
                 case R.id.key_frst:
                     keyNum = 0;
-                    clicked = true;
                     break;
                 case R.id.key_scnd:
                     keyNum = 1;
-                    clicked = true;
                     break;
                 case R.id.key_thrd:
                     keyNum = 2;
-                    clicked = true;
                     break;
                 case R.id.key_frth:
                     keyNum = 3;
-                    clicked = true;
                     break;
+                default:
+                    clicked = false;
             }
             if (clicked) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -99,6 +103,21 @@ public class KeyboardActivity extends AppCompatActivity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     keyHandler.keyReleased(keyNum);
                 }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Handles keys touches
+     */
+    private class ModifierListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                keyHandler.modifierPressed();
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                keyHandler.modifierReleased();
             }
             return true;
         }
