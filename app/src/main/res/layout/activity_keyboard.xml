@@ -11,13 +11,10 @@
 
     <Button
         android:id="@+id/key_hold1"
-        android:layout_width="409dp"
-        android:layout_height="724dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:backgroundTint="#FFFFFF"
+        android:elevation="0dp"
         android:enabled="false"
         android:text="@string/key_hold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -29,26 +26,25 @@
         android:id="@+id/key_frst"
         android:layout_width="250dp"
         android:layout_height="125dp"
-        android:layout_marginTop="373dp"
+        android:elevation="1dp"
         android:text="@string/key_frst"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/key_scnd" />
 
     <Button
         android:id="@+id/key_scnd"
         android:layout_width="250dp"
         android:layout_height="125dp"
-        android:layout_marginTop="248dp"
+        android:elevation="1dp"
         android:text="@string/key_scnd"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/key_thrd" />
 
     <Button
         android:id="@+id/key_frth"
         android:layout_width="250dp"
         android:layout_height="125dp"
-        android:layout_marginEnd="1dp"
+        android:elevation="1dp"
         android:text="@string/key_frth"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -57,10 +53,18 @@
         android:id="@+id/key_thrd"
         android:layout_width="250dp"
         android:layout_height="125dp"
-        android:layout_marginTop="123dp"
-        android:layout_marginEnd="1dp"
+        android:elevation="1dp"
         android:text="@string/key_thrd"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/key_frth" />
+
+    <Button
+        android:id="@+id/key_half"
+        android:layout_width="0dp"
+        android:layout_height="125dp"
+        android:text="@string/key_half_tone"
+        app:layout_constraintEnd_toStartOf="@+id/key_scnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/key_scnd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

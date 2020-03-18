@@ -5,10 +5,11 @@
     <string name="select_scale">Select scale</string>
     <string name="select_offset">Select Offset</string>
     <string name="open_keyboard">Open Keyboard</string>
-    <string name="key_frst">FRST</string>
-    <string name="key_scnd">SCND</string>
-    <string name="key_thrd">THRD</string>
-    <string name="key_frth">FRTH</string>
+    <string name="key_frst">I</string>
+    <string name="key_scnd">M</string>
+    <string name="key_thrd">R</string>
+    <string name="key_frth">P</string>
+    <string name="key_half_tone">H</string>
     <string name="key_hold"></string>
 
     <string-array name="wave_types">
