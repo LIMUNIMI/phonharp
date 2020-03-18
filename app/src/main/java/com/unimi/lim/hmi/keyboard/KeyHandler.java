@@ -30,13 +30,14 @@ public abstract class KeyHandler {
     }
 
     protected void play() {
+        long start = System.currentTimeMillis();
         if (noteNum < 0) {
-            Log.d(TAG, "Releasing note");
             synth.release();
+            Log.d(TAG, "Note released " + (System.currentTimeMillis() - start));
         } else {
             Note note = scale.getNote(noteNum + keyOffset);
-            Log.d(TAG, "Playing note " + note.toString());
             synth.press(note.getFrequency());
+            Log.d(TAG, "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
         }
     }
 

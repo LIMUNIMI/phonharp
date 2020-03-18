@@ -1,7 +1,5 @@
 package com.unimi.lim.hmi.keyboard;
 
-import android.util.Log;
-
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
@@ -20,13 +18,11 @@ public class BaseKeyHandler extends KeyHandler {
 
     public synchronized void keyPressed(int keyNum) {
         noteNum += keyNumToWeight(keyNum);
-        Log.d(TAG, "Pressed key " + keyNum + ", note number " + noteNum);
         play();
     }
 
     public synchronized void keyReleased(int keyNum) {
         noteNum -= keyNumToWeight(keyNum);
-        Log.d(TAG, "Released key " + keyNum + ", note number " + noteNum);
         play();
     }
 
