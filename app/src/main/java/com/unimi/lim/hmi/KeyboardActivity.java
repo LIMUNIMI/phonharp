@@ -6,10 +6,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.unimi.lim.hmi.keyboard.BaseKeyHandler;
 import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
-import com.unimi.lim.hmi.keyboard.QueuedKeyHandler;
+import com.unimi.lim.hmi.keyboard.ThreadedKeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
@@ -45,7 +44,7 @@ public class KeyboardActivity extends AppCompatActivity {
         Scale scale = new Scale(scaleType, note);
 
         synthesizer = new JsynSynthesizer(WaveForm.valueOf(selectedWaveForm.toUpperCase()));
-        keyHandler = new DelayedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
+        keyHandler = new ThreadedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
 
         // Setup keyboard listener
         KeyListener keyListener = new KeyListener();
@@ -58,6 +57,18 @@ public class KeyboardActivity extends AppCompatActivity {
         ModifierListener modifierListener = new ModifierListener();
         findViewById(R.id.key_modifier).setOnTouchListener(modifierListener);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        keyHandler.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        keyHandler.onDestroy();
     }
 
     @Override

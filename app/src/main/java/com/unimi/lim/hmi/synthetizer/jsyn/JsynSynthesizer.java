@@ -8,8 +8,8 @@ import com.jsyn.unitgen.SquareOscillator;
 import com.jsyn.unitgen.TriangleOscillator;
 import com.jsyn.unitgen.UnitOscillator;
 import com.jsyn.unitgen.VariableRateMonoReader;
-import com.unimi.lim.hmi.synthetizer.WaveForm;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.WaveForm;
 
 public class JsynSynthesizer implements Synthesizer {
 

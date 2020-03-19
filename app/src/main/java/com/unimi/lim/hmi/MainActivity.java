@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import static com.unimi.lim.hmi.util.Constant.Context.*;
+import static com.unimi.lim.hmi.util.Constant.Context.NOTE;
+import static com.unimi.lim.hmi.util.Constant.Context.OCTAVE;
+import static com.unimi.lim.hmi.util.Constant.Context.OFFSET;
+import static com.unimi.lim.hmi.util.Constant.Context.SCALE_TYPE;
+import static com.unimi.lim.hmi.util.Constant.Context.WAVE_FORM;
 
 public class MainActivity extends AppCompatActivity {
 

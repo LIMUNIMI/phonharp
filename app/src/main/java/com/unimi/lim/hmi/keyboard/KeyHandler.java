@@ -16,10 +16,16 @@ public abstract class KeyHandler {
     private Synthesizer synth;
     private Scale scale;
 
-    public KeyHandler(Synthesizer synthetizer, Scale scale, int keyOffset) {
+    public KeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
         this.scale = scale;
-        this.synth = synthetizer;
+        this.synth = synth;
         this.keyOffset = keyOffset;
+    }
+
+    public void onStart() {
+    }
+
+    public void onDestroy() {
     }
 
     public void keyPressed(int keyNum) {
