@@ -10,8 +10,6 @@ import static org.junit.Assert.*;
 
 public class ScaleUnitTest {
 
-    private final static double DELTA = 0.001;
-
     private Scale majScale;
     private Scale minScale;
 
