@@ -2,7 +2,10 @@ package com.unimi.lim.hmi;
 
 import com.jsyn.JSyn;
 import com.jsyn.data.SegmentedEnvelope;
+import com.jsyn.ports.UnitInputPort;
+import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Add;
+import com.jsyn.unitgen.FilterLowPass;
 import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
 import com.jsyn.unitgen.SineOscillator;
@@ -15,6 +18,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+
+import java.sql.SQLOutput;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LFOUnitTest {
@@ -86,6 +91,47 @@ public class LFOUnitTest {
         }
     }
 
+    @Test
+    public void ac_FreqModVibratoPlusTimbre() {
+        double vbrAm = 6 * 2;
+        double vbrRt = 6;
+        double tmbAm = PLAY_NOTE.getFrequency() * 2;
+        double tmbRt = PLAY_NOTE.getFrequency() * 6;
+
+        System.out.println("Normal");
+        setupFreqMod(tmbAm, tmbRt);
+        play(PLAY_NOTE);
+
+        System.out.println("Vibrato");
+        UnitOscillator vibrato = new SineOscillator();
+        vibrato.frequency.set(vbrRt);
+        vibrato.amplitude.set(vbrAm);
+
+        UnitOscillator timbre = new SineOscillator();
+        timbre.frequency.set(tmbRt);
+        timbre.amplitude.set(tmbAm);
+
+        Add mix = new Add();
+        mix.inputA.connect(vibrato.output);
+        mix.inputB.connect(timbre.output);
+
+        Add mod = new Add();
+        mod.inputA = new UnitInputPort("Carrier freq", PLAY_NOTE.getFrequency());
+        mod.inputB.connect(mix.output);
+
+        UnitOscillator out = new SineOscillator();
+        out.amplitude.set(1);
+        out.frequency.connect(mod.output);
+
+        synth.add(vibrato);
+        synth.add(timbre);
+        synth.add(mix);
+        synth.add(mod);
+        synth.add(out);
+
+        play(PLAY_NOTE, out.output);
+    }
+
 
     @Test
     public void ba_AmplModTremolo() {
@@ -99,12 +145,59 @@ public class LFOUnitTest {
     }
 
     @Test
-    public void b_TestVari() {
-        setupAmplEnvelop();
-        //setupFreqEnvelop();
-        setupAmplMod(0.15, 0.5, 3);
-        //setupFreqMod(PLAY_NOTE.getFrequency()*6, PLAY_NOTE.getFrequency()*2);
+    public void c_AmplModWithMultiplier() {
+        double amount = 0.5;
+        double dcOffset = 0.5;
+        double rate = 6;
+
+        // Usual ampl modifier
+        System.out.println("Usual ampl mod");
+        setupAmplMod(amount, dcOffset, rate);
         play(PLAY_NOTE);
+
+        // Amplitude modulator by multiplying two oscillators
+        System.out.println("Mult ampl mod");
+
+        // Carrier
+        SineOscillator carOsc = new SineOscillator();
+        carOsc.frequency.set(PLAY_NOTE.getFrequency());
+        carOsc.amplitude.set(1);
+
+        // Modulator
+        SineOscillator modOsc = new SineOscillator();
+        modOsc.frequency.set(rate);
+        modOsc.amplitude.set(amount);
+        Add mod = new Add();
+        mod.inputA = new UnitInputPort("DC offset", dcOffset);
+        mod.inputB.connect(modOsc.output);
+
+        // Multiplied signal
+        Multiply mult = new Multiply();
+        mult.inputA.connect(carOsc.output);
+        mult.inputB.connect(mod.output);
+
+        synth.add(carOsc);
+        synth.add(modOsc);
+        synth.add(mod);
+        synth.add(mult);
+
+        play(PLAY_NOTE, mult.output);
+    }
+
+    @Test
+    public void z_TestVari() {
+        System.out.println("Normal f=" + PLAY_NOTE.getFrequency());
+        play(PLAY_NOTE);
+
+        double cutoffFreq = PLAY_NOTE.getFrequency() / 2;
+        System.out.println("LowPass filter cf=" + cutoffFreq);
+        FilterLowPass flp = new FilterLowPass();
+        flp.frequency.set(cutoffFreq);
+        flp.amplitude.set(1);
+        flp.input.connect(osc.output);
+
+        synth.add(flp);
+        play(PLAY_NOTE, flp.output);
     }
 
 
@@ -169,8 +262,8 @@ public class LFOUnitTest {
     private void setupFreqEnvelop() {
         freqEnvelope = new SegmentedEnvelope(new double[]{
                 0.1, PLAY_NOTE.getFrequency(),     // attack
-                0.5, PLAY_NOTE.getFrequency()/1.5,       // decay
-                2, PLAY_NOTE.getFrequency()/2          // release
+                0.5, PLAY_NOTE.getFrequency() / 1.5,       // decay
+                2, PLAY_NOTE.getFrequency() / 2          // release
         });
         // Hang at end of decay segment to provide a "sustain" segment.
         freqEnvelope.setSustainBegin(1);
@@ -201,6 +294,22 @@ public class LFOUnitTest {
             freqEnvPlayer.dataQueue.queueLoop(freqEnvelope, 1, 1);
             freqEnvPlayer.dataQueue.queue(freqEnvelope, 2, 1);
         }
+        try {
+            synth.sleepFor(PLAY_DURATION);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        lineOut.stop();
+    }
+
+    private void play(Note note, UnitOutputPort outputPort) {
+        osc.output.disconnect(0, lineOut.input, 0);
+        osc.output.disconnect(0, lineOut.input, 1);
+
+        outputPort.connect(0, lineOut.input, 0);
+        outputPort.connect(0, lineOut.input, 1);
+
+        lineOut.start();
         try {
             synth.sleepFor(PLAY_DURATION);
         } catch (InterruptedException e) {
