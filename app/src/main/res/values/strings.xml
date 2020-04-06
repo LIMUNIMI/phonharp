@@ -5,6 +5,7 @@
     <string name="select_scale">Select scale</string>
     <string name="select_offset">Select Offset</string>
     <string name="open_keyboard">Open Keyboard</string>
+    <string name="open_settings">Settings</string>
     <string name="key_frst">I</string>
     <string name="key_scnd">M</string>
     <string name="key_thrd">R</string>
@@ -12,50 +13,20 @@
     <string name="key_half_tone">H</string>
     <string name="key_hold"></string>
 
-    <string-array name="wave_types">
-        <item>Sine</item>
-        <item>Square</item>
-        <item>Triangle</item>
-    </string-array>
 
-    <string-array name="notes">
-        <item>C</item>
-        <item>C#</item>
-        <item>D</item>
-        <item>D#</item>
-        <item>E</item>
-        <item>F</item>
-        <item>F#</item>
-        <item>G</item>
-        <item>G#</item>
-        <item>A</item>
-        <item>A#</item>
-        <item>B</item>
-    </string-array>
 
-    <string-array name="octaves">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-    </string-array>
+    <!-- SETTINGS -->
+    <string name="title_activity_settings">Settings</string>
 
-    <string-array name="offset">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-    </string-array>
+    <!-- Keyboard Preferences -->
+    <string name="keyboard_header">Keyboard</string>
 
-    <string-array name="scale_types">
-        <item>Major</item>
-        <item>Minor</item>
-    </string-array>
+    <string name="handedness_title">Handedness</string>
+    <string name="handedness_summary_left">Left-handed</string>
+    <string name="handedness_summary_right">Right-handed</string>
+
+    <string name="halftone_title">Show or hide half-tone button</string>
+    <string name="halftone_summary_on">Show</string>
+    <string name="halftone_summary_off">Hide</string>
 
 </resources>

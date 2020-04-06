@@ -45,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
         octave.setOnItemSelectedListener(spinnerListener);
         offset.setOnItemSelectedListener(spinnerListener);
 
+        // Open settings button
+        final Button settingsButton = findViewById(R.id.open_settings);
+        settingsButton.setOnClickListener((View v) -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
         // Open keyboard button, launch keyboard activity
         final Button keyboarButton = findViewById(R.id.open_keyboard);
         keyboarButton.setOnClickListener((View v) -> {

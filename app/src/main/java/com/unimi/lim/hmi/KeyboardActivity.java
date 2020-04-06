@@ -1,12 +1,15 @@
 package com.unimi.lim.hmi;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
-import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
 import com.unimi.lim.hmi.keyboard.ThreadedKeyHandler;
 import com.unimi.lim.hmi.music.Note;
@@ -21,7 +24,9 @@ import static com.unimi.lim.hmi.util.Constant.Context.OFFSET;
 import static com.unimi.lim.hmi.util.Constant.Context.SCALE_TYPE;
 import static com.unimi.lim.hmi.util.Constant.Context.WAVE_FORM;
 
-public class KeyboardActivity extends AppCompatActivity {
+public class KeyboardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final String TAG = "KEYBOARD_ACTIVITY";
 
     private Synthesizer synthesizer;
     private KeyHandler keyHandler;
@@ -30,6 +35,16 @@ public class KeyboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keyboard);
+
+        // Register this activity as preferences change listener
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        applyPreferences();
+
+        // Show action bar up button
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Read data passed by main activity
         String selectedWaveForm = getIntent().getStringExtra(WAVE_FORM);
@@ -81,6 +96,21 @@ public class KeyboardActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         synthesizer.stop();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "Preference changed, key: " + key);
+        applyPreferences();
+    }
+
+    private void applyPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean showHalfTone = sharedPreferences.getBoolean("halftone", false);
+        findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
+        Log.d(TAG, "Halftone button enabled: " + showHalfTone);
+
+        // TODO handle handedness
     }
 
     /**
