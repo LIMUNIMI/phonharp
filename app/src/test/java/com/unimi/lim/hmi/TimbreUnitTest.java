@@ -22,7 +22,7 @@ import org.junit.runners.MethodSorters;
 import java.sql.SQLOutput;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class LFOUnitTest {
+public class TimbreUnitTest {
 
     private static final Note PLAY_NOTE = Note.C4;
     private static final double PLAY_DURATION = 3;
