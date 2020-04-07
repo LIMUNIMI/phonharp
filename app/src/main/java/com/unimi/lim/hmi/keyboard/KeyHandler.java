@@ -39,12 +39,12 @@ public abstract class KeyHandler {
     }
 
     public void modifierPressed() {
-        keyModifier = 0;
+        keyModifier = -1;
         play();
     }
 
     public void modifierReleased() {
-        keyModifier = 1;
+        keyModifier = 0;
         play();
     }
 

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_keyboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="false"
@@ -10,7 +11,7 @@
     tools:context=".KeyboardActivity">
 
     <Button
-        android:id="@+id/key_hold1"
+        android:id="@+id/key_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:backgroundTint="#FFFFFF"
@@ -61,7 +62,7 @@
     <Button
         android:id="@+id/key_modifier"
         android:layout_width="0dp"
-        android:layout_height="125dp"
+        android:layout_height="75dp"
         android:text="@string/key_half_tone"
         app:layout_constraintEnd_toStartOf="@+id/key_scnd"
         app:layout_constraintStart_toStartOf="parent"

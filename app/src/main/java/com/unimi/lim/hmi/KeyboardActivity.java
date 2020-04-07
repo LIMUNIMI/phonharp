@@ -1,13 +1,17 @@
 package com.unimi.lim.hmi;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.keyboard.KeyHandler;
@@ -18,18 +22,24 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static com.unimi.lim.hmi.util.Constant.Context.NOTE;
 import static com.unimi.lim.hmi.util.Constant.Context.OCTAVE;
 import static com.unimi.lim.hmi.util.Constant.Context.OFFSET;
 import static com.unimi.lim.hmi.util.Constant.Context.SCALE_TYPE;
 import static com.unimi.lim.hmi.util.Constant.Context.WAVE_FORM;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class KeyboardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "KEYBOARD_ACTIVITY";
 
     private Synthesizer synthesizer;
     private KeyHandler keyHandler;
+
+    private List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +73,7 @@ public class KeyboardActivity extends AppCompatActivity implements SharedPrefere
 
         // Setup keyboard listener
         KeyListener keyListener = new KeyListener();
-        findViewById(R.id.key_frst).setOnTouchListener(keyListener);
-        findViewById(R.id.key_scnd).setOnTouchListener(keyListener);
-        findViewById(R.id.key_thrd).setOnTouchListener(keyListener);
-        findViewById(R.id.key_frth).setOnTouchListener(keyListener);
+        playableKeyIds.forEach(kid -> findViewById(kid).setOnTouchListener(keyListener));
 
         // Note modifier listener
         ModifierListener modifierListener = new ModifierListener();
@@ -106,11 +113,41 @@ public class KeyboardActivity extends AppCompatActivity implements SharedPrefere
 
     private void applyPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Half-tone button
         Boolean showHalfTone = sharedPreferences.getBoolean("halftone", false);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
         Log.d(TAG, "Halftone button enabled: " + showHalfTone);
 
-        // TODO handle handedness
+
+        // Handedness
+        ConstraintLayout layout = findViewById(R.id.layout_keyboard);
+        ConstraintSet constraint = new ConstraintSet();
+        constraint.clone(layout);
+
+        Boolean rightHanded = sharedPreferences.getBoolean("handedness", true);
+        if (rightHanded) {
+            playableKeyIds.forEach(kid -> flipRight(constraint, kid));
+            flipLeft(constraint, R.id.key_modifier);
+            constraint.connect(R.id.key_modifier, ConstraintSet.END, R.id.key_scnd, ConstraintSet.START);
+
+        } else {
+            playableKeyIds.forEach(kid -> flipLeft(constraint, kid));
+            flipRight(constraint, R.id.key_modifier);
+            constraint.connect(R.id.key_modifier, ConstraintSet.START, R.id.key_scnd, ConstraintSet.END);
+        }
+        constraint.applyTo(layout);
+        Log.d(TAG, "Right-handed: " + showHalfTone);
+    }
+
+    private void flipRight(ConstraintSet constraint, int keyId) {
+        constraint.connect(keyId, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
+        constraint.clear(keyId, ConstraintSet.START);
+    }
+
+    private void flipLeft(ConstraintSet constraint, int keyId) {
+        constraint.connect(keyId, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
+        constraint.clear(keyId, ConstraintSet.END);
     }
 
     /**
