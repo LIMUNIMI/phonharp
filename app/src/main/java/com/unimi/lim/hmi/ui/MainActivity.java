@@ -1,4 +1,4 @@
-package com.unimi.lim.hmi;
+package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.unimi.lim.hmi.R;
 
 import static com.unimi.lim.hmi.util.Constant.Context.NOTE;
 import static com.unimi.lim.hmi.util.Constant.Context.OCTAVE;

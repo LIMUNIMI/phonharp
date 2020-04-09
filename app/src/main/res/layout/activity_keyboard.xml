@@ -8,7 +8,7 @@
     android:clickable="false"
     android:focusable="auto"
     android:focusableInTouchMode="false"
-    tools:context=".KeyboardActivity">
+    tools:context=".ui.KeyboardActivity">
 
     <Button
         android:id="@+id/key_background"

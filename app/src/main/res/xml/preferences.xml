@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/keyboard_header">
 
@@ -32,6 +33,16 @@
             app:summaryOn="@string/handedness_summary_right"
             app:title="@string/handedness_title" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/timbre_header">
+        <Preference
+            app:key="timbre_list"
+            app:title="@string/timbre_title">
+            <intent
+                android:targetPackage="com.unimi.lim.hmi"
+                android:targetClass="com.unimi.lim.hmi.ui.TimbreListActivity"/>
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>

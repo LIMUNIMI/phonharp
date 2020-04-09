@@ -1,4 +1,4 @@
-package com.unimi.lim.hmi;
+package com.unimi.lim.hmi.ui;
 
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.preference.PreferenceManager;
 
+import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
 import com.unimi.lim.hmi.keyboard.ThreadedKeyHandler;
 import com.unimi.lim.hmi.music.Note;

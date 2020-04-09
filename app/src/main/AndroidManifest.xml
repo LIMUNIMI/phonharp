@@ -10,14 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.TimbreListActivity"
+            android:label="@string/title_activity_timbre_list"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unimi.lim.hmi.ui.SettingsActivity" />
+        </activity>
+        <activity
+            android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".KeyboardActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".MainActivity">
+            android:parentActivityName=".ui.MainActivity" />
+        <activity
+            android:name=".ui.KeyboardActivity"
+            android:parentActivityName=".ui.MainActivity" />
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
