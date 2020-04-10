@@ -1,31 +1,27 @@
 package com.unimi.lim.hmi.ui.adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.ui.fragment.TimbreFragment.OnListFragmentInteractionListener;
-import com.unimi.lim.hmi.entity.Timbre.DummyItem;
+import com.unimi.lim.hmi.entity.Timbre;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class TimbreRecyclerViewAdapter extends RecyclerView.Adapter<TimbreRecyclerViewAdapter.ViewHolder> {
+public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<Timbre> mValues;
 
-    public TimbreRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public TimbreListViewAdapter(List<Timbre> items) {
         mValues = items;
-        mListener = listener;
     }
 
     @Override
@@ -38,17 +34,14 @@ public class TimbreRecyclerViewAdapter extends RecyclerView.Adapter<TimbreRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText(mValues.get(position).getId());
+        holder.mContentView.setText(mValues.get(position).getContent());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+                // TODO call new activity
+                Log.d(getClass().getName(), "Clicked item with id " + holder.mItem.getId());
             }
         });
     }
@@ -62,13 +55,13 @@ public class TimbreRecyclerViewAdapter extends RecyclerView.Adapter<TimbreRecycl
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Timbre mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = view.findViewById(R.id.item_number);
+            mContentView = view.findViewById(R.id.content);
         }
 
         @Override

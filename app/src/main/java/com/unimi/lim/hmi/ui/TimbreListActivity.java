@@ -12,10 +12,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.entity.Timbre;
-import com.unimi.lim.hmi.ui.fragment.TimbreFragment;
 
-public class TimbreListActivity extends AppCompatActivity implements TimbreFragment.OnListFragmentInteractionListener {
+public class TimbreListActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +36,4 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreFragm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override
-    public void onListFragmentInteraction(Timbre.DummyItem item) {
-        // TODO
-    }
 }
