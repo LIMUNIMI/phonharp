@@ -9,6 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.TimbreDetailActivity"
+            android:parentActivityName=".ui.TimbreListActivity" />
         <activity
             android:name=".ui.TimbreListActivity"
             android:label="@string/title_activity_timbre_list"

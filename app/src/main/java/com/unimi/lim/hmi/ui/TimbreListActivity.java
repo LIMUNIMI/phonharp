@@ -1,25 +1,25 @@
 package com.unimi.lim.hmi.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
-import android.view.View;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.unimi.lim.hmi.R;
+import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 
-public class TimbreListActivity extends AppCompatActivity  {
+import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
+
+public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Log.d("TIMBRE_LIST", "CI sonoooooo");
 
         setContentView(R.layout.activity_timbre_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -34,6 +34,13 @@ public class TimbreListActivity extends AppCompatActivity  {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onTimbreClicked(Timbre item) {
+        Intent intent = new Intent(this, TimbreDetailActivity.class);
+        intent.putExtra(TIMBRE_ID, item.getId());
+        startActivity(intent);
     }
 
 }

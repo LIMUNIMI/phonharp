@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.dao.TimbreDao;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 
 /**
@@ -31,7 +32,9 @@ public class TimbreListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
+    private OnTimbreListClickListener mListener;
     private TimbreDao timbreDao;
+    private TimbreListViewAdapter timbreListViewAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,6 +68,8 @@ public class TimbreListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(getClass().getName(), " --> onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_timbre_list, container, false);
 
         // Set the adapter
@@ -76,9 +81,49 @@ public class TimbreListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new TimbreListViewAdapter(timbreDao.selectAll()));
+            timbreListViewAdapter = new TimbreListViewAdapter(timbreDao.selectAll(), mListener);
+            recyclerView.setAdapter(timbreListViewAdapter);
         }
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Reload list
+        timbreListViewAdapter.notifyDataSetChanged();
+        Log.d(getClass().getName(), " --> onResume");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnTimbreListClickListener) {
+            mListener = (OnTimbreListClickListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnTimbreListClickListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnTimbreListClickListener {
+        void onTimbreClicked(Timbre item);
+    }
 }

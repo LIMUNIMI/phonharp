@@ -1,5 +1,6 @@
 package com.unimi.lim.hmi.ui.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.ui.fragment.TimbreListFragment.OnTimbreListClickListener;
 
 import java.util.List;
 
@@ -19,17 +21,23 @@ import java.util.List;
 public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAdapter.ViewHolder> {
 
     private final List<Timbre> mValues;
+    private final OnTimbreListClickListener mListener;
 
-    public TimbreListViewAdapter(List<Timbre> items) {
+    private Context context;
+
+    public TimbreListViewAdapter(List<Timbre> items, OnTimbreListClickListener listener) {
         mValues = items;
+        mListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        this.context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_timbre, parent, false);
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
@@ -40,7 +48,11 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO call new activity
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onTimbreClicked(holder.mItem);
+                }
                 Log.d(getClass().getName(), "Clicked item with id " + holder.mItem.getId());
             }
         });
