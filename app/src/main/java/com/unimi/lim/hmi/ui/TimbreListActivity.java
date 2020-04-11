@@ -1,5 +1,6 @@
 package com.unimi.lim.hmi.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
@@ -37,13 +37,14 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         TimbreViewModel mViewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
         Log.d(getClass().getName(), " --> mViewModel " + mViewModel);
 
+
+        Activity activity = this;
         FloatingActionButton fab = findViewById(R.id.add_timbre);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                startActivityForResult(new Intent(activity, TimbreDetailActivity.class), 0);
             }
         });
     }

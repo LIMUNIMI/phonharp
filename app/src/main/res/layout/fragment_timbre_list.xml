@@ -11,4 +11,4 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context=".ui.fragment.TimbreListFragment"
-    tools:listitem="@layout/fragment_timbre" />
+    tools:listitem="@layout/fragment_timbre_list_item" />

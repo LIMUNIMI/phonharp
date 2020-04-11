@@ -29,7 +29,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_timbre, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_timbre_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -37,7 +37,6 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId());
         holder.mContentView.setText(mValues.get(position).getContent());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -58,14 +57,12 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
         public final TextView mContentView;
         public Timbre mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = view.findViewById(R.id.item_number);
             mContentView = view.findViewById(R.id.content);
         }
 
