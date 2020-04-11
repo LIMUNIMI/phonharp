@@ -18,7 +18,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/keyboard_header">
-
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="halftone"
@@ -32,7 +31,40 @@
             app:summaryOff="@string/handedness_summary_left"
             app:summaryOn="@string/handedness_summary_right"
             app:title="@string/handedness_title" />
+    </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/tuning_header">
+        <ListPreference
+            android:defaultValue="Major"
+            android:entries="@array/scale_types_names"
+            android:entryValues="@array/scale_types"
+            android:key="scale"
+            android:title="@string/scale_title"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:defaultValue="C"
+            android:entries="@array/notes"
+            android:entryValues="@array/notes"
+            android:key="note"
+            android:title="@string/note_title"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:defaultValue="4"
+            android:entries="@array/octaves"
+            android:entryValues="@array/octaves"
+            android:key="octave"
+            android:title="@string/octave_title"
+            android:summary="%s"/>
+
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/offset"
+            android:entryValues="@array/offset"
+            android:key="offset"
+            android:title="@string/note_offset"
+            android:summary="%s"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/timbre_header">
@@ -40,8 +72,8 @@
             app:key="timbre_list"
             app:title="@string/timbre_title">
             <intent
-                android:targetPackage="com.unimi.lim.hmi"
-                android:targetClass="com.unimi.lim.hmi.ui.TimbreListActivity"/>
+                android:targetClass="com.unimi.lim.hmi.ui.TimbreListActivity"
+                android:targetPackage="com.unimi.lim.hmi" />
         </Preference>
     </PreferenceCategory>
 
