@@ -1,6 +1,5 @@
 package com.unimi.lim.hmi.ui.fragment;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -72,21 +71,4 @@ public class TimbreDetailFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        // TODO save here if needed
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.d(getClass().getName(), " --> onAttach");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.d(getClass().getName(), " --> onDetach");
-    }
 }

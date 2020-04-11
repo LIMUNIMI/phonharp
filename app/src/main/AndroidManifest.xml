@@ -12,7 +12,11 @@
         <activity
             android:name=".ui.TimbreDetailActivity"
             android:parentActivityName=".ui.TimbreListActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unimi.lim.hmi.ui.TimbreListActivity" />
+        </activity>
         <activity
             android:name=".ui.TimbreListActivity"
             android:label="@string/title_activity_timbre_list"
@@ -25,14 +29,21 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unimi.lim.hmi.ui.MainActivity" />
+        </activity>
         <activity
             android:name=".ui.KeyboardActivity"
-            android:parentActivityName=".ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unimi.lim.hmi.ui.MainActivity" />
+        </activity>
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

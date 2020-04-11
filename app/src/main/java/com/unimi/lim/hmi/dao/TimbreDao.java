@@ -6,9 +6,12 @@ import androidx.annotation.RequiresApi;
 
 import com.unimi.lim.hmi.entity.Timbre;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -40,7 +43,11 @@ public class TimbreDao {
         if (timbre == null) {
             return;
         }
-        timbres.removeIf(t -> t.getId().equalsIgnoreCase(timbre.getId()));
+        if (StringUtils.isEmpty(timbre.getId())) {
+            timbre.setId(UUID.randomUUID().toString());
+        } else {
+            timbres.removeIf(t -> t.getId().equalsIgnoreCase(timbre.getId()));
+        }
         timbres.add(timbre);
         // TODO save to json
     }

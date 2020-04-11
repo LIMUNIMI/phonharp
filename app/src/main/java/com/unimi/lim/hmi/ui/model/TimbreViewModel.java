@@ -30,6 +30,13 @@ public class TimbreViewModel extends ViewModel {
         return all;
     }
 
+    public void reloadAll() {
+        if (all != null) {
+            List<Timbre> timbres = TimbreDao.getInstance().selectAll();
+            all.setValue(timbres);
+        }
+    }
+
     public LiveData<Timbre> select(String id) {
         if (selected == null) {
             Log.d(getClass().getName(), "Select timbre with id " + id);
@@ -38,6 +45,11 @@ public class TimbreViewModel extends ViewModel {
             selected.setValue(timbre);
         }
         return selected;
+    }
+
+    public void saveSelected() {
+        Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
+        TimbreDao.getInstance().save(selected.getValue());
     }
 
 }
