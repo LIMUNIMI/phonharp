@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +21,7 @@ import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
+import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
 /**
  * A fragment representing a list of Items.
@@ -33,32 +37,10 @@ public class TimbreListFragment extends Fragment {
     private int mColumnCount = 1;
 
     private OnTimbreListClickListener mListener;
-    private TimbreDao timbreDao;
-    private TimbreListViewAdapter timbreListViewAdapter;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public TimbreListFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static TimbreListFragment newInstance(int columnCount) {
-        Log.d("TIMBRE_FRAGMENT", "new Instance");
-        TimbreListFragment fragment = new TimbreListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        timbreDao = TimbreDao.getInstance();
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -66,11 +48,13 @@ public class TimbreListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.d(getClass().getName(), " --> onCreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_timbre_list, container, false);
+    }
 
-        View view = inflater.inflate(R.layout.fragment_timbre_list, container, false);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -81,35 +65,36 @@ public class TimbreListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            timbreListViewAdapter = new TimbreListViewAdapter(timbreDao.selectAll(), mListener);
-            recyclerView.setAdapter(timbreListViewAdapter);
+
+            TimbreViewModel mViewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
+            Log.d(getClass().getName(), " --> mViewModel " + mViewModel);
+            mViewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
+                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, mListener);
+                recyclerView.setAdapter(timbreListViewAdapter);
+            });
         }
-        return view;
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Reload list
-        timbreListViewAdapter.notifyDataSetChanged();
-        Log.d(getClass().getName(), " --> onResume");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(getClass().getName(), " --> onAttach");
         if (context instanceof OnTimbreListClickListener) {
             mListener = (OnTimbreListClickListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnTimbreListClickListener");
+            throw new RuntimeException(context.toString() + " must implement OnTimbreListClickListener");
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(getClass().getName(), " --> onDetach");
         mListener = null;
     }
 

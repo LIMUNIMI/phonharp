@@ -17,7 +17,7 @@
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_timbre_list"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
@@ -26,7 +26,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <fragment
-            android:id="@+id/timbre_fragment"
+            android:id="@+id/fragment_timbre_list"
             android:name="com.unimi.lim.hmi.ui.fragment.TimbreListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

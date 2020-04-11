@@ -30,4 +30,12 @@ public class Timbre {
         this.details = details;
     }
 
+    @Override
+    public String toString() {
+        return "Timbre{" +
+                "id='" + id + '\'' +
+                ", content='" + content + '\'' +
+                ", details='" + details + '\'' +
+                '}';
+    }
 }
