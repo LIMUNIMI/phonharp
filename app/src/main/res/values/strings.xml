@@ -35,6 +35,9 @@
     <!-- Timbre Preferences -->
     <string name="timbre_header">Timbre</string>
     <string name="timbre_title">Edit timbre preferences</string>
+    <string name="timbre_save">Save</string>
+    <string name="timbre_cancel">Cancel</string>
+    <string name="timbre_delete">Delete Timbre</string>
 
 
 </resources>
