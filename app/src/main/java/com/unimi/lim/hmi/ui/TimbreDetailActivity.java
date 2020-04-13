@@ -3,7 +3,6 @@ package com.unimi.lim.hmi.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.RequiresApi;
@@ -28,6 +27,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_timbre_detail);
 
         // When activity is created for the first time inject timbre detail fragment
+        // Use newInstance to send parameters from the activity to the fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_timbre_detail_container, TimbreDetailFragment.newInstance(

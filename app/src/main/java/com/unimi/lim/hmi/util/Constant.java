@@ -5,6 +5,16 @@ public class Constant {
     private Constant() {
     }
 
+    public static class Settings {
+        private Settings() {
+        }
+
+        public static final String HALF_TONE = "halftone";
+        public static final String HANDEDNESS = "handedness";
+        public static final String RIGHT_HANDED = "right-handed";
+        public static final String LEFT_HANDED = "left-handed";
+    }
+
     public static class Context {
         private Context() {
         }

@@ -31,6 +31,9 @@ import static com.unimi.lim.hmi.util.Constant.Context.OCTAVE;
 import static com.unimi.lim.hmi.util.Constant.Context.OFFSET;
 import static com.unimi.lim.hmi.util.Constant.Context.SCALE_TYPE;
 import static com.unimi.lim.hmi.util.Constant.Context.WAVE_FORM;
+import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
+import static com.unimi.lim.hmi.util.Constant.Settings.HANDEDNESS;
+import static com.unimi.lim.hmi.util.Constant.Settings.RIGHT_HANDED;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class KeyboardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -116,7 +119,7 @@ public class KeyboardActivity extends AppCompatActivity implements SharedPrefere
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Half-tone button
-        Boolean showHalfTone = sharedPreferences.getBoolean("halftone", false);
+        Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, false);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
         Log.d(TAG, "Halftone button enabled: " + showHalfTone);
 
@@ -126,12 +129,11 @@ public class KeyboardActivity extends AppCompatActivity implements SharedPrefere
         ConstraintSet constraint = new ConstraintSet();
         constraint.clone(layout);
 
-        Boolean rightHanded = sharedPreferences.getBoolean("handedness", true);
-        if (rightHanded) {
+        String handedness = sharedPreferences.getString(HANDEDNESS, RIGHT_HANDED);
+        if (RIGHT_HANDED.equals(handedness)) {
             playableKeyIds.forEach(kid -> flipRight(constraint, kid));
             flipLeft(constraint, R.id.key_modifier);
             constraint.connect(R.id.key_modifier, ConstraintSet.END, R.id.key_scnd, ConstraintSet.START);
-
         } else {
             playableKeyIds.forEach(kid -> flipLeft(constraint, kid));
             flipRight(constraint, R.id.key_modifier);

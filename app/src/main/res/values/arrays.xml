@@ -46,9 +46,20 @@
         <item>Minor</item>
     </string-array>
 
+    <string-array name="handedness">
+        <item>left-handed</item>
+        <item>right-handed</item>
+    </string-array>
+
     <!-- In case of multi lang these must be changed with the localized version -->
     <string-array name="scale_types_names">
         <item>Major</item>
         <item>Minor</item>
+    </string-array>
+
+    <!-- In case of multi lang these must be changed with the localized version -->
+    <string-array name="handedness_names">
+        <item>Left-handed</item>
+        <item>Right-handed</item>
     </string-array>
 </resources>

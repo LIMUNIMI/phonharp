@@ -33,13 +33,13 @@
     <string name="handedness_title">Handedness</string>
     <string name="handedness_summary_left">Left-handed</string>
     <string name="handedness_summary_right">Right-handed</string>
-    <string name="halftone_title">Show or hide half-tone button</string>
+    <string name="halftone_title">Show half-tone button</string>
     <string name="halftone_summary_on">Show</string>
     <string name="halftone_summary_off">Hide</string>
 
     <!-- Timbre Preferences -->
     <string name="timbre_header">Timbre</string>
-    <string name="timbre_title">Open timbre preferences</string>
+    <string name="timbre_title">Select timbre</string>
     <string name="timbre_save">Save</string>
     <string name="timbre_cancel">Cancel</string>
     <string name="timbre_delete">Delete Timbre</string>

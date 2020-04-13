@@ -25,12 +25,13 @@
             app:summaryOn="@string/halftone_summary_on"
             app:title="@string/halftone_title" />
 
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="handedness"
-            app:summaryOff="@string/handedness_summary_left"
-            app:summaryOn="@string/handedness_summary_right"
-            app:title="@string/handedness_title" />
+        <ListPreference
+            android:defaultValue="right-handed"
+            android:entries="@array/handedness_names"
+            android:entryValues="@array/handedness"
+            android:key="handedness"
+            android:summary="%s"
+            android:title="@string/handedness_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/tuning_header">
@@ -39,32 +40,32 @@
             android:entries="@array/scale_types_names"
             android:entryValues="@array/scale_types"
             android:key="scale"
-            android:title="@string/scale_title"
-            android:summary="%s"/>
+            android:summary="%s"
+            android:title="@string/scale_title" />
 
         <ListPreference
             android:defaultValue="C"
             android:entries="@array/notes"
             android:entryValues="@array/notes"
             android:key="note"
-            android:title="@string/note_title"
-            android:summary="%s"/>
+            android:summary="%s"
+            android:title="@string/note_title" />
 
         <ListPreference
             android:defaultValue="4"
             android:entries="@array/octaves"
             android:entryValues="@array/octaves"
             android:key="octave"
-            android:title="@string/octave_title"
-            android:summary="%s"/>
+            android:summary="%s"
+            android:title="@string/octave_title" />
 
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/offset"
             android:entryValues="@array/offset"
             android:key="offset"
-            android:title="@string/note_offset"
-            android:summary="%s"/>
+            android:summary="%s"
+            android:title="@string/note_offset" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/timbre_header">
