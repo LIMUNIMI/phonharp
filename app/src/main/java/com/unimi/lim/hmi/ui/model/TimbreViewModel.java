@@ -19,6 +19,7 @@ public class TimbreViewModel extends ViewModel {
     private MutableLiveData<List<Timbre>> all;
     private MutableLiveData<Timbre> selected;
 
+    private boolean itemChanged = false;
 
     public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
@@ -69,9 +70,17 @@ public class TimbreViewModel extends ViewModel {
         if (selected == null) {
             throw new IllegalStateException("Unable to save selected timbre, selected timbre is null, invoke select before");
         }
+        itemChanged = true;
         Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
         TimbreDao.getInstance().save(selected.getValue());
     }
 
+    public boolean isItemChanged() {
+        return itemChanged;
+    }
+
+    public void setItemChanged(boolean itemChanged) {
+        this.itemChanged = itemChanged;
+    }
 }
 

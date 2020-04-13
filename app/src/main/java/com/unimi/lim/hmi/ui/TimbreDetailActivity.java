@@ -46,21 +46,19 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     }
 
     /**
-     * Handle save and cancel buttons; action result is returned to caller activity
+     * Handles save and cancel buttons; also tells to parent activity if item list must be reloaded
      *
      * @param view
      */
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.timbre_cancel) {
-            setResult(RESULT_CANCELED);
-        } else if (view.getId() == R.id.timbre_save) {
-            TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        if (view.getId() == R.id.timbre_save) {
             viewModel.saveSelected();
-            Intent intent = new Intent();
-            intent.putExtra(RELOAD_TIMBRE_LIST, true);
-            setResult(RESULT_OK, intent);
         }
+        Intent intent = new Intent();
+        intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());
+        setResult(RESULT_CANCELED, intent);
         finish();
     }
 }

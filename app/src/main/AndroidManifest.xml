@@ -11,19 +11,28 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.TimbreDetailActivity"
-            android:parentActivityName=".ui.TimbreListActivity"
+            android:parentActivityName=".ui.TimbreListEditActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.unimi.lim.hmi.ui.TimbreListActivity" />
+                android:value="com.unimi.lim.hmi.ui.TimbreListEditActivity" />
         </activity>
         <activity
-            android:name=".ui.TimbreListActivity"
-            android:label="@string/title_activity_timbre_list"
-            android:parentActivityName=".ui.SettingsActivity">
+            android:name=".ui.TimbreListSelectActivity"
+            android:label="@string/title_activity_timbre_list_select"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unimi.lim.hmi.ui.SettingsActivity" />
+        </activity>
+        <activity
+            android:name=".ui.TimbreListEditActivity"
+            android:label="@string/title_activity_timbre_list_edit"
+            android:parentActivityName=".ui.TimbreListSelectActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.unimi.lim.hmi.ui.TimbreListSelectActivity" />
         </activity>
         <activity
             android:name=".ui.SettingsActivity"

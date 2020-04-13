@@ -14,8 +14,11 @@
     <string name="key_hold"></string>
 
 
-    <!-- TimbreListActivity -->
-    <string name="title_activity_timbre_list">Timbre list</string>
+    <!-- TimbreListSelectActivity -->
+    <string name="title_activity_timbre_list_select">Select timbre</string>
+
+    <!-- TimbreListEditActivity -->
+    <string name="title_activity_timbre_list_edit">Edit timbre</string>
 
 
     <!-- SettingsActivity -->

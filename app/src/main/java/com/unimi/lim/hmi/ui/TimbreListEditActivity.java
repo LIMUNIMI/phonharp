@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
@@ -23,14 +25,14 @@ import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
-public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListClickListener, View.OnClickListener {
+public class TimbreListEditActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListClickListener, View.OnClickListener {
 
     private final static int REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timbre_list);
+        setContentView(R.layout.activity_timbre_list_edit);
 
         // Show action bar up button
         ActionBar actionBar = getSupportActionBar();
@@ -75,17 +77,48 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(getClass().getName(), "On activity result " + resultCode);
 
-        // Refresh only if save butto is pressed
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            boolean reload = data.getBooleanExtra(RELOAD_TIMBRE_LIST, false);
-            Log.d(getClass().getName(), "Reload timbre " + reload);
-
-            // Reload timbre list in order to to refresh timbre fragment list values
+        // Reload timbre list in order to to refresh timbre fragment list values
+        if (data != null && data.getBooleanExtra(RELOAD_TIMBRE_LIST, false)) {
+            Log.d(getClass().getName(), "Reload timbre list");
             TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
             viewModel.reloadAll();
+            viewModel.setItemChanged(true);
         }
+    }
+
+    /**
+     * Android back button
+     */
+    @Override
+    public void onBackPressed() {
+        sendItentToParentActivity();
+    }
+
+    /**
+     * Toolbar back button
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() != android.R.id.home) {
+            return super.onOptionsItemSelected(item);
+        }
+        sendItentToParentActivity();
+        return true;
+    }
+
+    /**
+     * Tells to parent activity if item list must be reloaded
+     */
+    private void sendItentToParentActivity() {
+        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        Intent intent = new Intent();
+        intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
 
     /**
