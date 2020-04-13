@@ -14,17 +14,14 @@ import com.unimi.lim.hmi.ui.fragment.TimbreListFragment.OnTimbreListClickListene
 
 import java.util.List;
 
-/**
- * TODO: Replace the implementation with code for your data type.
- */
 public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAdapter.ViewHolder> {
 
-    private final List<Timbre> mValues;
-    private final OnTimbreListClickListener mListener;
+    private final List<Timbre> timbreList;
+    private final OnTimbreListClickListener timbreClickListener;
 
     public TimbreListViewAdapter(List<Timbre> items, OnTimbreListClickListener listener) {
-        mValues = items;
-        mListener = listener;
+        timbreList = items;
+        timbreClickListener = listener;
     }
 
     @Override
@@ -33,18 +30,23 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         return new ViewHolder(view);
     }
 
-
+    /**
+     * Associate timbre values to view adapter fields
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).getContent());
+        holder.mItem = timbreList.get(position);
+        holder.mContentView.setText(timbreList.get(position).getContent());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(getClass().getName(), "Clicked item with id " + holder.mItem.getId());
-                if (null != mListener) {
-                    mListener.onTimbreClicked(holder.mItem);
+                if (timbreClickListener != null) {
+                    timbreClickListener.onTimbreClicked(holder.mItem);
                 }
             }
         });
@@ -52,10 +54,11 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return timbreList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        // TODO implement real version
         public final View mView;
         public final TextView mContentView;
         public Timbre mItem;

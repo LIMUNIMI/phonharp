@@ -3,7 +3,6 @@ package com.unimi.lim.hmi.ui.fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
@@ -36,12 +34,13 @@ public class TimbreListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
-    private OnTimbreListClickListener mListener;
+    private OnTimbreListClickListener timbreClickListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // TODO remove useless code
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -55,6 +54,7 @@ public class TimbreListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // TODO remove useless code
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -66,47 +66,41 @@ public class TimbreListFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            TimbreViewModel mViewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
-            Log.d(getClass().getName(), " --> mViewModel " + mViewModel);
-            mViewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
-                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, mListener);
+            // Create timbre adapter and setup timbre list observer
+            TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
+            viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
+                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener);
                 recyclerView.setAdapter(timbreListViewAdapter);
             });
         }
     }
 
+    /**
+     * Setup timbre click listener
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d(getClass().getName(), " --> onAttach");
         if (context instanceof OnTimbreListClickListener) {
-            mListener = (OnTimbreListClickListener) context;
+            timbreClickListener = (OnTimbreListClickListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnTimbreListClickListener");
         }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
+    /**
+     * Reset timbre click listener
+     */
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(getClass().getName(), " --> onDetach");
-        mListener = null;
+        timbreClickListener = null;
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Interface to handles timbre list click
      */
     public interface OnTimbreListClickListener {
         void onTimbreClicked(Timbre item);

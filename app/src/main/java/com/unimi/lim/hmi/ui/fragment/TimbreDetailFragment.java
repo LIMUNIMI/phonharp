@@ -20,16 +20,38 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreDetailFragment extends Fragment {
 
-    public static TimbreDetailFragment newInstance() {
-        return new TimbreDetailFragment();
+    private TimbreViewModel viewModel;
+
+    public static Fragment newInstance(String timbreId, boolean isNewItem) {
+        TimbreDetailFragment fragment = new TimbreDetailFragment();
+        Bundle args = new Bundle();
+        args.putString(TIMBRE_ID, timbreId);
+        args.putBoolean(IS_NEW_ITEM, isNewItem);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-    @Nullable
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Setup current timbre
+        String timbreId = getArguments().getString(TIMBRE_ID);
+        boolean isNewItem = getArguments().getBoolean(IS_NEW_ITEM);
+        viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
+        if (isNewItem) {
+            viewModel.create();
+        } else {
+            viewModel.select(timbreId);
+        }
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_timbre_detail, container, false);
@@ -38,18 +60,13 @@ public class TimbreDetailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(getClass().getName(), " --> onViewCreated, bundle " + (savedInstanceState == null ? "EMPTY" : savedInstanceState.toString()));
 
+        // TODO implement real version
         EditText timbreIdView = view.findViewById(R.id.timbre_id);
         timbreIdView.setEnabled(false);
         TextInputEditText timbreContentView = view.findViewById(R.id.timbre_content);
 
-        String timbreId = getActivity().getIntent().getStringExtra(TIMBRE_ID);
-        Log.d(getClass().getName(), "Selected timbre id " + timbreId);
-
-        TimbreViewModel mViewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
-        Log.d(getClass().getName(), " --> mViewModel " + mViewModel);
-        mViewModel.select(timbreId).observe(getViewLifecycleOwner(), timbre -> {
+        viewModel.getSelected().observe(getViewLifecycleOwner(), timbre -> {
             Log.d(getClass().getName(), "Change -> timbre: " + timbre.toString());
             timbreIdView.setText(timbre.getId());
             timbreContentView.setText(timbre.getContent());

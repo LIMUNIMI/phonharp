@@ -20,8 +20,7 @@
         <activity
             android:name=".ui.TimbreListActivity"
             android:label="@string/title_activity_timbre_list"
-            android:parentActivityName=".ui.SettingsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".ui.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.unimi.lim.hmi.ui.SettingsActivity" />

@@ -29,37 +29,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
-                    <!--
-                    <TextView
-                        android:id="@+id/toolbar_cancel"
-                        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:text="Cancel"
-                        android:textAlignment="center"
-                        android:textAllCaps="true" />
-
-                    <TextView
-                        android:id="@+id/toolbar_save"
-                        style="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:drawablePadding="8dp"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:text="Save"
-                        android:textAlignment="center"
-                        android:textAllCaps="true" />
--->
                     <Button
                         android:id="@+id/timbre_cancel"
                         style="?attr/buttonBarButtonStyle"
@@ -80,12 +49,11 @@
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
-
         </com.google.android.material.appbar.AppBarLayout>
 
-        <fragment
-            android:id="@+id/fragment_timbre_detail"
-            android:name="com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment"
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/fragment_timbre_detail_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
