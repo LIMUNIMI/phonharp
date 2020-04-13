@@ -36,9 +36,8 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <fragment
-            android:id="@+id/fragment_timbre_list"
-            android:name="com.unimi.lim.hmi.ui.fragment.TimbreListFragment"
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/fragment_timbre_list_select_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

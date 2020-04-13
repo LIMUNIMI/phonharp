@@ -70,7 +70,7 @@ public class TimbreDao {
         timbres = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             Timbre t = new Timbre();
-            t.setId(UUID.randomUUID().toString());
+            t.setId(i + "");
             t.setContent("Timbre " + i);
             t.setDetails("Details " + i);
             timbres.add(t);

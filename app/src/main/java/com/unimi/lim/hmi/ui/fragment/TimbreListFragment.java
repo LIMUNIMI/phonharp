@@ -21,6 +21,9 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import static com.unimi.lim.hmi.util.Constant.Context.SHOW_CHECK_MARKER;
+import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -34,7 +37,18 @@ public class TimbreListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
+    private boolean showCheckMarker;
+    private String selectedTimbreId;
     private OnTimbreListClickListener timbreClickListener;
+
+    public static Fragment newInstance(boolean showCheckMarker, String selectedTimbre) {
+        TimbreListFragment fragment = new TimbreListFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(SHOW_CHECK_MARKER, showCheckMarker);
+        args.putString(SELECTED_TIMBRE_ID, selectedTimbre);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +57,8 @@ public class TimbreListFragment extends Fragment {
         // TODO remove useless code
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+            showCheckMarker = getArguments().getBoolean(SHOW_CHECK_MARKER);
+            selectedTimbreId = getArguments().getString(SELECTED_TIMBRE_ID);
         }
     }
 
@@ -69,7 +85,7 @@ public class TimbreListFragment extends Fragment {
             // Create timbre adapter and setup timbre list observer
             TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
             viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
-                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener);
+                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener, showCheckMarker, selectedTimbreId);
                 recyclerView.setAdapter(timbreListViewAdapter);
             });
         }

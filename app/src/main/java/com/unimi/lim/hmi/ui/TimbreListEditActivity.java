@@ -22,6 +22,7 @@ import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
+import static com.unimi.lim.hmi.util.Constant.Context.SHOW_CHECK_MARKER;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -33,6 +34,13 @@ public class TimbreListEditActivity extends AppCompatActivity implements TimbreL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timbre_list_edit);
+
+        // When activity is created for the first time setup fragment data
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_timbre_list_edit_container, TimbreListFragment.newInstance(false, null))
+                    .commitNow();
+        }
 
         // Show action bar up button
         ActionBar actionBar = getSupportActionBar();

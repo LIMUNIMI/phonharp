@@ -3,6 +3,8 @@ package com.unimi.lim.hmi.entity;
 public class Timbre {
 
     private String id;
+    private boolean checked = false;
+
     private String content;
     private String details;
 
@@ -28,6 +30,14 @@ public class Timbre {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 
     @Override

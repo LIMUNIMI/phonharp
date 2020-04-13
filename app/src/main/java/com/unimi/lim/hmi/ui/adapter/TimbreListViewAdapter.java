@@ -4,7 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.CheckedTextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,9 +19,16 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     private final List<Timbre> timbreList;
     private final OnTimbreListClickListener timbreClickListener;
 
-    public TimbreListViewAdapter(List<Timbre> items, OnTimbreListClickListener listener) {
-        timbreList = items;
-        timbreClickListener = listener;
+    private Timbre checked;
+    private boolean showChecked;
+
+    public TimbreListViewAdapter(List<Timbre> items, OnTimbreListClickListener listener, boolean showChecked, String selectedTimbreId) {
+        this.timbreList = items;
+        this.timbreClickListener = listener;
+        this.showChecked = showChecked;
+        if (showChecked) {
+            items.stream().filter(t -> selectedTimbreId.equalsIgnoreCase(t.getId())).findFirst().ifPresent(t -> t.setChecked(true));
+        }
     }
 
     @Override
@@ -39,15 +46,33 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = timbreList.get(position);
+
+        // Bind model to view holder
         holder.mContentView.setText(timbreList.get(position).getContent());
 
+        // Show check marker
+        addCheckMarker(holder);
+
+        // Setup click listener
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(getClass().getName(), "Clicked item with id " + holder.mItem.getId());
-                if (timbreClickListener != null) {
-                    timbreClickListener.onTimbreClicked(holder.mItem);
+                if (showChecked) {
+                    // Remove check marker from previous item
+                    if (checked != null) {
+                        checked.setChecked(false);
+                        notifyDataSetChanged();
+                    }
+                    // Set current item as checked
+                    holder.mItem.setChecked(true);
+
+                    // Add check marker
+                    addCheckMarker(holder);
                 }
+
+                // Invoke listener
+                Log.d(getClass().getName(), "Clicked item with id " + holder.mItem.getId());
+                timbreClickListener.onTimbreClicked(holder.mItem);
             }
         });
     }
@@ -57,16 +82,28 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         return timbreList.size();
     }
 
+    private void addCheckMarker(ViewHolder holder) {
+        // Add or remove check marker to provided holder
+        if (showChecked && holder.mItem.isChecked()) {
+            checked = holder.mItem;
+            holder.mContentView.setChecked(true);
+            holder.mContentView.setCheckMarkDrawable(R.drawable.ic_check_black_24dp);
+        } else {
+            holder.mContentView.setChecked(false);
+            holder.mContentView.setCheckMarkDrawable(R.drawable.ic_uncheck_white_24dp);
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         // TODO implement real version
         public final View mView;
-        public final TextView mContentView;
+        public final CheckedTextView mContentView;
         public Timbre mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = view.findViewById(R.id.content);
+            mContentView = view.findViewById(R.id.timbre_list_item);
         }
 
         @Override
