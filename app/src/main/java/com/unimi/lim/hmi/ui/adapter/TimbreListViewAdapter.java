@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -49,6 +50,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
         // Bind model to view holder
         holder.title.setText(timbreList.get(position).getContent());
+        holder.desc.setText("lorem ipsum dolor sit amet");
 
         // Show check marker
         addCheckMarker(holder);
@@ -74,7 +76,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
             }
         });
 
-        holder.title.setOnClickListener(new View.OnClickListener() {
+        holder.textLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Invoke listener
@@ -101,15 +103,19 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         // TODO implement real version
-        public final View mView;
+        public final View view;
+        public final LinearLayout textLayout;
         public final TextView title;
+        public final TextView desc;
         public final RadioButton radio;
         public Timbre timbre;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            title = view.findViewById(R.id.timbre_list_item_desc);
+            this.view = view;
+            textLayout = view.findViewById(R.id.timbre_list_item);
+            title = view.findViewById(R.id.timbre_list_item_title);
+            desc = view.findViewById(R.id.timbre_list_item_desc);
             radio = view.findViewById(R.id.timbre_list_item_rad);
         }
 

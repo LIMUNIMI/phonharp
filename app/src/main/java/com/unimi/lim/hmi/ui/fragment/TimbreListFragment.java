@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 /**
@@ -73,6 +75,9 @@ public class TimbreListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
+            DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(itemDecor);
 
             // Create timbre adapter and setup timbre list observer
             TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
