@@ -1,6 +1,5 @@
 package com.unimi.lim.hmi.ui.fragment;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,7 +11,6 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -23,7 +21,6 @@ import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreDetailFragment extends Fragment {
 
     private TimbreViewModel viewModel;

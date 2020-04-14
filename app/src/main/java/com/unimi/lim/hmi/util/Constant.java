@@ -26,7 +26,6 @@ public class Constant {
         public static final String OCTAVE = "octave";
         public static final String OFFSET = "offset";
 
-        public static final String SHOW_CHECK_MARKER = "showCheckMarker";
         public static final String TIMBRE_ID = "timbreId";
         public static final String IS_NEW_ITEM = "isNewItem";
         public static final String RELOAD_TIMBRE_LIST = "reloadTimbreList";

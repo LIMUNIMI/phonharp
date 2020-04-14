@@ -1,9 +1,7 @@
 package com.unimi.lim.hmi.ui.model;
 
-import android.os.Build;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -13,7 +11,6 @@ import com.unimi.lim.hmi.entity.Timbre;
 
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreViewModel extends ViewModel {
 
     private MutableLiveData<List<Timbre>> all;

@@ -1,20 +1,18 @@
 package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
-import android.os.Build;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
@@ -22,23 +20,22 @@ import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
-import static com.unimi.lim.hmi.util.Constant.Context.SHOW_CHECK_MARKER;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
+import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
-public class TimbreListEditActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListClickListener, View.OnClickListener {
+public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListListener, View.OnClickListener {
 
     private final static int REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timbre_list_edit);
+        setContentView(R.layout.activity_timbre_list);
 
         // When activity is created for the first time setup fragment data
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_timbre_list_edit_container, TimbreListFragment.newInstance(false, null))
+                    .replace(R.id.fragment_timbre_list_select_container, TimbreListFragment.newInstance())
                     .commitNow();
         }
 
@@ -49,17 +46,31 @@ public class TimbreListEditActivity extends AppCompatActivity implements TimbreL
         }
 
         // Set "Add" button click listener
-        FloatingActionButton fab = findViewById(R.id.add_timbre);
-        fab.setOnClickListener(this);
+        ImageButton addButton = findViewById(R.id.add_timbre);
+        addButton.setOnClickListener(this);
     }
 
     /**
-     * Open timbre detail activity, invoked when an item from timbre list is clicked
+     * Select timbre, invoked when radio button is clicked
      *
      * @param item clicked timbre on timbre list
      */
     @Override
-    public void onTimbreClicked(Timbre item) {
+    public void onSelect(Timbre item) {
+        Log.d(getClass().getName(), "Selected timbre " + item.getId());
+        Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString(SELECTED_TIMBRE_ID, item.getId());
+        editor.commit();
+    }
+
+    /**
+     * Open edit timbre activity, invoked when an item from timbre list is clicked
+     *
+     * @param item clicked timbre on timbre list
+     */
+    @Override
+    public void onEdit(Timbre item) {
+        Log.d(getClass().getName(), "Edit timbre " + item.getId());
         startTimbreDetailActivity(item.getId(), false);
     }
 
@@ -93,40 +104,6 @@ public class TimbreListEditActivity extends AppCompatActivity implements TimbreL
             viewModel.reloadAll();
             viewModel.setItemChanged(true);
         }
-    }
-
-    /**
-     * Android back button
-     */
-    @Override
-    public void onBackPressed() {
-        sendItentToParentActivity();
-    }
-
-    /**
-     * Toolbar back button
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() != android.R.id.home) {
-            return super.onOptionsItemSelected(item);
-        }
-        sendItentToParentActivity();
-        return true;
-    }
-
-    /**
-     * Tells to parent activity if item list must be reloaded
-     */
-    private void sendItentToParentActivity() {
-        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-        Intent intent = new Intent();
-        intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());
-        setResult(RESULT_CANCELED, intent);
-        finish();
     }
 
     /**

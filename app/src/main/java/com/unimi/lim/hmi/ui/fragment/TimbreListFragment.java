@@ -1,17 +1,18 @@
 package com.unimi.lim.hmi.ui.fragment;
 
 import android.content.Context;
-import android.os.Build;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,6 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
-import static com.unimi.lim.hmi.util.Constant.Context.SHOW_CHECK_MARKER;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 /**
@@ -29,7 +29,6 @@ import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
  * <p/>
  * interface.
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
@@ -37,17 +36,10 @@ public class TimbreListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
 
-    private boolean showCheckMarker;
-    private String selectedTimbreId;
-    private OnTimbreListClickListener timbreClickListener;
+    private OnTimbreListListener timbreClickListener;
 
-    public static Fragment newInstance(boolean showCheckMarker, String selectedTimbre) {
-        TimbreListFragment fragment = new TimbreListFragment();
-        Bundle args = new Bundle();
-        args.putBoolean(SHOW_CHECK_MARKER, showCheckMarker);
-        args.putString(SELECTED_TIMBRE_ID, selectedTimbre);
-        fragment.setArguments(args);
-        return fragment;
+    public static Fragment newInstance() {
+        return new TimbreListFragment();
     }
 
     @Override
@@ -57,8 +49,6 @@ public class TimbreListFragment extends Fragment {
         // TODO remove useless code
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            showCheckMarker = getArguments().getBoolean(SHOW_CHECK_MARKER);
-            selectedTimbreId = getArguments().getString(SELECTED_TIMBRE_ID);
         }
     }
 
@@ -71,6 +61,8 @@ public class TimbreListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // TODO remove useless code
+
+        Log.d(getClass().getName(), "--> VIEW CREATED");
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -85,7 +77,12 @@ public class TimbreListFragment extends Fragment {
             // Create timbre adapter and setup timbre list observer
             TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
             viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
-                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener, showCheckMarker, selectedTimbreId);
+                // Retrieves selected timbre from preferences
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                String selectedTimbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, "");
+
+                // Setup the adapter
+                TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener, selectedTimbreId);
                 recyclerView.setAdapter(timbreListViewAdapter);
             });
         }
@@ -99,10 +96,13 @@ public class TimbreListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnTimbreListClickListener) {
-            timbreClickListener = (OnTimbreListClickListener) context;
+
+        Log.d(getClass().getName(), "--> ON ATTACH");
+
+        if (context instanceof OnTimbreListListener) {
+            timbreClickListener = (OnTimbreListListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnTimbreListClickListener");
+            throw new RuntimeException(context.toString() + " must implement OnTimbreListListener");
         }
     }
 
@@ -118,7 +118,9 @@ public class TimbreListFragment extends Fragment {
     /**
      * Interface to handles timbre list click
      */
-    public interface OnTimbreListClickListener {
-        void onTimbreClicked(Timbre item);
+    public interface OnTimbreListListener {
+        void onSelect(Timbre item);
+
+        void onEdit(Timbre item);
     }
 }

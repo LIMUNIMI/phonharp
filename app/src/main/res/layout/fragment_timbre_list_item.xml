@@ -4,12 +4,20 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <CheckedTextView
-        android:id="@+id/timbre_list_item"
+    <TextView
+        android:id="@+id/timbre_list_item_desc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="@dimen/text_margin"
-        android:checked="false"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
         android:textAppearance="?attr/textAppearanceListItem" />
+
+    <RadioButton
+        android:id="@+id/timbre_list_item_rad"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="9"
+        android:gravity="center_vertical" />
 
 </LinearLayout>

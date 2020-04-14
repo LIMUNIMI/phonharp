@@ -1,13 +1,11 @@
 package com.unimi.lim.hmi.ui;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -35,7 +33,6 @@ import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
 import static com.unimi.lim.hmi.util.Constant.Settings.HANDEDNESS;
 import static com.unimi.lim.hmi.util.Constant.Settings.RIGHT_HANDED;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class KeyboardActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "KEYBOARD_ACTIVITY";

@@ -73,7 +73,7 @@
             app:key="timbre_list"
             app:title="@string/timbre_title">
             <intent
-                android:targetClass="com.unimi.lim.hmi.ui.TimbreListSelectActivity"
+                android:targetClass="com.unimi.lim.hmi.ui.TimbreListActivity"
                 android:targetPackage="com.unimi.lim.hmi" />
         </Preference>
     </PreferenceCategory>

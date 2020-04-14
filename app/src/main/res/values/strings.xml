@@ -6,16 +6,16 @@
     <string name="select_offset">Select Offset</string>
     <string name="open_keyboard">Open Keyboard</string>
     <string name="open_settings">Settings</string>
-    <string name="key_frst">I</string>
-    <string name="key_scnd">M</string>
-    <string name="key_thrd">R</string>
-    <string name="key_frth">P</string>
-    <string name="key_half_tone">H</string>
+    <string name="key_frst"></string>
+    <string name="key_scnd"></string>
+    <string name="key_thrd"></string>
+    <string name="key_frth"></string>
+    <string name="key_half_tone"></string>
     <string name="key_hold"></string>
 
 
-    <!-- TimbreListSelectActivity -->
-    <string name="title_activity_timbre_list_select">Select timbre</string>
+    <!-- TimbreListActivity -->
+    <string name="title_activity_timbre_list_select">Select or Edit timbre</string>
 
     <!-- TimbreListEditActivity -->
     <string name="title_activity_timbre_list_edit">Edit timbre</string>
@@ -42,7 +42,7 @@
 
     <!-- Timbre Preferences -->
     <string name="timbre_header">Timbre</string>
-    <string name="timbre_title">Select timbre</string>
+    <string name="timbre_title">Open timbre preferences</string>
     <string name="timbre_save">Save</string>
     <string name="timbre_cancel">Cancel</string>
     <string name="timbre_delete">Delete Timbre</string>

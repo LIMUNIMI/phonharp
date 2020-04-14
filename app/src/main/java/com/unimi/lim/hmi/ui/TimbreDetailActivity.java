@@ -1,11 +1,9 @@
 package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,7 +16,6 @@ import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override

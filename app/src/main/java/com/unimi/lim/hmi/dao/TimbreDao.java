@@ -1,9 +1,6 @@
 package com.unimi.lim.hmi.dao;
 
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.unimi.lim.hmi.entity.Timbre;
 
@@ -15,7 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class TimbreDao {
 
     private static TimbreDao timbreDao;
