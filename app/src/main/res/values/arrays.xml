@@ -1,11 +1,4 @@
 <resources>
-    <!-- TODO remove -->
-    <string-array name="wave_types">
-        <item>Sine</item>
-        <item>Square</item>
-        <item>Triangle</item>
-    </string-array>
-
     <string-array name="notes">
         <item>C</item>
         <item>C#</item>
@@ -41,7 +34,7 @@
         <item>6</item>
     </string-array>
 
-    <string-array name="scale_types">
+    <string-array name="scale_type">
         <item>Major</item>
         <item>Minor</item>
     </string-array>
@@ -51,13 +44,48 @@
         <item>right-handed</item>
     </string-array>
 
-    <!-- In case of multi lang these must be changed with the localized version -->
+    <!-- TODO move to localization -->
+
+    <string-array name="notes_names">
+        <item>C</item>
+        <item>C#/Db</item>
+        <item>D</item>
+        <item>D#/Eb</item>
+        <item>E</item>
+        <item>F</item>
+        <item>F#/Gb</item>
+        <item>G</item>
+        <item>G#/Ab</item>
+        <item>A</item>
+        <item>A#/Bb</item>
+        <item>B</item>
+    </string-array>
+
+    <string-array name="octaves_names">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="offset_names">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
     <string-array name="scale_types_names">
         <item>Major</item>
         <item>Minor</item>
     </string-array>
 
-    <!-- In case of multi lang these must be changed with the localized version -->
     <string-array name="handedness_names">
         <item>Left-handed</item>
         <item>Right-handed</item>

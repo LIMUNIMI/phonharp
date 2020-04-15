@@ -7,6 +7,7 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
 public class DelayedKeyHandler extends KeyHandler {
 
+    // TODO refactor
     private final static int DELAY = 50;
     private final static double[] ENVELOP = {
             0.001, 0.9, // attack

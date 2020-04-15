@@ -32,20 +32,21 @@
             android:key="handedness"
             android:summary="%s"
             android:title="@string/handedness_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/tuning_header">
         <ListPreference
             android:defaultValue="Major"
             android:entries="@array/scale_types_names"
-            android:entryValues="@array/scale_types"
-            android:key="scale"
+            android:entryValues="@array/scale_type"
+            android:key="scaleType"
             android:summary="%s"
             android:title="@string/scale_title" />
 
         <ListPreference
             android:defaultValue="C"
-            android:entries="@array/notes"
+            android:entries="@array/notes_names"
             android:entryValues="@array/notes"
             android:key="note"
             android:summary="%s"
@@ -53,7 +54,7 @@
 
         <ListPreference
             android:defaultValue="4"
-            android:entries="@array/octaves"
+            android:entries="@array/octaves_names"
             android:entryValues="@array/octaves"
             android:key="octave"
             android:summary="%s"
@@ -61,7 +62,7 @@
 
         <ListPreference
             android:defaultValue="0"
-            android:entries="@array/offset"
+            android:entries="@array/offset_names"
             android:entryValues="@array/offset"
             android:key="offset"
             android:summary="%s"
