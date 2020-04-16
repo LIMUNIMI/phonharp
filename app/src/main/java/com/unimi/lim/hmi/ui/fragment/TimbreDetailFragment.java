@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,13 +58,10 @@ public class TimbreDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // TODO implement real version
-        EditText timbreIdView = view.findViewById(R.id.timbre_id);
-        timbreIdView.setEnabled(false);
         TextInputEditText timbreContentView = view.findViewById(R.id.timbre_content);
 
         viewModel.getSelected().observe(getViewLifecycleOwner(), timbre -> {
             Log.d(getClass().getName(), "Change -> timbre: " + timbre.toString());
-            timbreIdView.setText(timbre.getId());
             timbreContentView.setText(timbre.getContent());
             timbreContentView.addTextChangedListener(new TextWatcher() {
                 @Override

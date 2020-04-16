@@ -1,29 +1,337 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_timbre_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ui.fragment.TimbreDetailFragment">
 
-    <EditText
-        android:id="@+id/timbre_id"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType=""
-        android:text="" />
+        android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/timbre_content"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Content" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/category_pulse_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="Oscillator"
+                android:textAllCaps="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/width_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Pulse Width"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/width_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="50%"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_pulse_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="100"
+                android:progress="1" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/category_tremolo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="Tremolo"
+                android:textAllCaps="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tremolo_rate_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Rate"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/tremolo_rate_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="6Hz"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_tremolo_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="20"
+                android:progress="1" />
+
+            <TextView
+                android:id="@+id/tremolo_depth_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Depth"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/tremolo_depth_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="50%"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_tremolo_depth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="100"
+                android:progress="1" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/category_vibrato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="Vibrato"
+                android:textAllCaps="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/vibrato_rate_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Rate"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/vibrato_rate_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="6Hz"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_vibrato_rate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="20"
+                android:progress="1" />
+
+            <TextView
+                android:id="@+id/vibrato_depth_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Depth"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/vibrato_depth_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="50%"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_vibrato_depth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="100"
+                android:progress="1" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/category_ampl_asr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="Amplitude ASR"
+                android:textAllCaps="false"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/ampl_asr_attack_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Attack"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/ampl_asr_attack_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="0.5s"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_ampl_asr_attack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="20"
+                android:progress="1" />
+
+            <TextView
+                android:id="@+id/ampl_asr_release_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="Release"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <TextView
+                android:id="@+id/ampl_asr_release_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="1s"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
+
+            <SeekBar
+                android:id="@+id/seek_ampl_asr_release"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:max="100"
+                android:progress="1" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+
+        <!-- TODO Delete -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/category_amplitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="Pulse width ASR"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/timbre_detail_component_margin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/timbre_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Content" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

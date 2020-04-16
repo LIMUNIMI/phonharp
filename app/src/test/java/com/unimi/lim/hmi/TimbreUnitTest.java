@@ -5,10 +5,11 @@ import com.jsyn.data.SegmentedEnvelope;
 import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Add;
-import com.jsyn.unitgen.FilterLowPass;
 import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
+import com.jsyn.unitgen.PulseOscillator;
 import com.jsyn.unitgen.SineOscillator;
+import com.jsyn.unitgen.TriangleOscillator;
 import com.jsyn.unitgen.UnitOscillator;
 import com.jsyn.unitgen.VariableRateMonoReader;
 import com.unimi.lim.hmi.music.Note;
@@ -19,8 +20,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.sql.SQLOutput;
-
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TimbreUnitTest {
 
@@ -28,7 +27,7 @@ public class TimbreUnitTest {
     private static final double PLAY_DURATION = 3;
 
     private com.jsyn.Synthesizer synth;
-    private UnitOscillator osc;
+    private PulseOscillator osc;
     private LineOut lineOut;
 
     private Multiply amplitude;
@@ -44,7 +43,7 @@ public class TimbreUnitTest {
     @Before
     public void setup() {
         synth = JSyn.createSynthesizer();
-        osc = new SineOscillator();
+        osc = new PulseOscillator();
         lineOut = new LineOut();
         amplitude = new Multiply();
 
@@ -59,6 +58,8 @@ public class TimbreUnitTest {
         osc.output.connect(0, lineOut.input, 0);
         osc.output.connect(0, lineOut.input, 1);
 
+        osc.width.set(0.5);
+
         synth.start();
     }
 
@@ -70,11 +71,19 @@ public class TimbreUnitTest {
     @Test
     public void aa_freqModVibrato() {
         UnitOscillator modOsc = setupFreqMod(0, 0);
-        double freqs[] = {0.03, 0.3, 0.4, 1.6, 6, 25};
-        for (double freq : freqs) {
-            System.out.println("Vibrato f = " + freq + "Hz, M = 2");
-            modOsc.frequency.set(freq);
-            modOsc.amplitude.set(freq * 2);
+//        double freqs[] = {0.03, 0.3, 0.4, 1.6, 6, 25};
+//        for (double freq : freqs) {
+//            System.out.println("Vibrato f = " + freq + "Hz, M = 2");
+//            modOsc.frequency.set(freq);
+//            modOsc.amplitude.set(freq * 2);
+//            play(PLAY_NOTE);
+//        }
+        modOsc.frequency.set(6);
+        for (int i = 2; i <= 10; i += 2) {
+            double ampl = (double) 6 / 10 * i;
+            double depth = ampl / 6 * 100;
+            modOsc.amplitude.set(ampl);
+            System.out.println("Vibrato f = 6Hz, Depth = " + (int) depth);
             play(PLAY_NOTE);
         }
     }
@@ -136,10 +145,19 @@ public class TimbreUnitTest {
     @Test
     public void ba_AmplModTremolo() {
         UnitOscillator modOsc = setupAmplMod(0.5, 0.5, 0);
-        double freqs[] = {0.03, 0.3, 0.4, 1.6, 6, 25};
-        for (double freq : freqs) {
-            System.out.println("Tremolo f = " + freq + "Hz, M = 1");
-            modOsc.frequency.set(freq);
+        //double freqs[] = {0.03, 0.3, 0.4, 1.6, 6, 25};
+//        double freqs[] = {0.1, 1, 6, 10, 15, 20};
+//        for (double freq : freqs) {
+//            System.out.println("Tremolo f = " + freq + "Hz, M = 1");
+//            modOsc.frequency.set(freq);
+//            play(PLAY_NOTE);
+//        }
+        modOsc.frequency.set(6);
+        for (int i = 2; i <= 10; i += 2) {
+            double ampl = 0.5 / 10 * (double) i;
+            double depth = ampl / 0.5 * 100;
+            modOsc.amplitude.set(ampl);
+            System.out.println("Tremolo f = 6Hz, Depth = " + (int) depth);
             play(PLAY_NOTE);
         }
     }
@@ -186,18 +204,19 @@ public class TimbreUnitTest {
 
     @Test
     public void z_TestVari() {
-        System.out.println("Normal f=" + PLAY_NOTE.getFrequency());
+//        System.out.println("Normal f=" + PLAY_NOTE.getFrequency());
+//        play(PLAY_NOTE);
+//
+//        double cutoffFreq = PLAY_NOTE.getFrequency() / 2;
+//        System.out.println("LowPass filter cf=" + cutoffFreq);
+//        FilterLowPass flp = new FilterLowPass();
+//        flp.frequency.set(cutoffFreq);
+//        flp.amplitude.set(1);
+//        flp.input.connect(osc.output);
+//
+//        synth.add(flp);
+//        play(PLAY_NOTE, flp.output);
         play(PLAY_NOTE);
-
-        double cutoffFreq = PLAY_NOTE.getFrequency() / 2;
-        System.out.println("LowPass filter cf=" + cutoffFreq);
-        FilterLowPass flp = new FilterLowPass();
-        flp.frequency.set(cutoffFreq);
-        flp.amplitude.set(1);
-        flp.input.connect(osc.output);
-
-        synth.add(flp);
-        play(PLAY_NOTE, flp.output);
     }
 
 
@@ -224,7 +243,7 @@ public class TimbreUnitTest {
     private UnitOscillator setupAmplMod(double amount, double dcOffset, double rate) {
         // Define unit
         Add adder = new Add();
-        UnitOscillator modOsc = new SineOscillator();
+        UnitOscillator modOsc = new TriangleOscillator();
 
         // Add to synth
         synth.add(adder);
