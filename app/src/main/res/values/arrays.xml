@@ -44,6 +44,13 @@
         <item>right-handed</item>
     </string-array>
 
+    <string-array name="swipe_control">
+        <item>none</item>
+        <item>volume</item>
+        <item>pitch</item>
+        <item>pulse-width</item>
+    </string-array>
+
     <!-- TODO move to localization -->
 
     <string-array name="notes_names">
@@ -89,5 +96,12 @@
     <string-array name="handedness_names">
         <item>Left-handed</item>
         <item>Right-handed</item>
+    </string-array>
+
+    <string-array name="swipe_control_names">
+        <item>None</item>
+        <item>Volume</item>
+        <item>Pitch bend</item>
+        <item>Pulse width</item>
     </string-array>
 </resources>

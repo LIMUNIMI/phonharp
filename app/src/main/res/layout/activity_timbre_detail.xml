@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.TimbreDetailActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_timbre_detail"
@@ -29,6 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
+
                     <Button
                         android:id="@+id/timbre_cancel"
                         style="?attr/buttonBarButtonStyle"
@@ -52,10 +56,43 @@
         </com.google.android.material.appbar.AppBarLayout>
 
 
+        <!-- TODO read padding from resources -->
         <FrameLayout
             android:id="@+id/fragment_timbre_detail_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:paddingTop="40dp"
+            android:paddingBottom="40dp"
+            app:layout_constraintBottom_toTopOf="@+id/button2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"></FrameLayout>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Delete"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@android:color/holo_orange_light"
+        android:clickable="true"
+        app:backgroundTint="@color/light_gray"
+        app:srcCompat="@drawable/ic_play" />
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

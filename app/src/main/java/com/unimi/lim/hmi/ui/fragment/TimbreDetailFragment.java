@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,9 +59,8 @@ public class TimbreDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // TODO implement real version
+        // TODO remove
         TextInputEditText timbreContentView = view.findViewById(R.id.timbre_content);
-
         viewModel.getSelected().observe(getViewLifecycleOwner(), timbre -> {
             Log.d(getClass().getName(), "Change -> timbre: " + timbre.toString());
             timbreContentView.setText(timbre.getContent());
@@ -78,6 +79,31 @@ public class TimbreDetailFragment extends Fragment {
                     timbre.setContent(s.toString());
                 }
             });
+        });
+
+        // TODO refactor
+        setupSwitchListener(view, R.id.swipe_control_enabled, R.id.swipe_control_container);
+        setupSwitchListener(view, R.id.tremolo_enabled, R.id.tremolo_container);
+        setupSwitchListener(view, R.id.vibrato_enabled, R.id.vibrato_container);
+        setupSwitchListener(view, R.id.ampl_asr_enabled, R.id.ampl_asr_container);
+        setupSwitchListener(view, R.id.pitch_asr_enabled, R.id.pitch_asr_container);
+        setupSwitchListener(view, R.id.pwidth_asr_enabled, R.id.pwidth_asr_container);
+
+    }
+
+    private void setupSwitchListener(View view, int switchId, int containerId) {
+        Switch switchView = view.findViewById(switchId);
+        View containerView = view.findViewById(containerId);
+        containerView.setVisibility(View.GONE);
+        switchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    containerView.setVisibility(View.VISIBLE);
+                } else {
+                    containerView.setVisibility(View.GONE);
+                }
+            }
         });
     }
 
