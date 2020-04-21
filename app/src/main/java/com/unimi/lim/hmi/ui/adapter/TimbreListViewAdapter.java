@@ -49,7 +49,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         holder.timbre = timbreList.get(position);
 
         // Bind model to view holder
-        holder.title.setText(timbreList.get(position).getContent());
+        holder.title.setText(timbreList.get(position).getName());
         holder.desc.setText("lorem ipsum dolor sit amet");
 
         // Show check marker

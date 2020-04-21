@@ -1,7 +1,7 @@
 package com.unimi.lim.hmi.keyboard;
 
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 
 public class BaseKeyHandler extends KeyHandler {
 
@@ -11,7 +11,7 @@ public class BaseKeyHandler extends KeyHandler {
             0.01, 0.0 // release
     };
 
-    public BaseKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
+    public BaseKeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
         synth.setEnvelopData(ENVELOP);
     }

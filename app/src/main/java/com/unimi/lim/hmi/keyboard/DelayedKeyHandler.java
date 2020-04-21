@@ -3,7 +3,7 @@ package com.unimi.lim.hmi.keyboard;
 import android.os.Handler;
 
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 
 public class DelayedKeyHandler extends KeyHandler {
 
@@ -19,7 +19,7 @@ public class DelayedKeyHandler extends KeyHandler {
     private final Player player = new Player();
     private boolean delayedPlayInvoked;
 
-    public DelayedKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
+    public DelayedKeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
         synth.setEnvelopData(ENVELOP);
     }

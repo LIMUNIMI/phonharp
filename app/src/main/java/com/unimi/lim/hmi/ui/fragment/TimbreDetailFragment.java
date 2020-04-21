@@ -63,7 +63,7 @@ public class TimbreDetailFragment extends Fragment {
         TextInputEditText timbreContentView = view.findViewById(R.id.timbre_content);
         viewModel.getSelected().observe(getViewLifecycleOwner(), timbre -> {
             Log.d(getClass().getName(), "Change -> timbre: " + timbre.toString());
-            timbreContentView.setText(timbre.getContent());
+            timbreContentView.setText(timbre.getName());
             timbreContentView.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -76,7 +76,7 @@ public class TimbreDetailFragment extends Fragment {
                 @Override
                 public void afterTextChanged(Editable s) {
                     Log.d(getClass().getName(), " --> afterTextChanged: " + s.toString());
-                    timbre.setContent(s.toString());
+                    timbre.setName(s.toString());
                 }
             });
         });

@@ -1,6 +1,6 @@
 package com.unimi.lim.hmi.synthetizer;
 
-public interface Synthesizer {
+public interface SynthesizerOld {
 
     void start();
 

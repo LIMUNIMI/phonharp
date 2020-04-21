@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 
 public class ThreadedKeyHandler extends KeyHandler {
 
@@ -22,7 +22,7 @@ public class ThreadedKeyHandler extends KeyHandler {
     private Handler delayedPlayer;
 
 
-    public ThreadedKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
+    public ThreadedKeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
         synth.setEnvelopData(ENVELOP);
     }

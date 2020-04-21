@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 
 public abstract class KeyHandler {
 
@@ -13,10 +13,10 @@ public abstract class KeyHandler {
     protected int noteNum = -1;
     private int keyModifier = 0;
     private int keyOffset;
-    private Synthesizer synth;
+    private SynthesizerOld synth;
     private Scale scale;
 
-    public KeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
+    public KeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
         this.scale = scale;
         this.synth = synth;
         this.keyOffset = keyOffset;

@@ -8,10 +8,10 @@ import com.jsyn.unitgen.SquareOscillator;
 import com.jsyn.unitgen.TriangleOscillator;
 import com.jsyn.unitgen.UnitOscillator;
 import com.jsyn.unitgen.VariableRateMonoReader;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
 
-public class JsynSynthesizer implements Synthesizer {
+public class JsynSynthesizerOld implements SynthesizerOld {
 
     private final com.jsyn.Synthesizer synth;
     private final UnitOscillator osc;
@@ -19,7 +19,7 @@ public class JsynSynthesizer implements Synthesizer {
     private final VariableRateMonoReader envPlayer;
     private SegmentedEnvelope envelope;
 
-    public JsynSynthesizer(WaveForm waveForm) {
+    public JsynSynthesizerOld(WaveForm waveForm) {
 
         switch (waveForm) {
             case SINE:

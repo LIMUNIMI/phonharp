@@ -67,8 +67,7 @@ public class TimbreDao {
         for (int i = 0; i < 25; i++) {
             Timbre t = new Timbre();
             t.setId(i + "");
-            t.setContent("Timbre " + i);
-            t.setDetails("Details " + i);
+            t.setName("Timbre " + i);
             timbres.add(t);
         }
     }

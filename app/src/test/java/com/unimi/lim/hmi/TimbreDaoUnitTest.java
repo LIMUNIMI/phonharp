@@ -44,7 +44,7 @@ public class TimbreDaoUnitTest {
         List<Timbre> timbres = timbreDao.selectAll();
         int count = timbres.size();
 
-        t.setContent("CT2");
+        t.setName("CT2");
         timbreDao.save(t);
 
         timbres = timbreDao.selectAll();
@@ -52,7 +52,7 @@ public class TimbreDaoUnitTest {
 
         Optional<Timbre> selected = timbreDao.selectById(t.getId());
         Assert.assertTrue(selected.isPresent());
-        Assert.assertEquals("CT2", selected.get().getContent());
+        Assert.assertEquals("CT2", selected.get().getName());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TimbreDaoUnitTest {
         Optional<Timbre> selected = timbreDao.selectById(t.getId());
         Assert.assertTrue(selected.isPresent());
         Assert.assertEquals(t.getId(), selected.get().getId());
-        Assert.assertEquals(t.getContent(), selected.get().getContent());
+        Assert.assertEquals(t.getName(), selected.get().getName());
         Assert.assertEquals(t.getDetails(), selected.get().getDetails());
     }
 
@@ -88,7 +88,7 @@ public class TimbreDaoUnitTest {
         Timbre t = new Timbre();
         t.setId(UUID.randomUUID().toString());
         t.setDetails("DT1");
-        t.setContent("CT1");
+        t.setName("CT1");
         return t;
     }
 

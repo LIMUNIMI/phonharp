@@ -19,9 +19,9 @@ import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
-import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizerOld;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +38,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
     private static final String TAG = "KEYBOARD_ACTIVITY";
 
-    private Synthesizer synthesizer;
+    private SynthesizerOld synthesizer;
     private KeyHandler keyHandler;
 
     private List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
@@ -64,7 +64,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Note note = Note.valueOf(selectedNote.replace('#', 'd').concat(selectedOctave));
         Scale scale = new Scale(scaleType, note);
 
-        synthesizer = new JsynSynthesizer(WaveForm.valueOf(selectedWaveForm.toUpperCase()));
+        synthesizer = new JsynSynthesizerOld(WaveForm.valueOf(selectedWaveForm.toUpperCase()));
         keyHandler = new DelayedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
 
         // Setup keyboard listener
