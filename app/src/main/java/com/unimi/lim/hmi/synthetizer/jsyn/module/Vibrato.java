@@ -9,6 +9,10 @@ public class Vibrato extends Lfo {
 
     private int depth;
 
+    public Vibrato() {
+        this(0, 0);
+    }
+
     public Vibrato(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
 

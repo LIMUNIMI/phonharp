@@ -16,7 +16,7 @@ import org.junit.Test;
 public class SynthModuleUnitTest {
 
     private static final Note PLAY_NOTE = Note.C3;
-    private static final double PLAY_DURATION = 10;
+    private static final double PLAY_DURATION = 3;
 
     private com.jsyn.Synthesizer synth;
     private PulseOscillator osc;
@@ -46,7 +46,7 @@ public class SynthModuleUnitTest {
     @Test
     public void testTremolo() {
         System.out.println("Tremolo...");
-        Tremolo tremolo = new Tremolo(1, 100);
+        Tremolo tremolo = new Tremolo(6, 100);
         tremolo.output.connect(osc.amplitude);
         synth.add(tremolo);
         play(PLAY_NOTE);
@@ -55,7 +55,7 @@ public class SynthModuleUnitTest {
     @Test
     public void testVibrato() {
         System.out.println("Vibrato...");
-        Vibrato vibrato = new Vibrato(0, 0);
+        Vibrato vibrato = new Vibrato(6, 100);
         synth.add(vibrato);
 
         Add adder = new Add();
@@ -110,7 +110,7 @@ public class SynthModuleUnitTest {
         sleep(3);
 
         // Changes offset
-        asr.editValues(200, 0, 200);
+        asr.updateValues(200, 0, 200);
         asr.press();
         sleep(3);
         asr.release();
@@ -119,7 +119,6 @@ public class SynthModuleUnitTest {
         asr.stop();
         lineOut.stop();
     }
-
 
 
     private void play() {

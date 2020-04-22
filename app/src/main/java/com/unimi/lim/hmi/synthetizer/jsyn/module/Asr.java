@@ -41,7 +41,7 @@ public class Asr extends Circuit {
         envPlayer.stop();
     }
 
-    public void editValues(double initialValue, double sunstainValue, double finalValue) {
+    public void updateValues(double initialValue, double sunstainValue, double finalValue) {
         envData.writeDouble(0, initialValue);
         envData.writeDouble(1, sunstainValue);
         envData.writeDouble(2, finalValue);

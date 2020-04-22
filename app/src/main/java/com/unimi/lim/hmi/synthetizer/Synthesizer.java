@@ -1,10 +1,14 @@
 package com.unimi.lim.hmi.synthetizer;
 
+import com.unimi.lim.hmi.entity.TimbreCfg;
+
 public interface Synthesizer {
 
     void start();
 
     void stop();
+
+    void updateTimbreCfg(TimbreCfg timbreCfg);
 
     void press(double frequency);
 

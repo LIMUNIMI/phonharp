@@ -11,6 +11,10 @@ public class Tremolo extends Lfo {
     private final Add modulator;
     private int depth;
 
+    public Tremolo() {
+        this(0, 0);
+    }
+
     public Tremolo(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
 

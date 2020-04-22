@@ -9,12 +9,12 @@ public class TimbreCfg {
     private String name;
     private float volume;
     private int harmonics;
-    private LfoCfg tremolo;
-    private LfoCfg vibrato;
-    private EnvelopCfg volumeEnv;
-    private EnvelopCfg pitchEnv;
-    private EnvelopCfg harmonicsEnv;
-    private EqualizerCfg equalizer;
+    private LfoCfg tremolo = new LfoCfg(0, 0);
+    private LfoCfg vibrato = new LfoCfg(0, 0);
+    private EnvelopCfg volumeEnv = new EnvelopCfg(1, 0, 0, 0);
+    private EnvelopCfg pitchEnv = new EnvelopCfg(0, 0, 0, 0);
+    private EnvelopCfg harmonicsEnv = new EnvelopCfg(0, 0, 0, 0);
+    private EqualizerCfg equalizer = new EqualizerCfg();
 
     public boolean isChecked() {
         return checked;
@@ -109,6 +109,14 @@ public class TimbreCfg {
         private float rate;
         private int depth;
 
+        public LfoCfg() {
+        }
+
+        public LfoCfg(float rate, int depth) {
+            this.rate = rate;
+            this.depth = depth;
+        }
+
         public float getRate() {
             return rate;
         }
@@ -128,25 +136,36 @@ public class TimbreCfg {
 
     public static class EnvelopCfg {
 
-        private int startValue;
-        private int endValue;
+        private int initialValue;
+        private int finalValue;
         private float attackTime;
         private float releaseTime;
 
-        public int getStartValue() {
-            return startValue;
+        public EnvelopCfg() {
+
         }
 
-        public void setStartValue(int startValue) {
-            this.startValue = startValue;
+        public EnvelopCfg(int startValue, int endValue, float attackTime, float releaseTime) {
+            this.initialValue = startValue;
+            this.finalValue = endValue;
+            this.attackTime = attackTime;
+            this.releaseTime = releaseTime;
         }
 
-        public int getEndValue() {
-            return endValue;
+        public int getInitialValue() {
+            return initialValue;
         }
 
-        public void setEndValue(int endValue) {
-            this.endValue = endValue;
+        public void setInitialValue(int initialValue) {
+            this.initialValue = initialValue;
+        }
+
+        public int getFinalValue() {
+            return finalValue;
+        }
+
+        public void setFinalValue(int finalValue) {
+            this.finalValue = finalValue;
         }
 
         public float getAttackTime() {
