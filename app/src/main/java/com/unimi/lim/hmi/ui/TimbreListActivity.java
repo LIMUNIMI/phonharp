@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.entity.TimbreCfg;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
@@ -56,7 +56,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
      * @param item clicked timbre on timbre list
      */
     @Override
-    public void onSelect(Timbre item) {
+    public void onSelect(TimbreCfg item) {
         Log.d(getClass().getName(), "Selected timbre " + item.getId());
         Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString(SELECTED_TIMBRE_ID, item.getId());
@@ -69,7 +69,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
      * @param item clicked timbre on timbre list
      */
     @Override
-    public void onEdit(Timbre item) {
+    public void onEdit(TimbreCfg item) {
         Log.d(getClass().getName(), "Edit timbre " + item.getId());
         startTimbreDetailActivity(item.getId(), false);
     }

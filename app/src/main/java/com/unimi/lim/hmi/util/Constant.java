@@ -9,7 +9,7 @@ public class Constant {
         private Settings() {
         }
 
-        // Timbre
+        // TimbreCfg
         public static final String SELECTED_TIMBRE_ID = "selectedTimbreId";
 
         // Keyboard

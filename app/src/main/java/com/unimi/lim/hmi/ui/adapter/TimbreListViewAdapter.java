@@ -11,19 +11,19 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.entity.TimbreCfg;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 
 import java.util.List;
 
 public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAdapter.ViewHolder> {
 
-    private final List<Timbre> timbreList;
+    private final List<TimbreCfg> timbreList;
     private final TimbreListFragment.OnTimbreListListener timbreClickListener;
 
-    private Timbre checked;
+    private TimbreCfg checked;
 
-    public TimbreListViewAdapter(List<Timbre> items, TimbreListFragment.OnTimbreListListener listener, String selectedTimbreId) {
+    public TimbreListViewAdapter(List<TimbreCfg> items, TimbreListFragment.OnTimbreListListener listener, String selectedTimbreId) {
         this.timbreList = items;
         this.timbreClickListener = listener;
 
@@ -108,7 +108,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         public final TextView title;
         public final TextView desc;
         public final RadioButton radio;
-        public Timbre timbre;
+        public TimbreCfg timbre;
 
         public ViewHolder(View view) {
             super(view);

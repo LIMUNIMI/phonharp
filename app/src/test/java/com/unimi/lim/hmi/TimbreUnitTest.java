@@ -23,7 +23,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TimbreUnitTest {
 
-    private static final Note PLAY_NOTE = Note.C4;
+    private static final Note PLAY_NOTE = Note.C3;
     private static final double PLAY_DURATION = 3;
 
     private com.jsyn.Synthesizer synth;
@@ -152,14 +152,19 @@ public class TimbreUnitTest {
 //            modOsc.frequency.set(freq);
 //            play(PLAY_NOTE);
 //        }
-        modOsc.frequency.set(6);
-        for (int i = 2; i <= 10; i += 2) {
-            double ampl = 0.5 / 10 * (double) i;
-            double depth = ampl / 0.5 * 100;
-            modOsc.amplitude.set(ampl);
-            System.out.println("Tremolo f = 6Hz, Depth = " + (int) depth);
-            play(PLAY_NOTE);
-        }
+
+        // Test different depths
+//        modOsc.frequency.set(6);
+//        for (int i = 2; i <= 10; i += 2) {
+//            double ampl = 0.5 / 10 * (double) i;
+//            double depth = ampl / 0.5 * 100;
+//            modOsc.amplitude.set(ampl);
+//            System.out.println("Tremolo f = 6Hz, Depth = " + (int) depth);
+//            play(PLAY_NOTE);
+//        }
+
+        modOsc = setupAmplMod(0.6666666666666666, 0.33333333333333337, 6);
+        play(PLAY_NOTE);
     }
 
     @Test
@@ -169,12 +174,12 @@ public class TimbreUnitTest {
         double rate = 6;
 
         // Usual ampl modifier
-        System.out.println("Usual ampl mod");
+        System.out.println("Usual ampl lfoOsc");
         setupAmplMod(amount, dcOffset, rate);
         play(PLAY_NOTE);
 
         // Amplitude modulator by multiplying two oscillators
-        System.out.println("Mult ampl mod");
+        System.out.println("Mult ampl lfoOsc");
 
         // Carrier
         SineOscillator carOsc = new SineOscillator();

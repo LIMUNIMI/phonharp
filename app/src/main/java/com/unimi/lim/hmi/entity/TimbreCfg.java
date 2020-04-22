@@ -1,6 +1,6 @@
 package com.unimi.lim.hmi.entity;
 
-public class Timbre {
+public class TimbreCfg {
 
     // TODO for UI purpose, refactor?
     private boolean checked = false;
@@ -9,12 +9,12 @@ public class Timbre {
     private String name;
     private float volume;
     private int harmonics;
-    private Lfo tremolo;
-    private Lfo vibrato;
-    private Envelop volumeEnv;
-    private Envelop pitchEnv;
-    private Envelop harmonicsEnv;
-    private Equalizer equalizer;
+    private LfoCfg tremolo;
+    private LfoCfg vibrato;
+    private EnvelopCfg volumeEnv;
+    private EnvelopCfg pitchEnv;
+    private EnvelopCfg harmonicsEnv;
+    private EqualizerCfg equalizer;
 
     public boolean isChecked() {
         return checked;
@@ -56,63 +56,55 @@ public class Timbre {
         this.harmonics = harmonics;
     }
 
-    public Lfo getTremolo() {
+    public LfoCfg getTremolo() {
         return tremolo;
     }
 
-    public void setTremolo(Lfo tremolo) {
+    public void setTremolo(LfoCfg tremolo) {
         this.tremolo = tremolo;
     }
 
-    public Lfo getVibrato() {
+    public LfoCfg getVibrato() {
         return vibrato;
     }
 
-    public void setVibrato(Lfo vibrato) {
+    public void setVibrato(LfoCfg vibrato) {
         this.vibrato = vibrato;
     }
 
-    public Envelop getVolumeEnv() {
+    public EnvelopCfg getVolumeEnv() {
         return volumeEnv;
     }
 
-    public void setVolumeEnv(Envelop volumeEnv) {
+    public void setVolumeEnv(EnvelopCfg volumeEnv) {
         this.volumeEnv = volumeEnv;
     }
 
-    public Envelop getPitchEnv() {
+    public EnvelopCfg getPitchEnv() {
         return pitchEnv;
     }
 
-    public void setPitchEnv(Envelop pitchEnv) {
+    public void setPitchEnv(EnvelopCfg pitchEnv) {
         this.pitchEnv = pitchEnv;
     }
 
-    public Envelop getHarmonicsEnv() {
+    public EnvelopCfg getHarmonicsEnv() {
         return harmonicsEnv;
     }
 
-    public void setHarmonicsEnv(Envelop harmonicsEnv) {
+    public void setHarmonicsEnv(EnvelopCfg harmonicsEnv) {
         this.harmonicsEnv = harmonicsEnv;
     }
 
-    public Equalizer getEqualizer() {
+    public EqualizerCfg getEqualizer() {
         return equalizer;
     }
 
-    public void setEqualizer(Equalizer equalizer) {
+    public void setEqualizer(EqualizerCfg equalizer) {
         this.equalizer = equalizer;
     }
 
-    @Override
-    public String toString() {
-        return "Timbre{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    public static class Lfo {
+    public static class LfoCfg {
 
         private float rate;
         private int depth;
@@ -134,7 +126,7 @@ public class Timbre {
         }
     }
 
-    public static class Envelop {
+    public static class EnvelopCfg {
 
         private int startValue;
         private int endValue;
@@ -174,7 +166,7 @@ public class Timbre {
         }
     }
 
-    public static class Equalizer {
+    public static class EqualizerCfg {
 
         private float bass;
         private float mid;

@@ -19,11 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.entity.TimbreCfg;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
-import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 /**
@@ -124,8 +123,8 @@ public class TimbreListFragment extends Fragment {
      * Interface to handles timbre list click
      */
     public interface OnTimbreListListener {
-        void onSelect(Timbre item);
+        void onSelect(TimbreCfg item);
 
-        void onEdit(Timbre item);
+        void onEdit(TimbreCfg item);
     }
 }

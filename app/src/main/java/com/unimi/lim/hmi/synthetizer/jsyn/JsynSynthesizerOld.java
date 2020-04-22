@@ -10,6 +10,7 @@ import com.jsyn.unitgen.UnitOscillator;
 import com.jsyn.unitgen.VariableRateMonoReader;
 import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
+import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 
 public class JsynSynthesizerOld implements SynthesizerOld {
 

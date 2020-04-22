@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.unimi.lim.hmi.synthetizer.jsyn;
+package com.unimi.lim.hmi.synthetizer.jsyn.device;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
  * Implement JSyn's AudioDeviceManager for Android.
  * Use AudioTrack for audio output.
  */
-// TODO refactor
+// TODO refactor, maybe can be a singleton
 public class JSynAndroidAudioDevice implements AudioDeviceManager
 {
 
