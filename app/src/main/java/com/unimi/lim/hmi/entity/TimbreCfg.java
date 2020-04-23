@@ -7,8 +7,8 @@ public class TimbreCfg {
 
     private String id;
     private String name;
-    private float volume;
-    private int harmonics;
+    private float volume = 1;
+    private float harmonics = 0;
     private LfoCfg tremolo = new LfoCfg(0, 0);
     private LfoCfg vibrato = new LfoCfg(0, 0);
     private EnvelopCfg volumeEnv = new EnvelopCfg(1, 0, 0, 0);
@@ -48,11 +48,11 @@ public class TimbreCfg {
         this.volume = volume;
     }
 
-    public int getHarmonics() {
+    public float getHarmonics() {
         return harmonics;
     }
 
-    public void setHarmonics(int harmonics) {
+    public void setHarmonics(float harmonics) {
         this.harmonics = harmonics;
     }
 
@@ -136,8 +136,8 @@ public class TimbreCfg {
 
     public static class EnvelopCfg {
 
-        private int initialValue;
-        private int finalValue;
+        private float initialValue;
+        private float finalValue;
         private float attackTime;
         private float releaseTime;
 
@@ -145,14 +145,14 @@ public class TimbreCfg {
 
         }
 
-        public EnvelopCfg(int startValue, int endValue, float attackTime, float releaseTime) {
-            this.initialValue = startValue;
-            this.finalValue = endValue;
+        public EnvelopCfg(float initialValue, float finalValue, float attackTime, float releaseTime) {
+            this.initialValue = initialValue;
+            this.finalValue = finalValue;
             this.attackTime = attackTime;
             this.releaseTime = releaseTime;
         }
 
-        public int getInitialValue() {
+        public float getInitialValue() {
             return initialValue;
         }
 
@@ -160,7 +160,7 @@ public class TimbreCfg {
             this.initialValue = initialValue;
         }
 
-        public int getFinalValue() {
+        public float getFinalValue() {
             return finalValue;
         }
 

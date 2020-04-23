@@ -16,22 +16,22 @@ import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
 
 public class JsynSynthesizer implements Synthesizer {
 
-    public static class JsynSynthesizerBuilder {
+    public static class Builder {
 
         private TimbreCfg timbre;
         private AudioDeviceManager audioDeviceManager;
 
-        public JsynSynthesizerBuilder timbreCfg(TimbreCfg timbre) {
+        public Builder timbreCfg(TimbreCfg timbre) {
             this.timbre = timbre;
             return this;
         }
 
-        public JsynSynthesizerBuilder defaultAudioDeviceManager() {
+        public Builder defaultAudioDeviceManager() {
             this.audioDeviceManager = new JSynAndroidAudioDevice();
             return this;
         }
 
-        public JsynSynthesizerBuilder audioDeviceManager(AudioDeviceManager audioDeviceManager) {
+        public Builder audioDeviceManager(AudioDeviceManager audioDeviceManager) {
             this.audioDeviceManager = audioDeviceManager;
             return this;
         }
@@ -112,7 +112,7 @@ public class JsynSynthesizer implements Synthesizer {
         pitchEnvelop.output.connect(pitch2.inputA);
         pitch1.output.connect(pitch2.inputB);
         pitch2.output.connect(pitch3.inputB);
-        pitch3.output.connect(osc.amplitude);
+        pitch3.output.connect(osc.frequency);
 
         // Harmonics mixers: harmonics1=harmonics+envelop, harmonics2=harmonics1+controller
         harmonicsEnvelop.output.connect(harmonics1.inputB);
