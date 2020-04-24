@@ -48,7 +48,8 @@ public class Asr extends Circuit {
     }
 
     public void press() {
-        envPlayer.dataQueue.clear();
+        // TODO comment or uncomment queue clear
+        //envPlayer.dataQueue.clear();
         envPlayer.dataQueue.queue(envData, 0, 1);
         envPlayer.dataQueue.queue(envData, 1, 1);
     }

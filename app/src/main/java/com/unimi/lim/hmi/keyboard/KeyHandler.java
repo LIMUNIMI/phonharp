@@ -8,10 +8,8 @@ import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
 
 public abstract class KeyHandler {
 
-    protected final static String TAG = "KEY_HANDLER";
-
     protected int noteNum = -1;
-    private int keyModifier = 0;
+    private int halfTone = 0;
     private int keyOffset;
     private SynthesizerOld synth;
     private Scale scale;
@@ -38,13 +36,13 @@ public abstract class KeyHandler {
         play();
     }
 
-    public void modifierPressed() {
-        keyModifier = -1;
+    public void halfToneKeyPressed() {
+        halfTone = -1;
         play();
     }
 
-    public void modifierReleased() {
-        keyModifier = 0;
+    public void halfToneKeyReleased() {
+        halfTone = 0;
         play();
     }
 
@@ -54,11 +52,11 @@ public abstract class KeyHandler {
         long start = System.currentTimeMillis();
         if (noteNum < 0) {
             synth.release();
-            Log.d(TAG, "Note released " + (System.currentTimeMillis() - start));
+            Log.d(getClass().getName(), "Note released " + (System.currentTimeMillis() - start));
         } else {
-            Note note = scale.getNote(noteNum + keyOffset, keyModifier);
+            Note note = scale.getNote(noteNum + keyOffset, halfTone);
             synth.press(note.getFrequency());
-            Log.d(TAG, "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
+            Log.d(getClass().getName(), "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
         }
     }
 

@@ -72,8 +72,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         playableKeyIds.forEach(kid -> findViewById(kid).setOnTouchListener(keyListener));
 
         // Note modifier listener
-        ModifierListener modifierListener = new ModifierListener();
-        findViewById(R.id.key_modifier).setOnTouchListener(modifierListener);
+        findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
     }
 
@@ -217,13 +216,13 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     /**
      * Half tone button handler
      */
-    private class ModifierListener implements View.OnTouchListener {
+    private class HalfToneKeyListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                keyHandler.modifierPressed();
+                keyHandler.halfToneKeyPressed();
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                keyHandler.modifierReleased();
+                keyHandler.halfToneKeyReleased();
             }
             return true;
         }

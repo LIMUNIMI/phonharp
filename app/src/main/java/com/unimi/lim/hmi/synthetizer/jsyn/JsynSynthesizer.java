@@ -174,26 +174,26 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void controlVolume(double delta) {
-
+        // TODO
     }
 
     @Override
     public void controlPitch(double delta) {
-
+        // TODO
     }
 
     @Override
     public void controlHarmonics(double delta) {
-
+        // TODO
     }
 
     @Override
     public void controlTremoloDepth(double delta) {
-
+        // TODO
     }
 
     @Override
     public void controlVibratoDepth(double delta) {
-
+        // TODO
     }
 }
