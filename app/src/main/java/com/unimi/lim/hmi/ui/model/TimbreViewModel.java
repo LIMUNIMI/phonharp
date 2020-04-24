@@ -7,21 +7,21 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.unimi.lim.hmi.dao.TimbreDao;
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 
 import java.util.List;
 
 public class TimbreViewModel extends ViewModel {
 
-    private MutableLiveData<List<TimbreCfg>> all;
-    private MutableLiveData<TimbreCfg> selected;
+    private MutableLiveData<List<Timbre>> all;
+    private MutableLiveData<Timbre> selected;
 
     private boolean itemChanged = false;
 
-    public LiveData<List<TimbreCfg>> selectAll() {
+    public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
-            List<TimbreCfg> timbres = TimbreDao.getInstance().selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance().selectAll();
             all = new MutableLiveData<>();
             all.setValue(timbres);
         }
@@ -31,31 +31,31 @@ public class TimbreViewModel extends ViewModel {
     public void reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
-            List<TimbreCfg> timbres = TimbreDao.getInstance().selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance().selectAll();
             all.setValue(timbres);
         }
     }
 
-    public LiveData<TimbreCfg> select(String id) {
+    public LiveData<Timbre> select(String id) {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
-            TimbreCfg timbre = TimbreDao.getInstance().selectById(id).orElseThrow(() -> new IllegalArgumentException("TimbreCfg with id " + id + " was not found"));
+            Timbre timbre = TimbreDao.getInstance().selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
             selected.setValue(timbre);
         }
         return selected;
     }
 
-    public LiveData<TimbreCfg> create() {
+    public LiveData<Timbre> create() {
         Log.d(getClass().getName(), "Create new timbre");
         if (selected == null) {
             selected = new MutableLiveData<>();
-            selected.setValue(new TimbreCfg());
+            selected.setValue(new Timbre());
         }
         return selected;
     }
 
-    public LiveData<TimbreCfg> getSelected() {
+    public LiveData<Timbre> getSelected() {
         Log.d(getClass().getName(), "Retrieve selected timbre");
         if (selected == null) {
             throw new IllegalStateException("Selected timbre is null, invoke select before");

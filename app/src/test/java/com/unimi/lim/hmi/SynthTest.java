@@ -1,6 +1,6 @@
 package com.unimi.lim.hmi;
 
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
@@ -17,11 +17,11 @@ public class SynthTest {
     private static final long TIME_RELEASE = 1000;
 
     private Synthesizer synth;
-    private TimbreCfg cfg;
+    private Timbre timbre;
 
     @Before
     public void init() {
-        cfg = new TimbreCfg();
+        timbre = new Timbre();
     }
 
     @After
@@ -37,83 +37,83 @@ public class SynthTest {
 
     @Test
     public void testVolume() {
-        cfg.setVolume(1);
-        buildAndStart(cfg);
+        timbre.setVolume(1);
+        buildAndStart(timbre);
         play();
 
-        cfg.setVolume(0.25f);
-        synth.updateTimbreCfg(cfg);
+        timbre.setVolume(0.25f);
+        synth.updateTimbreCfg(timbre);
         play();
     }
 
     @Test
     public void testHarmonics() {
-        buildAndStart(cfg);
-        cfg.setHarmonics(0.0f);
-        synth.updateTimbreCfg(cfg);
+        buildAndStart(timbre);
+        timbre.setHarmonics(0.0f);
+        synth.updateTimbreCfg(timbre);
         play();
 
-        cfg.setHarmonics(0.45f);
-        synth.updateTimbreCfg(cfg);
+        timbre.setHarmonics(0.45f);
+        synth.updateTimbreCfg(timbre);
         play();
 
-        cfg.setHarmonics(0.9f);
-        synth.updateTimbreCfg(cfg);
+        timbre.setHarmonics(0.9f);
+        synth.updateTimbreCfg(timbre);
         play();
 
     }
 
     @Test
     public void testTremolo() {
-        cfg.setTremolo(new TimbreCfg.LfoCfg(6, 75));
-        buildAndStart(cfg);
+        timbre.setTremolo(new Timbre.Lfo(6, 75));
+        buildAndStart(timbre);
         play();
         // Changes tremolo config on the fly
-        cfg.setTremolo(new TimbreCfg.LfoCfg(20, 50));
-        synth.updateTimbreCfg(cfg);
+        timbre.setTremolo(new Timbre.Lfo(20, 50));
+        synth.updateTimbreCfg(timbre);
         play();
     }
 
     @Test
     public void testVibrato() {
-        cfg.setVibrato(new TimbreCfg.LfoCfg(6, 100));
-        buildAndStart(cfg);
+        timbre.setVibrato(new Timbre.Lfo(6, 100));
+        buildAndStart(timbre);
         play();
         // Changes vibrato config on the fly
-        cfg.setVibrato(new TimbreCfg.LfoCfg(20, 100));
-        synth.updateTimbreCfg(cfg);
+        timbre.setVibrato(new Timbre.Lfo(20, 100));
+        synth.updateTimbreCfg(timbre);
         play();
     }
 
     @Test
     public void testVolumeEnvelop() {
-        cfg.setVolumeEnv(new TimbreCfg.EnvelopCfg(0, 0, 1, 1));
-        buildAndStart(cfg);
+        timbre.setVolumeAsr(new Timbre.Asr(0, 0, 1, 1));
+        buildAndStart(timbre);
         play();
     }
 
     @Test
     public void testPitchEnvelop() {
-        cfg.setVolumeEnv(new TimbreCfg.EnvelopCfg(1, 0, 0, 1));
-        cfg.setPitchEnv(new TimbreCfg.EnvelopCfg(-50, -50, 1, 1));
-        buildAndStart(cfg);
+        timbre.setVolumeAsr(new Timbre.Asr(1, 0, 0, 1));
+        timbre.setPitchAsr(new Timbre.Asr(-50, -50, 1, 1));
+        buildAndStart(timbre);
         play();
     }
 
     @Test
     public void testHarmonicsEnvelop() {
-        cfg.setVolumeEnv(new TimbreCfg.EnvelopCfg(1, 0, 0, 1));
-        cfg.setHarmonicsEnv(new TimbreCfg.EnvelopCfg(-0.5f, -0.5f, 1, 1));
-        buildAndStart(cfg);
+        timbre.setVolumeAsr(new Timbre.Asr(1, 0, 0, 1));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-0.5f, -0.5f, 1, 1));
+        buildAndStart(timbre);
         play();
     }
 
     @Test
     public void testStaccato() {
-        cfg.setVolumeEnv(new TimbreCfg.EnvelopCfg(0, 0, 0.15f, 0.15f));
-        cfg.setPitchEnv(new TimbreCfg.EnvelopCfg(-50, -50, 0.15f, 0.15f));
-        cfg.setHarmonicsEnv(new TimbreCfg.EnvelopCfg(-0.9f, -0.9f, 0.15f, 0.15f));
-        buildAndStart(cfg);
+        timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
+        timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-0.9f, -0.9f, 0.15f, 0.15f));
+        buildAndStart(timbre);
 
         sleep(500);
 
@@ -131,10 +131,10 @@ public class SynthTest {
 
     @Test
     public void testLegato() {
-        cfg.setVolumeEnv(new TimbreCfg.EnvelopCfg(0, 0, 0.15f, 0.15f));
-        cfg.setPitchEnv(new TimbreCfg.EnvelopCfg(-50, -50, 0.15f, 0.15f));
-        cfg.setHarmonicsEnv(new TimbreCfg.EnvelopCfg(-0.9f, -0.9f, 0.15f, 0.15f));
-        buildAndStart(cfg);
+        timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
+        timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-0.9f, -0.9f, 0.15f, 0.15f));
+        buildAndStart(timbre);
 
         sleep(500);
 
@@ -151,7 +151,7 @@ public class SynthTest {
         System.out.println("Stop.");
     }
 
-    private void buildAndStart(TimbreCfg cfg) {
+    private void buildAndStart(Timbre cfg) {
         synth = new JsynSynthesizer
                 .Builder()
                 .timbreCfg(cfg)

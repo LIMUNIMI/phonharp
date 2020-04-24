@@ -7,7 +7,7 @@ import com.jsyn.unitgen.Add;
 import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
 import com.jsyn.unitgen.PulseOscillator;
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
@@ -18,10 +18,10 @@ public class JsynSynthesizer implements Synthesizer {
 
     public static class Builder {
 
-        private TimbreCfg timbre;
+        private Timbre timbre;
         private AudioDeviceManager audioDeviceManager;
 
-        public Builder timbreCfg(TimbreCfg timbre) {
+        public Builder timbreCfg(Timbre timbre) {
             this.timbre = timbre;
             return this;
         }
@@ -56,9 +56,9 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
 
-    private JsynSynthesizer(AudioDeviceManager audioDeviceManager, TimbreCfg timbreCfg) {
+    private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
-        timbreCfg = timbreCfg != null ? timbreCfg : new TimbreCfg();
+        timbre = timbre != null ? timbre : new Timbre();
 
         // Volume mixers: volume1=volume*tremolo, volume2=envelop*volume1, volume3=controller+volume2
         Multiply volume1;
@@ -87,9 +87,9 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(harmonics2 = new Add());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
-        synth.add(volumeEnvelop = new Asr(timbreCfg.getVolumeEnv().getAttackTime(), timbreCfg.getVolumeEnv().getReleaseTime()));
-        synth.add(pitchEnvelop = new Asr(timbreCfg.getPitchEnv().getAttackTime(), timbreCfg.getPitchEnv().getReleaseTime()));
-        synth.add(harmonicsEnvelop = new Asr(timbreCfg.getHarmonicsEnv().getAttackTime(), timbreCfg.getHarmonicsEnv().getReleaseTime()));
+        synth.add(volumeEnvelop = new Asr(timbre.getVolumeAsr().getAttackTime(), timbre.getVolumeAsr().getReleaseTime()));
+        synth.add(pitchEnvelop = new Asr(timbre.getPitchAsr().getAttackTime(), timbre.getPitchAsr().getReleaseTime()));
+        synth.add(harmonicsEnvelop = new Asr(timbre.getHarmonicsAsr().getAttackTime(), timbre.getHarmonicsAsr().getReleaseTime()));
 
         // Controlled values
         volume = volume1.inputA;
@@ -123,7 +123,7 @@ public class JsynSynthesizer implements Synthesizer {
         osc.output.connect(0, lineOut.input, 0);
         osc.output.connect(0, lineOut.input, 1);
 
-        updateTimbreCfg(timbreCfg);
+        updateTimbreCfg(timbre);
     }
 
     @Override
@@ -145,16 +145,16 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
-    public void updateTimbreCfg(TimbreCfg timbreCfg) {
-        volume.set(timbreCfg.getVolume());
-        harmonics.set(timbreCfg.getHarmonics());
-        tremolo.setFrequency(timbreCfg.getTremolo().getRate());
-        tremolo.setDepth(timbreCfg.getTremolo().getDepth());
-        vibrato.setFrequency(timbreCfg.getVibrato().getRate());
-        vibrato.setDepth(timbreCfg.getVibrato().getDepth());
-        volumeEnvelop.updateValues(timbreCfg.getVolumeEnv().getInitialValue(), 1, timbreCfg.getVolumeEnv().getFinalValue());
-        pitchEnvelop.updateValues(timbreCfg.getPitchEnv().getInitialValue(), 0, timbreCfg.getPitchEnv().getFinalValue());
-        harmonicsEnvelop.updateValues(timbreCfg.getHarmonicsEnv().getInitialValue(), 0, timbreCfg.getHarmonicsEnv().getFinalValue());
+    public void updateTimbreCfg(Timbre timbre) {
+        volume.set(timbre.getVolume());
+        harmonics.set(timbre.getHarmonics());
+        tremolo.setFrequency(timbre.getTremolo().getRate());
+        tremolo.setDepth(timbre.getTremolo().getDepth());
+        vibrato.setFrequency(timbre.getVibrato().getRate());
+        vibrato.setDepth(timbre.getVibrato().getDepth());
+        volumeEnvelop.updateValues(timbre.getVolumeAsr().getInitialValue(), 1, timbre.getVolumeAsr().getFinalValue());
+        pitchEnvelop.updateValues(timbre.getPitchAsr().getInitialValue(), 0, timbre.getPitchAsr().getFinalValue());
+        harmonicsEnvelop.updateValues(timbre.getHarmonicsAsr().getInitialValue(), 0, timbre.getHarmonicsAsr().getFinalValue());
     }
 
     @Override

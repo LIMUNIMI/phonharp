@@ -2,7 +2,7 @@ package com.unimi.lim.hmi.dao;
 
 import android.util.Log;
 
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class TimbreDao {
 
     private static TimbreDao timbreDao;
-    private List<TimbreCfg> timbres;
+    private List<Timbre> timbres;
 
     private TimbreDao() {
     }
@@ -28,17 +28,17 @@ public class TimbreDao {
         return timbreDao;
     }
 
-    public synchronized List<TimbreCfg> selectAll() {
+    public synchronized List<Timbre> selectAll() {
         Log.d(getClass().getName(), "SelectAll");
         return timbres.stream().collect(Collectors.toList());
     }
 
-    public synchronized Optional<TimbreCfg> selectById(String id) {
+    public synchronized Optional<Timbre> selectById(String id) {
         Log.d(getClass().getName(), "SelectById " + id);
         return timbres.stream().filter(t -> t.getId().equalsIgnoreCase(id)).findFirst();
     }
 
-    public synchronized void save(TimbreCfg timbre) {
+    public synchronized void save(Timbre timbre) {
         if (timbre == null) {
             return;
         }
@@ -65,9 +65,9 @@ public class TimbreDao {
         // TODO load from json
         timbres = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
-            TimbreCfg t = new TimbreCfg();
+            Timbre t = new Timbre();
             t.setId(i + "");
-            t.setName("TimbreCfg " + i);
+            t.setName("Timbre " + i);
             timbres.add(t);
         }
     }

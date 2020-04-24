@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
@@ -123,8 +123,8 @@ public class TimbreListFragment extends Fragment {
      * Interface to handles timbre list click
      */
     public interface OnTimbreListListener {
-        void onSelect(TimbreCfg item);
+        void onSelect(Timbre item);
 
-        void onEdit(TimbreCfg item);
+        void onEdit(Timbre item);
     }
 }

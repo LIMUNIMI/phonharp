@@ -1,6 +1,6 @@
 package com.unimi.lim.hmi.synthetizer;
 
-import com.unimi.lim.hmi.entity.TimbreCfg;
+import com.unimi.lim.hmi.entity.Timbre;
 
 public interface Synthesizer {
 
@@ -8,7 +8,7 @@ public interface Synthesizer {
 
     void stop();
 
-    void updateTimbreCfg(TimbreCfg timbreCfg);
+    void updateTimbreCfg(Timbre timbre);
 
     void press(double frequency);
 
