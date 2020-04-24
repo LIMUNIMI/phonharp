@@ -1,8 +1,12 @@
 package com.unimi.lim.hmi.entity;
 
+import com.google.gson.annotations.Expose;
+
 public class Timbre {
 
-    // TODO for UI purpose, refactor?
+    // This field is strictly related to ui purposes
+    // Since there is only one field we leave it here and avoid to create decorator objects
+    @Expose(serialize = false, deserialize = false)
     private boolean checked = false;
 
     private String id;
