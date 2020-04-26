@@ -12,7 +12,6 @@ import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
 import java.util.List;
-import java.util.Optional;
 
 public class TimbreViewModel extends AndroidViewModel {
 
@@ -28,7 +27,7 @@ public class TimbreViewModel extends AndroidViewModel {
     public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
-            List<Timbre> timbres = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all = new MutableLiveData<>();
             all.setValue(timbres);
         }
@@ -38,7 +37,7 @@ public class TimbreViewModel extends AndroidViewModel {
     public void reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
-            List<Timbre> timbres = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
         }
     }
@@ -47,7 +46,7 @@ public class TimbreViewModel extends AndroidViewModel {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
-            Timbre timbre = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
+            Timbre timbre = TimbreDao.getInstance(getApplication().getApplicationContext()).selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
             selected.setValue(timbre);
         }
         return selected;
@@ -77,7 +76,7 @@ public class TimbreViewModel extends AndroidViewModel {
         itemChanged = true;
         Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
         // TODO show notification if save fails
-        TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).save(selected.getValue());
+        TimbreDao.getInstance(getApplication().getApplicationContext()).save(selected.getValue());
     }
 
     public boolean isItemChanged() {

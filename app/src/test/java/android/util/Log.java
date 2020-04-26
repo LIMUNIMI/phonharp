@@ -1,7 +1,7 @@
 package android.util;
 
 /**
- * This class mocks android Log class and allow to run unit test without installing external libraries (like mockito)
+ * Fastest way to mock android Log class
  */
 public class Log {
     public static int d(String tag, String msg) {

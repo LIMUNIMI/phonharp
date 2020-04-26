@@ -1,23 +1,47 @@
 package com.unimi.lim.hmi;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.unimi.lim.hmi.util.Constant.System.TIMBRE_FILE_NAME;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class TimbreDaoUnitTest {
+
+    private final static String TEST_PATH = "/";
+    private final static String TEST_FILE = TEST_PATH + TIMBRE_FILE_NAME;
 
     private TimbreDao timbreDao;
 
+    @Mock
+    Context mockContext;
+    @Mock
+    AssetManager mockAssetManager;
+
     @Before
-    public void init() {
-        timbreDao = TimbreDao.getInstance(Optional.empty());
+    public void init() throws IOException {
+        when(mockContext.getFilesDir()).thenReturn(new File(getClass().getResource(TEST_PATH).getFile()));
+        when(mockContext.getAssets()).thenReturn(mockAssetManager);
+        when(mockAssetManager.open(TIMBRE_FILE_NAME)).thenReturn(new FileInputStream(getClass().getResource(TEST_FILE).getFile()));
+        timbreDao = TimbreDao.getInstance(mockContext);
         timbreDao.deleteAll();
         for (int i = 0; i < 1; i++) {
             Timbre t = new Timbre();

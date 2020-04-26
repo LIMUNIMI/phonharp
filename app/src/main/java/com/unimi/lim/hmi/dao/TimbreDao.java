@@ -34,7 +34,7 @@ public class TimbreDao {
     private static TimbreDao timbreDao;
 
     private final Gson gson;
-    private final Optional<Context> applicationContext;
+    private final Context applicationContext;
     private final static Type TIMBRE_LIST_TYPE = new TypeToken<ArrayList<Timbre>>() {
     }.getType();
 
@@ -44,23 +44,20 @@ public class TimbreDao {
     /**
      * Constructor
      *
-     * @param applicationContext if present then timbre file is read from application assets or from internal storage. Empty optional can be used for test purposes.
+     * @param applicationContext application context
      */
-    private TimbreDao(Optional<Context> applicationContext) {
+    private TimbreDao(Context applicationContext) {
         this.applicationContext = applicationContext;
         this.gson = new Gson();
-        if (!applicationContext.isPresent()) {
-            Log.w(getClass().getName(), "Application context is not present");
-        }
     }
 
     /**
      * Return timbre dao singleton instance
      *
-     * @param applicationContext if present then timbre file is read from application assets or from internal storage. Empty optional can be used for test purposes.
+     * @param applicationContext application context
      * @return singleton instance
      */
-    public static synchronized TimbreDao getInstance(Optional<Context> applicationContext) {
+    public static synchronized TimbreDao getInstance(Context applicationContext) {
         if (timbreDao == null) {
             timbreDao = new TimbreDao(applicationContext);
             timbreDao.reload();
@@ -178,11 +175,7 @@ public class TimbreDao {
      * @throws IOException
      */
     private FileWriter getFileWriter() throws IOException {
-        if (!applicationContext.isPresent()) {
-            // This branch should be taken only during tests
-            return new FileWriter(TIMBRE_FILE_NAME);
-        }
-        return new FileWriter(new File(applicationContext.get().getFilesDir(), TIMBRE_FILE_NAME));
+        return new FileWriter(new File(applicationContext.getFilesDir(), TIMBRE_FILE_NAME));
     }
 
     /**
@@ -192,25 +185,23 @@ public class TimbreDao {
      * @throws IOException
      */
     private FileReader getFileReader() throws IOException {
-        if (!applicationContext.isPresent()) {
-            // This branch should be taken only during tests
-            return new FileReader(TIMBRE_FILE_NAME);
-        }
-
         // Try to open timbre file from internal storage.
         // On the first invocation (after application installation) timbre file is copied from
         // assets directory to internal storage directory.
         FileReader fileReader;
         try {
-            fileReader = new FileReader(new File(applicationContext.get().getFilesDir(), TIMBRE_FILE_NAME));
+            fileReader = new FileReader(new File(applicationContext.getFilesDir(), TIMBRE_FILE_NAME));
         } catch (FileNotFoundException e) {
             // Try to open timbre file from assets directory
             Log.i(getClass().getName(), "Timbre list file not found on local storage, copy from asset");
-            InputStream initialTimbreList = applicationContext.get().getAssets().open(TIMBRE_FILE_NAME);
+            InputStream initialTimbreList = applicationContext.getAssets().open(TIMBRE_FILE_NAME);
+
+            System.out.println("----> " + initialTimbreList);
+
             timbres = gson.fromJson(new InputStreamReader(initialTimbreList), TIMBRE_LIST_TYPE);
             // Store timbre list to internal storage directory
             store();
-            fileReader = new FileReader(new File(applicationContext.get().getFilesDir(), TIMBRE_FILE_NAME));
+            fileReader = new FileReader(new File(applicationContext.getFilesDir(), TIMBRE_FILE_NAME));
         }
         return fileReader;
     }
