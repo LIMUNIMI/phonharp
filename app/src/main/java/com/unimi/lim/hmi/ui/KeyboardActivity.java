@@ -138,7 +138,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private void applyKeyboardPreferences(SharedPreferences sharedPreferences) {
 
         // Half-tone button
-        Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, false);
+        Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, true);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
         Log.d(TAG, "Halftone button enabled: " + showHalfTone);
 

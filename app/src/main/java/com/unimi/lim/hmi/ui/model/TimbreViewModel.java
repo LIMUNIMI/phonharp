@@ -1,27 +1,34 @@
 package com.unimi.lim.hmi.ui.model;
 
+import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
 import java.util.List;
+import java.util.Optional;
 
-public class TimbreViewModel extends ViewModel {
+public class TimbreViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Timbre>> all;
     private MutableLiveData<Timbre> selected;
 
     private boolean itemChanged = false;
 
+    public TimbreViewModel(@NonNull Application application) {
+        super(application);
+    }
+
     public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
-            List<Timbre> timbres = TimbreDao.getInstance().selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectAll();
             all = new MutableLiveData<>();
             all.setValue(timbres);
         }
@@ -31,7 +38,7 @@ public class TimbreViewModel extends ViewModel {
     public void reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
-            List<Timbre> timbres = TimbreDao.getInstance().selectAll();
+            List<Timbre> timbres = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectAll();
             all.setValue(timbres);
         }
     }
@@ -40,7 +47,7 @@ public class TimbreViewModel extends ViewModel {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
-            Timbre timbre = TimbreDao.getInstance().selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
+            Timbre timbre = TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
             selected.setValue(timbre);
         }
         return selected;
@@ -69,7 +76,8 @@ public class TimbreViewModel extends ViewModel {
         }
         itemChanged = true;
         Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
-        TimbreDao.getInstance().save(selected.getValue());
+        // TODO show notification if save fails
+        TimbreDao.getInstance(Optional.of(getApplication().getApplicationContext())).save(selected.getValue());
     }
 
     public boolean isItemChanged() {

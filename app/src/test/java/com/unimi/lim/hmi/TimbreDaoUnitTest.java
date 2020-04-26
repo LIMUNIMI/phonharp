@@ -17,7 +17,13 @@ public class TimbreDaoUnitTest {
 
     @Before
     public void init() {
-        timbreDao = TimbreDao.getInstance();
+        timbreDao = TimbreDao.getInstance(Optional.empty());
+        timbreDao.deleteAll();
+        for (int i = 0; i < 1; i++) {
+            Timbre t = new Timbre();
+            t.setId("tid" + i);
+            timbreDao.save(t);
+        }
     }
 
     @Test
@@ -27,6 +33,7 @@ public class TimbreDaoUnitTest {
 
         Timbre t = newTimbre();
         timbreDao.save(t);
+        timbreDao.reload();
 
         timbres = timbreDao.selectAll();
         Assert.assertEquals(count + 1, timbres.size());
@@ -40,12 +47,14 @@ public class TimbreDaoUnitTest {
     public void testSaveExisting() {
         Timbre t = newTimbre();
         timbreDao.save(t);
+        timbreDao.reload();
 
         List<Timbre> timbres = timbreDao.selectAll();
         int count = timbres.size();
 
         t.setName("CT2");
         timbreDao.save(t);
+        timbreDao.reload();
 
         timbres = timbreDao.selectAll();
         Assert.assertEquals(count, timbres.size());
@@ -59,6 +68,7 @@ public class TimbreDaoUnitTest {
     public void testSelect() {
         Timbre t = newTimbre();
         timbreDao.save(t);
+        timbreDao.reload();
 
         Optional<Timbre> selected = timbreDao.selectById(t.getId());
         Assert.assertTrue(selected.isPresent());
@@ -70,11 +80,13 @@ public class TimbreDaoUnitTest {
     public void testDelete() {
         Timbre t = newTimbre();
         timbreDao.save(t);
+        timbreDao.reload();
 
         List<Timbre> timbres = timbreDao.selectAll();
         int count = timbres.size();
 
         timbreDao.delete(t.getId());
+        timbreDao.reload();
 
         timbres = timbreDao.selectAll();
         Assert.assertEquals(count - 1, timbres.size());

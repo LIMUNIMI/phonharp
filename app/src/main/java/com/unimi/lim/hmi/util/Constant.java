@@ -1,8 +1,16 @@
 package com.unimi.lim.hmi.util;
 
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
+
 public class Constant {
 
     private Constant() {
+    }
+
+    public static class System {
+        private System(){}
+
+        public static final String TIMBRE_FILE_NAME = "timbre-list.json";
     }
 
     public static class Settings {
@@ -11,6 +19,7 @@ public class Constant {
 
         // Timbre
         public static final String SELECTED_TIMBRE_ID = "selectedTimbreId";
+        public static final String DEFAULT_TIMBRE_ID = "tid0";
 
         // Keyboard
         public static final String HALF_TONE = "halftone";

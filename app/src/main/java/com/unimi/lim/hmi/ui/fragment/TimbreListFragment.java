@@ -23,6 +23,7 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 /**
@@ -83,7 +84,7 @@ public class TimbreListFragment extends Fragment {
             viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
                 // Retrieves selected timbre from preferences
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                String selectedTimbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, "");
+                String selectedTimbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
 
                 // Setup the adapter
                 TimbreListViewAdapter timbreListViewAdapter = new TimbreListViewAdapter(timbres, timbreClickListener, selectedTimbreId);
