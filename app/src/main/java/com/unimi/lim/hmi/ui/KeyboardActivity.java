@@ -12,20 +12,23 @@ import android.widget.PopupMenu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
 import com.unimi.lim.hmi.keyboard.KeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
-import com.unimi.lim.hmi.synthetizer.WaveForm;
-import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizerOld;
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
+import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
 import static com.unimi.lim.hmi.util.Constant.Settings.HANDEDNESS;
 import static com.unimi.lim.hmi.util.Constant.Settings.NOTE;
@@ -33,12 +36,11 @@ import static com.unimi.lim.hmi.util.Constant.Settings.OCTAVE;
 import static com.unimi.lim.hmi.util.Constant.Settings.OFFSET;
 import static com.unimi.lim.hmi.util.Constant.Settings.RIGHT_HANDED;
 import static com.unimi.lim.hmi.util.Constant.Settings.SCALE_TYPE;
+import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    private static final String TAG = "KEYBOARD_ACTIVITY";
-
-    private SynthesizerOld synthesizer;
+    private Synthesizer synthesizer;
     private KeyHandler keyHandler;
 
     private List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
@@ -56,15 +58,17 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         String selectedOctave = sharedPreferences.getString(OCTAVE, "4");
         String selectedOffset = sharedPreferences.getString(OFFSET, "0");
 
-        // TODO remove, read timbre from properties
-        String selectedWaveForm = WaveForm.SQUARE.name();
+        String timbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
+        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        viewModel.select(timbreId);
+        Timbre timbre = viewModel.getSelected().getValue();
 
         // Initialize services
         Scale.Type scaleType = Scale.Type.valueOf(selectedScaleType.toUpperCase());
         Note note = Note.valueOf(selectedNote.replace('#', 'd').concat(selectedOctave));
         Scale scale = new Scale(scaleType, note);
 
-        synthesizer = new JsynSynthesizerOld(WaveForm.valueOf(selectedWaveForm.toUpperCase()));
+        synthesizer = new JsynSynthesizer.Builder().defaultAudioDeviceManager().timbreCfg(timbre).build();
         keyHandler = new DelayedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
 
         // Setup keyboard listener
@@ -140,7 +144,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // Half-tone button
         Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, true);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
-        Log.d(TAG, "Halftone button enabled: " + showHalfTone);
+        Log.d(getClass().getName(), "Halftone button enabled: " + showHalfTone);
 
 
         // Handedness
@@ -161,7 +165,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             constraint.connect(R.id.key_modifier, ConstraintSet.START, R.id.key_scnd, ConstraintSet.END);
         }
         constraint.applyTo(layout);
-        Log.d(TAG, "Right-handed: " + showHalfTone);
+        Log.d(getClass().getName(), "Right-handed: " + showHalfTone);
     }
 
     private void flipRight(ConstraintSet constraint, int keyId) {

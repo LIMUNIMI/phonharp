@@ -4,27 +4,22 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
+// TODO refactor, this class is probably useless
 public class ThreadedKeyHandler extends KeyHandler {
 
     private static final String TAG = "ThreadedKeyHandler";
 
     private final static int DELAY = 50;
-    private final static double[] ENVELOP = {
-            0.001, 0.9, // attack
-            0.001, 0.8, // decay
-            0.001, 0.0  // release
-    };
 
     private final HandlerThread handlerThread = new HandlerThread(TAG);
     private final Player player = new Player();
     private Handler delayedPlayer;
 
 
-    public ThreadedKeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
+    public ThreadedKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
-        synth.setEnvelopData(ENVELOP);
     }
 
     @Override

@@ -3,25 +3,20 @@ package com.unimi.lim.hmi.keyboard;
 import android.os.Handler;
 
 import com.unimi.lim.hmi.music.Scale;
-import com.unimi.lim.hmi.synthetizer.SynthesizerOld;
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
+// TODO refactor, move everything to keyhandler
 public class DelayedKeyHandler extends KeyHandler {
 
-    // TODO refactor
+    // TODO move to configuration
     private final static int DELAY = 50;
-    private final static double[] ENVELOP = {
-            0.001, 0.9, // attack
-            0.001, 0.8, // decay
-            0.001, 0.0  // release
-    };
 
     private final Handler delayedPlayer = new Handler();
     private final Player player = new Player();
     private boolean delayedPlayInvoked;
 
-    public DelayedKeyHandler(SynthesizerOld synth, Scale scale, int keyOffset) {
+    public DelayedKeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
         super(synth, scale, keyOffset);
-        synth.setEnvelopData(ENVELOP);
     }
 
     @Override
@@ -32,7 +27,6 @@ public class DelayedKeyHandler extends KeyHandler {
         }
     }
 
-    // TODO this class is duplicated
     private class Player implements Runnable {
 
         @Override
