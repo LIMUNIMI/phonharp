@@ -1,6 +1,8 @@
 package com.unimi.lim.hmi.entity;
 
-public class Timbre {
+import java.io.Serializable;
+
+public class Timbre implements Serializable {
 
     // This field is strictly related to ui purposes
     // Since there is only one field we leave it here and avoid to create decorator objects
@@ -131,7 +133,7 @@ public class Timbre {
         this.controller2 = controller2;
     }
 
-    public static class Lfo {
+    public static class Lfo implements Serializable {
 
         private float rate;
         private int depth;
@@ -161,7 +163,7 @@ public class Timbre {
         }
     }
 
-    public static class Asr {
+    public static class Asr implements Serializable {
 
         private float initialValue;
         private float finalValue;
@@ -212,7 +214,7 @@ public class Timbre {
         }
     }
 
-    public static class Equalizer {
+    public static class Equalizer implements Serializable {
 
         private float bass;
         private float mid;

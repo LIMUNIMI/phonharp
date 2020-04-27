@@ -22,9 +22,12 @@
     <!-- TimbreListActivity -->
     <string name="title_activity_timbre_list_select">Select or Edit timbre</string>
 
-    <!-- TimbreListEditActivity -->
-    <string name="title_activity_timbre_list_edit">Edit timbre</string>
-
+    <!-- TimbreEditActivity -->
+    <string name="volume">Volume</string>
+    <string name="harmonics">Harmonics</string>
+    <string name="volumeAsr">Volume Envelop</string>
+    <string name="attack">Attack</string>
+    <string name="release">Release</string>
 
     <!-- SettingsActivity -->
     <string name="title_activity_settings">Settings</string>

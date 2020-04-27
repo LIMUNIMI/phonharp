@@ -51,7 +51,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
         if (view.getId() == R.id.timbre_save) {
-            viewModel.saveSelected();
+            viewModel.saveWorking();
         }
         Intent intent = new Intent();
         intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());

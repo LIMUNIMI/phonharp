@@ -1,16 +1,24 @@
 package com.unimi.lim.hmi.util;
 
-import com.unimi.lim.hmi.synthetizer.Synthesizer;
-
 public class Constant {
 
     private Constant() {
     }
 
     public static class System {
-        private System(){}
+        private System() {
+        }
 
         public static final String TIMBRE_FILE_NAME = "timbre-list.json";
+    }
+
+    public static class Strings {
+        private Strings() {
+        }
+
+        public static final String PERCENTAGE = "%";
+        public static final String SECOND = "s";
+
     }
 
     public static class Settings {

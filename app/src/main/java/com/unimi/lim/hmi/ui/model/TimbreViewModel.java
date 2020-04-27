@@ -11,12 +11,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.List;
 
 public class TimbreViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Timbre>> all;
     private MutableLiveData<Timbre> selected;
+    private MutableLiveData<Timbre> working;
 
     private boolean itemChanged = false;
 
@@ -24,41 +27,41 @@ public class TimbreViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public LiveData<List<Timbre>> selectAll() {
+    public TimbreViewModel selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
             List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all = new MutableLiveData<>();
             all.setValue(timbres);
         }
-        return all;
+        return this;
     }
 
-    public void reloadAll() {
+    public TimbreViewModel reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
             List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
         }
+        return this;
     }
 
-    public LiveData<Timbre> select(String id) {
+    public LiveData<List<Timbre>> getAll() {
+        Log.d(getClass().getName(), "Retrieve all timbre");
+        if (all == null) {
+            throw new IllegalStateException("All timbre is null, invoke selectAll before");
+        }
+        return all;
+    }
+
+    public TimbreViewModel select(String id) {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
             Timbre timbre = TimbreDao.getInstance(getApplication().getApplicationContext()).selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
             selected.setValue(timbre);
         }
-        return selected;
-    }
-
-    public LiveData<Timbre> create() {
-        Log.d(getClass().getName(), "Create new timbre");
-        if (selected == null) {
-            selected = new MutableLiveData<>();
-            selected.setValue(new Timbre());
-        }
-        return selected;
+        return this;
     }
 
     public LiveData<Timbre> getSelected() {
@@ -69,14 +72,47 @@ public class TimbreViewModel extends AndroidViewModel {
         return selected;
     }
 
-    public void saveSelected() {
+    public TimbreViewModel createWorking() {
+        if (working != null) {
+            throw new IllegalStateException("Working timbre can be created only one time per view model instance");
+        }
+        Log.d(getClass().getName(), "Create new timbre");
+        working = new MutableLiveData<>();
+        working.setValue(new Timbre());
+        return this;
+    }
+
+    public TimbreViewModel createWorkingFromSelected() {
+        if (working != null) {
+            throw new IllegalStateException("Working timbre can be created only one time per view model instance");
+        }
         if (selected == null) {
-            throw new IllegalStateException("Unable to save selected timbre, selected timbre is null, invoke select before");
+            throw new IllegalStateException("Selected timbre is null, invoke select before");
+        }
+        Log.d(getClass().getName(), "Create new timbre from selected");
+        Timbre cloned = SerializationUtils.clone(selected.getValue());
+        working = new MutableLiveData<>();
+        working.setValue(cloned);
+        return this;
+    }
+
+    public LiveData<Timbre> getWorking() {
+        Log.d(getClass().getName(), "Retrieve working timbre");
+        if (working == null) {
+            throw new IllegalStateException("Working timbre is null, invoke select before");
+        }
+        return working;
+    }
+
+    public TimbreViewModel saveWorking() {
+        if (working == null) {
+            throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
         itemChanged = true;
         Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
         // TODO show notification if save fails
-        TimbreDao.getInstance(getApplication().getApplicationContext()).save(selected.getValue());
+        TimbreDao.getInstance(getApplication().getApplicationContext()).save(working.getValue());
+        return this;
     }
 
     public boolean isItemChanged() {
