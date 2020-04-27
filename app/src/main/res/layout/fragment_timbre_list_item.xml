@@ -30,7 +30,8 @@
             android:layout_marginBottom="@dimen/text_margin"
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <RadioButton

@@ -87,6 +87,7 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(harmonics2 = new Add());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
+        // TODO handle null values
         synth.add(volumeEnvelop = new Asr(timbre.getVolumeAsr().getAttackTime(), timbre.getVolumeAsr().getReleaseTime()));
         synth.add(pitchEnvelop = new Asr(timbre.getPitchAsr().getAttackTime(), timbre.getPitchAsr().getReleaseTime()));
         synth.add(harmonicsEnvelop = new Asr(timbre.getHarmonicsAsr().getAttackTime(), timbre.getHarmonicsAsr().getReleaseTime()));

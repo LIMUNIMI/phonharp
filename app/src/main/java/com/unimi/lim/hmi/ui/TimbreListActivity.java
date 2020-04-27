@@ -61,6 +61,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString(SELECTED_TIMBRE_ID, item.getId());
         editor.commit();
+        // TODO play audio sample
     }
 
     /**

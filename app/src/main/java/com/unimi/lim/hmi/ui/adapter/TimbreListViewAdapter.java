@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
+import com.unimi.lim.hmi.util.TimbreUtils;
 
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
         // Bind model to view holder
         holder.title.setText(timbreList.get(position).getName());
-        holder.desc.setText("lorem ipsum dolor sit amet");
+        holder.desc.setText(TimbreUtils.buildDescription(holder.timbre));
 
         // Show check marker
         addCheckMarker(holder);
@@ -93,6 +94,9 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
 
     private void addCheckMarker(ViewHolder holder) {
         // Add or remove check marker to provided holder
+        // Note that check marker field cannot be set on ViewHolder because ViewHolder instances
+        // are recycled by the framework: the number of ViewHolder instances is equals to the number
+        // of visible items.
         if (holder.timbre.isChecked()) {
             checked = holder.timbre;
             holder.radio.setChecked(true);
@@ -102,7 +106,6 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        // TODO implement real version
         public final View view;
         public final LinearLayout textLayout;
         public final TextView title;

@@ -6,6 +6,14 @@ public class Timbre {
     // Since there is only one field we leave it here and avoid to create decorator objects
     private transient boolean checked = false;
 
+    public enum Controller {
+        VOLUME,
+        PITCH,
+        HARMONICS,
+        VIBRATO,
+        TREMOLO
+    }
+
     private String id;
     private String name;
     private float volume = 1;
@@ -16,6 +24,8 @@ public class Timbre {
     private Asr pitchAsr = new Asr(0, 0, 0, 0);
     private Asr harmonicsAsr = new Asr(0, 0, 0, 0);
     private Equalizer equalizer = new Equalizer();
+    private Controller controller1;
+    private Controller controller2;
 
     public boolean isChecked() {
         return checked;
@@ -103,6 +113,22 @@ public class Timbre {
 
     public void setEqualizer(Equalizer equalizer) {
         this.equalizer = equalizer;
+    }
+
+    public Controller getController1() {
+        return controller1;
+    }
+
+    public void setController1(Controller controller1) {
+        this.controller1 = controller1;
+    }
+
+    public Controller getController2() {
+        return controller2;
+    }
+
+    public void setController2(Controller controller2) {
+        this.controller2 = controller2;
     }
 
     public static class Lfo {
