@@ -19,10 +19,58 @@ public class TimbreUtils {
     private TimbreUtils() {
     }
 
+    public static float safeLfoRate(Timbre.Lfo lfo) {
+        return safeLfoRate(lfo, 0);
+    }
+
+    public static float safeLfoRate(Timbre.Lfo lfo, float defaultValue) {
+        return lfo == null ? defaultValue : lfo.getRate();
+    }
+
+    public static int safeLfoDepth(Timbre.Lfo lfo) {
+        return safeLfoDepth(lfo, 0);
+    }
+
+    public static int safeLfoDepth(Timbre.Lfo lfo, int defaultValue) {
+        return lfo == null ? defaultValue : lfo.getDepth();
+    }
+
+    public static float safeAsrInitialValue(Timbre.Asr asr) {
+        return safeAsrInitialValue(asr, 0);
+    }
+
+    public static float safeAsrInitialValue(Timbre.Asr asr, float defaultValue) {
+        return asr == null ? defaultValue : asr.getInitialValue();
+    }
+
+    public static float safeAsrFinalValue(Timbre.Asr asr) {
+        return safeAsrFinalValue(asr, 0);
+    }
+
+    public static float safeAsrFinalValue(Timbre.Asr asr, float defaultValue) {
+        return asr == null ? defaultValue : asr.getFinalValue();
+    }
+
+    public static float safeAsrAttackTime(Timbre.Asr asr) {
+        return safeAsrAttackTime(asr, 0);
+    }
+
+    public static float safeAsrAttackTime(Timbre.Asr asr, float defaultValue) {
+        return asr == null ? defaultValue : asr.getAttackTime();
+    }
+
+    public static float safeAsrReleaseTime(Timbre.Asr asr) {
+        return safeAsrReleaseTime(asr, 0);
+    }
+
+    public static float safeAsrReleaseTime(Timbre.Asr asr, float defaultValue) {
+        return asr == null ? defaultValue : asr.getReleaseTime();
+    }
+
     public static String buildDescription(Timbre timbre) {
         StringBuilder builder = new StringBuilder();
-        builder.append(VOLUME).append((int) timbre.getVolume() * 100).append(SEPARATOR)
-                .append(HARMONICS).append((int) timbre.getHarmonics() * 100).append(SEPARATOR);
+        builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)
+                .append(HARMONICS).append(timbre.getHarmonics()).append(SEPARATOR);
         addControllerDescription(builder, SWIPE_HORIZONTAL, timbre.getController1());
         addControllerDescription(builder, SWIPE_VERTICAL, timbre.getController2());
         addLfoDescription(builder, VIBRATO, timbre.getVibrato());

@@ -16,14 +16,14 @@ public class Timbre {
 
     private String id;
     private String name;
-    private float volume = 1;
-    private float harmonics = 0;
-    private Lfo tremolo = new Lfo(0, 0);
-    private Lfo vibrato = new Lfo(0, 0);
-    private Asr volumeAsr = new Asr(1, 0, 0, 0);
-    private Asr pitchAsr = new Asr(0, 0, 0, 0);
-    private Asr harmonicsAsr = new Asr(0, 0, 0, 0);
-    private Equalizer equalizer = new Equalizer();
+    private int volume = 100;
+    private int harmonics = 0;
+    private Lfo tremolo;
+    private Lfo vibrato;
+    private Asr volumeAsr;
+    private Asr pitchAsr;
+    private Asr harmonicsAsr;
+    private Equalizer equalizer;
     private Controller controller1;
     private Controller controller2;
 
@@ -51,19 +51,19 @@ public class Timbre {
         this.name = name;
     }
 
-    public float getVolume() {
+    public int getVolume() {
         return volume;
     }
 
-    public void setVolume(float volume) {
+    public void setVolume(int volume) {
         this.volume = volume;
     }
 
-    public float getHarmonics() {
+    public int getHarmonics() {
         return harmonics;
     }
 
-    public void setHarmonics(float harmonics) {
+    public void setHarmonics(int harmonics) {
         this.harmonics = harmonics;
     }
 

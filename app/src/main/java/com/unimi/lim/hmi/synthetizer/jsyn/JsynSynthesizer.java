@@ -13,6 +13,7 @@ import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
+import com.unimi.lim.hmi.util.TimbreUtils;
 
 public class JsynSynthesizer implements Synthesizer {
 
@@ -87,10 +88,9 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(harmonics2 = new Add());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
-        // TODO handle null values
-        synth.add(volumeEnvelop = new Asr(timbre.getVolumeAsr().getAttackTime(), timbre.getVolumeAsr().getReleaseTime()));
-        synth.add(pitchEnvelop = new Asr(timbre.getPitchAsr().getAttackTime(), timbre.getPitchAsr().getReleaseTime()));
-        synth.add(harmonicsEnvelop = new Asr(timbre.getHarmonicsAsr().getAttackTime(), timbre.getHarmonicsAsr().getReleaseTime()));
+        synth.add(volumeEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr())));
+        synth.add(pitchEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getPitchAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getPitchAsr())));
+        synth.add(harmonicsEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr())));
 
         // Controlled values
         volume = volume1.inputA;
@@ -147,15 +147,16 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void updateTimbreCfg(Timbre timbre) {
-        volume.set(timbre.getVolume());
-        harmonics.set(timbre.getHarmonics());
-        tremolo.setFrequency(timbre.getTremolo().getRate());
-        tremolo.setDepth(timbre.getTremolo().getDepth());
-        vibrato.setFrequency(timbre.getVibrato().getRate());
-        vibrato.setDepth(timbre.getVibrato().getDepth());
-        volumeEnvelop.updateValues(timbre.getVolumeAsr().getInitialValue(), 1, timbre.getVolumeAsr().getFinalValue());
-        pitchEnvelop.updateValues(timbre.getPitchAsr().getInitialValue(), 0, timbre.getPitchAsr().getFinalValue());
-        harmonicsEnvelop.updateValues(timbre.getHarmonicsAsr().getInitialValue(), 0, timbre.getHarmonicsAsr().getFinalValue());
+        // Values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
+        volume.set((double) timbre.getVolume() / 100);
+        harmonics.set((double) timbre.getHarmonics() / 100);
+        tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
+        tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
+        vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
+        vibrato.setDepth(TimbreUtils.safeLfoDepth(timbre.getVibrato()));
+        volumeEnvelop.updateValues((double) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100, 1, (double) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100);
+        pitchEnvelop.updateValues(TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr()), 0, TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr()));
+        harmonicsEnvelop.updateValues((double) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100, 0, (double) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100);
     }
 
     @Override

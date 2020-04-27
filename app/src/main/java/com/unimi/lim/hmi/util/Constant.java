@@ -19,7 +19,7 @@ public class Constant {
 
         // Timbre
         public static final String SELECTED_TIMBRE_ID = "selectedTimbreId";
-        public static final String DEFAULT_TIMBRE_ID = "tid0";
+        public static final String DEFAULT_TIMBRE_ID = "04b1be44-78b0-4a8a-84c5-12be11027e51";
 
         // Keyboard
         public static final String HALF_TONE = "halftone";

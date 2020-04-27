@@ -15,6 +15,12 @@ public class Tremolo extends Lfo {
         this(0, 0);
     }
 
+    /**
+     * Constructor
+     *
+     * @param frequency frequency
+     * @param depth     between 0 and 100
+     */
     public Tremolo(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
 

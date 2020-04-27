@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SynthTest {
+public class SynthUnitTest {
 
     private static final Note NOTE = Note.C3;
     private static final long TIME_PLAY = 2000;
@@ -37,11 +37,15 @@ public class SynthTest {
 
     @Test
     public void testVolume() {
-        timbre.setVolume(1);
+        timbre.setVolume(100);
         buildAndStart(timbre);
         play();
 
-        timbre.setVolume(0.25f);
+        timbre.setVolume(50);
+        synth.updateTimbreCfg(timbre);
+        play();
+
+        timbre.setVolume(10);
         synth.updateTimbreCfg(timbre);
         play();
     }
@@ -49,15 +53,15 @@ public class SynthTest {
     @Test
     public void testHarmonics() {
         buildAndStart(timbre);
-        timbre.setHarmonics(0.0f);
+        timbre.setHarmonics(0);
         synth.updateTimbreCfg(timbre);
         play();
 
-        timbre.setHarmonics(0.45f);
+        timbre.setHarmonics(45);
         synth.updateTimbreCfg(timbre);
         play();
 
-        timbre.setHarmonics(0.9f);
+        timbre.setHarmonics(90);
         synth.updateTimbreCfg(timbre);
         play();
 
@@ -103,7 +107,7 @@ public class SynthTest {
     @Test
     public void testHarmonicsEnvelop() {
         timbre.setVolumeAsr(new Timbre.Asr(1, 0, 0, 1));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-0.5f, -0.5f, 1, 1));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-50, -50, 1, 1));
         buildAndStart(timbre);
         play();
     }
@@ -112,7 +116,7 @@ public class SynthTest {
     public void testStaccato() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
         timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-0.9f, -0.9f, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-90, -90f, 0.15f, 0.15f));
         buildAndStart(timbre);
 
         sleep(500);
@@ -133,7 +137,7 @@ public class SynthTest {
     public void testLegato() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
         timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-0.9f, -0.9f, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-90, -90, 0.15f, 0.15f));
         buildAndStart(timbre);
 
         sleep(500);

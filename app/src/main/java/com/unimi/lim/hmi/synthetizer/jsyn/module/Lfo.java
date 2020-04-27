@@ -15,10 +15,23 @@ public class Lfo extends Circuit {
         this(0, 0, waveForm);
     }
 
+    /**
+     * Constructor
+     *
+     * @param frequency modulator frequency
+     * @param waveForm  modulator wave form
+     */
     public Lfo(double frequency, WaveForm waveForm) {
         this(frequency, 0, waveForm);
     }
 
+    /**
+     * Constructor
+     *
+     * @param frequency modulator frequency
+     * @param amplitude (note that volume value range is between 0 and 1)
+     * @param waveForm  modulator wave form
+     */
     public Lfo(double frequency, double amplitude, WaveForm waveForm) {
         switch (waveForm) {
             case SQUARE:
