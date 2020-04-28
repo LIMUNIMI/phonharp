@@ -23,11 +23,29 @@
     <string name="title_activity_timbre_list_select">Select or Edit timbre</string>
 
     <!-- TimbreEditActivity -->
+    <string name="timbre_name">Timbre name</string>
+    <string name="percentage">%</string>
+    <string name="seconds">s</string>
+    <string name="semitone">semitone</string>
+    <string name="hertz">Hz</string>
     <string name="volume">Volume</string>
     <string name="harmonics">Harmonics</string>
-    <string name="volumeAsr">Volume Envelop</string>
-    <string name="attack">Attack</string>
-    <string name="release">Release</string>
+    <string name="swipe_controller">Swipe controller</string>
+    <string name="swipe_horizontal">Swipe horizontal</string>
+    <string name="swipe_vertical">Swipe vertical</string>
+    <string name="tremolo">Tremolo</string>
+    <string name="vibrato">Vibrato</string>
+    <string name="rate">Rate</string>
+    <string name="depth">Depth</string>
+    <string name="volume_asr">Volume Envelop</string>
+    <string name="pitch_asr">Pitch Envelop</string>
+    <string name="harmonics_asr">Harmonics Envelop</string>
+    <string name="asr_attack">Attack</string>
+    <string name="asr_release">Release</string>
+    <string name="asr_initial_shift">Initial shift</string>
+    <string name="asr_final_shift">Final shift</string>
+    <string name="asr_initial_value">Initial value</string>
+    <string name="asr_final_value">Final value</string>
 
     <!-- SettingsActivity -->
     <string name="title_activity_settings">Settings</string>
@@ -53,7 +71,7 @@
     <string name="timbre_title">Open timbre preferences</string>
     <string name="timbre_save">Save</string>
     <string name="timbre_cancel">Cancel</string>
-    <string name="timbre_delete">Delete Timbre</string>
+    <string name="timbre_delete">Delete</string>
     <string name="menu">menu</string>
 
 

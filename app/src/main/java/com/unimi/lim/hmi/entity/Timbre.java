@@ -185,7 +185,7 @@ public class Timbre implements Serializable {
             return initialValue;
         }
 
-        public void setInitialValue(int initialValue) {
+        public void setInitialValue(float initialValue) {
             this.initialValue = initialValue;
         }
 
@@ -193,7 +193,7 @@ public class Timbre implements Serializable {
             return finalValue;
         }
 
-        public void setFinalValue(int finalValue) {
+        public void setFinalValue(float finalValue) {
             this.finalValue = finalValue;
         }
 

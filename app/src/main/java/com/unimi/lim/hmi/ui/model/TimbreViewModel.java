@@ -58,7 +58,10 @@ public class TimbreViewModel extends AndroidViewModel {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
-            Timbre timbre = TimbreDao.getInstance(getApplication().getApplicationContext()).selectById(id).orElseThrow(() -> new IllegalArgumentException("Timbre with id " + id + " was not found"));
+            Timbre timbre = TimbreDao.getInstance(getApplication().getApplicationContext()).selectById(id).orElseGet(() -> {
+                Log.d(getClass().getName(), "Unable to find timbre by provided id, create new empty timbre");
+                return new Timbre();
+            });
             selected.setValue(timbre);
         }
         return this;
@@ -109,9 +112,22 @@ public class TimbreViewModel extends AndroidViewModel {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
         itemChanged = true;
-        Log.d(getClass().getName(), "Saving timbre " + selected.getValue());
+        Log.d(getClass().getName(), "Saving timbre " + working.getValue());
         // TODO show notification if save fails
         TimbreDao.getInstance(getApplication().getApplicationContext()).save(working.getValue());
+        return this;
+    }
+
+    public TimbreViewModel deleteWorking() {
+        if (working == null) {
+            throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
+        }
+        Log.d(getClass().getName(), "Deleting timbre " + working.getValue());
+        if (working.getValue().getId() != null) {
+            itemChanged = true;
+            // TODO show notification if save fails
+            TimbreDao.getInstance(getApplication().getApplicationContext()).delete(working.getValue().getId());
+        }
         return this;
     }
 
@@ -122,5 +138,6 @@ public class TimbreViewModel extends AndroidViewModel {
     public void setItemChanged(boolean itemChanged) {
         this.itemChanged = itemChanged;
     }
+
 }
 

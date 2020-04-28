@@ -12,15 +12,6 @@ public class Constant {
         public static final String TIMBRE_FILE_NAME = "timbre-list.json";
     }
 
-    public static class Strings {
-        private Strings() {
-        }
-
-        public static final String PERCENTAGE = "%";
-        public static final String SECOND = "s";
-
-    }
-
     public static class Settings {
         private Settings() {
         }

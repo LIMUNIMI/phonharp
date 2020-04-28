@@ -13,6 +13,7 @@ import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
+import com.unimi.lim.hmi.util.NoteUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 public class JsynSynthesizer implements Synthesizer {
@@ -56,10 +57,12 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr volumeEnvelop;
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
+    private final Timbre timbre;
 
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
         timbre = timbre != null ? timbre : new Timbre();
+        this.timbre = timbre;
 
         // Volume mixers: volume1=volume*tremolo, volume2=envelop*volume1, volume3=controller+volume2
         Multiply volume1;
@@ -154,17 +157,31 @@ public class JsynSynthesizer implements Synthesizer {
         tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
         vibrato.setDepth(TimbreUtils.safeLfoDepth(timbre.getVibrato()));
-        volumeEnvelop.updateValues((double) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100, 1, (double) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100);
-        pitchEnvelop.updateValues(TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr()), 0, TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr()));
-        harmonicsEnvelop.updateValues((double) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100, 0, (double) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100);
+        volumeEnvelop.updateValues(
+                (double) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100,
+                1,
+                (double) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100);
+        harmonicsEnvelop.updateValues(
+                (double) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100,
+                0,
+                (double) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100);
     }
 
     @Override
     public void press(double frequency) {
         pitch.set(frequency);
         volumeEnvelop.press();
-        pitchEnvelop.press();
-        harmonicsEnvelop.press();
+        if (timbre.getPitchAsr() != null) {
+            pitchEnvelop.updateValues(
+                    NoteUtils.calculateNoteByOffset(frequency, (int) timbre.getPitchAsr().getInitialValue()) - frequency,
+                    0,
+                    NoteUtils.calculateNoteByOffset(frequency, (int) timbre.getPitchAsr().getFinalValue()) - frequency
+            );
+            pitchEnvelop.press();
+        }
+        if (timbre.getHarmonicsAsr() != null) {
+            harmonicsEnvelop.press();
+        }
     }
 
     @Override

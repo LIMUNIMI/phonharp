@@ -12,6 +12,8 @@ import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
@@ -40,6 +42,9 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         // Setup save and cancel button click listener
         findViewById(R.id.timbre_save).setOnClickListener(this);
         findViewById(R.id.timbre_cancel).setOnClickListener(this);
+        View deleteButton = findViewById(R.id.timbre_delete);
+        deleteButton.setOnClickListener(this);
+        deleteButton.setVisibility(StringUtils.isNotEmpty(getIntent().getStringExtra(TIMBRE_ID)) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -52,6 +57,8 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
         if (view.getId() == R.id.timbre_save) {
             viewModel.saveWorking();
+        } else if (view.getId() == R.id.timbre_delete) {
+            viewModel.deleteWorking();
         }
         Intent intent = new Intent();
         intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());
