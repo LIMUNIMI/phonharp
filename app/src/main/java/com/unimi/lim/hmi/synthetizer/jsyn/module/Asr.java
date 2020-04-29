@@ -11,6 +11,14 @@ public class Asr extends Circuit {
 
     private VariableRateMonoReader envPlayer;
     private SegmentedEnvelope envData;
+    private double[] pairs = new double[6];
+
+    /**
+     * Asr constructor
+     */
+    public Asr() {
+        this(0, 0, 0, 0, 0);
+    }
 
     /**
      * Asr constructor
@@ -32,14 +40,10 @@ public class Asr extends Circuit {
      * @param finalValue   final value (note that volume value range and pulse width value rage is between 0 and 1)
      */
     public Asr(double initialValue, double attackTime, double sustainValue, double releaseTime, double finalValue) {
-        // Envelop data
-        envData = new SegmentedEnvelope(new double[]{
-                // First frame is used to setup initial value, indeed first frame time is 0
-                0, initialValue,
-                // Attack frame
-                attackTime, sustainValue,
-                // Release frame
-                releaseTime, finalValue});
+
+        // Envelop data, provided constructor int is the number of frames (3 frames: attack, sustain, release)
+        envData = new SegmentedEnvelope(pairs.length / 2);
+        update(initialValue, attackTime, sustainValue, releaseTime, finalValue);
 
         // Envelop player
         add(envPlayer = new VariableRateMonoReader());
@@ -73,6 +77,29 @@ public class Asr extends Circuit {
         envData.writeDouble(0, initialValue);
         envData.writeDouble(1, sustainValue);
         envData.writeDouble(2, finalValue);
+    }
+
+    /**
+     * Update envelop values and time
+     *
+     * @param initialValue initial value (note that volume value range and pulse width value rage is between 0 and 1)
+     * @param attackTime   attack time in seconds
+     * @param sustainValue sustain value (note that volume value range and pulse width value rage is between 0 and 1)
+     * @param releaseTime  release time in seconds
+     * @param finalValue   final value (note that volume value range and pulse width value rage is between 0 and 1)
+     */
+    public void update(double initialValue, double attackTime, double sustainValue, double releaseTime, double finalValue) {
+        // First frame is used to setup initial value, indeed first frame time is 0
+        pairs[0] = 0;
+        pairs[1] = initialValue;
+        // Attack frame
+        pairs[2] = attackTime;
+        pairs[3] = sustainValue;
+        // Release frame
+        pairs[4] = releaseTime;
+        pairs[5] = finalValue;
+        // Setup SegmentedEnvelope
+        envData.write(pairs);
     }
 
     /**

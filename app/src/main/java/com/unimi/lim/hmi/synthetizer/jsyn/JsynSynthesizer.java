@@ -82,9 +82,9 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(harmMix = new Add());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
-        synth.add(volumeEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr())));
-        synth.add(pitchEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getPitchAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getPitchAsr())));
-        synth.add(harmonicsEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr())));
+        synth.add(volumeEnvelop = new Asr());
+        synth.add(pitchEnvelop = new Asr());
+        synth.add(harmonicsEnvelop = new Asr());
 
         // Controlled values
         volumeController = volMix2.inputA;
@@ -137,19 +137,31 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void updateTimbreCfg(Timbre timbre) {
-        // Values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
         vibrato.setDepth(TimbreUtils.safeLfoDepth(timbre.getVibrato()));
-        volumeEnvelop.updateValues(
-                (double) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100,
-                (double) timbre.getVolume() / 100,
-                (double) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100);
-        harmonicsEnvelop.updateValues(
-                (double) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100,
-                (double) timbre.getHarmonics() / 100,
-                (double) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100);
+        // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
+        volumeEnvelop.update(
+                TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100f,
+                TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()),
+                timbre.getVolume() / 100f,
+                TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr()),
+                TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100f);
+        // Note that pitch envelop values depend on played note and are set on press method
+        pitchEnvelop.update(
+                0,
+                TimbreUtils.safeAsrAttackTime(timbre.getPitchAsr()),
+                0,
+                TimbreUtils.safeAsrReleaseTime(timbre.getPitchAsr()),
+                0);
+        // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
+        harmonicsEnvelop.update(
+                TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100f - timbre.getHarmonics() / 100f,
+                TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
+                timbre.getHarmonics() / 100f,
+                TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
+                TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100f - timbre.getHarmonics() / 100f);
     }
 
     @Override
