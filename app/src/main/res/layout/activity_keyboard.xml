@@ -25,11 +25,12 @@
         style="?attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/menu_description"
+        android:onClick="showMenuPopup"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintStart_toStartOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_menu"
-        android:onClick="showMenuPopup" />
+        app:srcCompat="@drawable/ic_menu" />
 
     <Button
         android:id="@+id/key_background"
