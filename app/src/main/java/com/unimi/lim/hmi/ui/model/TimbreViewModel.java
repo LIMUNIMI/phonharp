@@ -21,8 +21,6 @@ public class TimbreViewModel extends AndroidViewModel {
     private MutableLiveData<Timbre> selected;
     private MutableLiveData<Timbre> working;
 
-    private boolean itemChanged = false;
-
     public TimbreViewModel(@NonNull Application application) {
         super(application);
     }
@@ -111,7 +109,6 @@ public class TimbreViewModel extends AndroidViewModel {
         if (working == null) {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
-        itemChanged = true;
         Log.d(getClass().getName(), "Saving timbre " + working.getValue());
         // TODO show notification if save fails
         TimbreDao.getInstance(getApplication().getApplicationContext()).save(working.getValue());
@@ -124,19 +121,10 @@ public class TimbreViewModel extends AndroidViewModel {
         }
         Log.d(getClass().getName(), "Deleting timbre " + working.getValue());
         if (working.getValue().getId() != null) {
-            itemChanged = true;
             // TODO show notification if save fails
             TimbreDao.getInstance(getApplication().getApplicationContext()).delete(working.getValue().getId());
         }
         return this;
-    }
-
-    public boolean isItemChanged() {
-        return itemChanged;
-    }
-
-    public void setItemChanged(boolean itemChanged) {
-        this.itemChanged = itemChanged;
     }
 
 }

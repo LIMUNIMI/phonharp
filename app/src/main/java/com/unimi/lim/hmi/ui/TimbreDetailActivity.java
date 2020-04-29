@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
@@ -43,26 +44,61 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.timbre_save).setOnClickListener(this);
         findViewById(R.id.timbre_cancel).setOnClickListener(this);
         View deleteButton = findViewById(R.id.timbre_delete);
-        deleteButton.setOnClickListener(this);
         deleteButton.setVisibility(StringUtils.isNotEmpty(getIntent().getStringExtra(TIMBRE_ID)) ? View.VISIBLE : View.GONE);
+        deleteButton.setOnClickListener(this);
     }
 
     /**
-     * Handles save and cancel buttons; also tells to parent activity if item list must be reloaded
+     * Handles save, cancel and delete buttons; also tells to parent activity if item list must be reloaded
      *
      * @param view
      */
     @Override
     public void onClick(View view) {
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-        if (view.getId() == R.id.timbre_save) {
-            viewModel.saveWorking();
-        } else if (view.getId() == R.id.timbre_delete) {
-            viewModel.deleteWorking();
+        switch (view.getId()) {
+            case R.id.timbre_save:
+                viewModel.saveWorking();
+                toParentActivity(true);
+                break;
+            case R.id.timbre_cancel:
+                toParentActivity(false);
+                break;
+            case R.id.timbre_delete:
+                showDeleteAlert(viewModel);
+                break;
+            default:
+                throw new IllegalArgumentException("Unable to handle onClick event on view " + view.getId());
         }
+    }
+
+    /**
+     * Show delete button alert popup
+     *
+     * @param viewModel timbre view model
+     */
+    private void showDeleteAlert(TimbreViewModel viewModel) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(getResources().getString(R.string.delete_alert_message));
+        alert.setPositiveButton(getResources().getString(R.string.delete_alert_yes), (dialog, which) -> {
+            viewModel.deleteWorking();
+            dialog.dismiss();
+            toParentActivity(true);
+        });
+        alert.setNegativeButton(getResources().getString(R.string.delete_alert_no), (dialog, which) -> dialog.dismiss());
+        alert.show();
+    }
+
+    /**
+     * Back to parent activity, also notify if timbre list must be reloaded
+     *
+     * @param reloadTimbreList true to tell parent activity to reload timbre list, false otherwise
+     */
+    private void toParentActivity(boolean reloadTimbreList) {
         Intent intent = new Intent();
-        intent.putExtra(RELOAD_TIMBRE_LIST, viewModel.isItemChanged());
+        intent.putExtra(RELOAD_TIMBRE_LIST, reloadTimbreList);
         setResult(RESULT_CANCELED, intent);
         finish();
     }
+
 }

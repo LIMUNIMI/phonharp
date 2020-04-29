@@ -103,7 +103,6 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
             Log.d(getClass().getName(), "Reload timbre list");
             TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
             viewModel.reloadAll();
-            viewModel.setItemChanged(true);
         }
     }
 
