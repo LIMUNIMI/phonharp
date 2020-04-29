@@ -46,9 +46,6 @@ public class JsynSynthesizer implements Synthesizer {
     private final com.jsyn.Synthesizer synth;
     private final LineOut lineOut;
     private final PulseOscillator osc;
-    private final UnitInputPort volume;
-    private final UnitInputPort pitch;
-    private final UnitInputPort harmonics;
     private final UnitInputPort volumeController;
     private final UnitInputPort pitchController;
     private final UnitInputPort harmonicsController;
@@ -64,31 +61,25 @@ public class JsynSynthesizer implements Synthesizer {
         timbre = timbre != null ? timbre : new Timbre();
         this.timbre = timbre;
 
-        // Volume mixers: volume1=volume*tremolo, volume2=envelop*volume1, volume3=controller+volume2
-        Multiply volume1;
-        Multiply volume2;
-        Add volume3;
+        // Volume mixers: volMix1=envelop*tremolo, volMix2=controller*volMix1
+        Multiply volMix1;
+        Multiply volMix2;
 
-        // Pitch mixers: pitch1=pitch+vibrato, pitch2=envelop+pitch1, pitch3=controller+pitch2
-        Add pitch1;
-        Add pitch2;
-        Add pitch3;
+        // Pitch mixers: pitchMix1=envelop+vibrato, pitchMix2=controller+pitchMix1
+        Add pitchMix1;
+        Add pitchMix2;
 
-        // Harmonics mixers: harmonics1=harmonics+envelop, harmonics2=harmonics1+controller
-        Add harmonics1;
-        Add harmonics2;
+        // Harmonics mixers: harmMix=envelop+controller
+        Add harmMix;
 
         // Add generators to synthesizer
         synth.add(lineOut = new LineOut());
         synth.add(osc = new PulseOscillator());
-        synth.add(volume1 = new Multiply());
-        synth.add(volume2 = new Multiply());
-        synth.add(volume3 = new Add());
-        synth.add(pitch1 = new Add());
-        synth.add(pitch2 = new Add());
-        synth.add(pitch3 = new Add());
-        synth.add(harmonics1 = new Add());
-        synth.add(harmonics2 = new Add());
+        synth.add(volMix1 = new Multiply());
+        synth.add(volMix2 = new Multiply());
+        synth.add(pitchMix1 = new Add());
+        synth.add(pitchMix2 = new Add());
+        synth.add(harmMix = new Add());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
         synth.add(volumeEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr())));
@@ -96,32 +87,28 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(harmonicsEnvelop = new Asr(TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()), TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr())));
 
         // Controlled values
-        volume = volume1.inputA;
-        pitch = pitch1.inputA;
-        harmonics = harmonics1.inputA;
-        volumeController = volume3.inputA;
-        pitchController = pitch3.inputA;
-        harmonicsController = harmonics2.inputA;
+        volumeController = volMix2.inputA;
+        pitchController = pitchMix2.inputA;
+        harmonicsController = harmMix.inputB;
+        // Default value because is part of multiply operation
+        volumeController.set(1);
 
         // Connect modules together
-        // Volume mixers: volume1=volume*tremolo, volume2=envelop*volume1, volume3=controller+volume2
-        tremolo.output.connect(volume1.inputB);
-        volumeEnvelop.output.connect(volume2.inputA);
-        volume1.output.connect(volume2.inputB);
-        volume2.output.connect(volume3.inputB);
-        volume3.output.connect(osc.amplitude);
+        // Volume mixers: volMix1=envelop*tremolo, volMix2=controller*volMix1
+        volumeEnvelop.output.connect(volMix1.inputA);
+        tremolo.output.connect(volMix1.inputB);
+        volMix1.output.connect(volMix2.inputB);
+        volMix2.output.connect(osc.amplitude);
 
-        // Pitch mixers: pitch1=pitch+vibrato, pitch2=envelop+pitch1, pitch3=controller+pitch2
-        vibrato.output.connect(pitch1.inputB);
-        pitchEnvelop.output.connect(pitch2.inputA);
-        pitch1.output.connect(pitch2.inputB);
-        pitch2.output.connect(pitch3.inputB);
-        pitch3.output.connect(osc.frequency);
+        // Pitch mixers: pitchMix1=envelop+vibrato, pitchMix2=controller+pitchMix1
+        pitchEnvelop.output.connect(pitchMix1.inputA);
+        vibrato.output.connect(pitchMix1.inputB);
+        pitchMix1.output.connect(pitchMix2.inputB);
+        pitchMix2.output.connect(osc.frequency);
 
-        // Harmonics mixers: harmonics1=harmonics+envelop, harmonics2=harmonics1+controller
-        harmonicsEnvelop.output.connect(harmonics1.inputB);
-        harmonics1.output.connect(harmonics2.inputB);
-        harmonics2.output.connect(osc.width);
+        // Harmonics mixers: harmMix=envelop+harmonics
+        harmonicsEnvelop.output.connect(harmMix.inputA);
+        harmMix.output.connect(osc.width);
 
         // Line out
         osc.output.connect(0, lineOut.input, 0);
@@ -151,37 +138,32 @@ public class JsynSynthesizer implements Synthesizer {
     @Override
     public void updateTimbreCfg(Timbre timbre) {
         // Values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
-        volume.set((double) timbre.getVolume() / 100);
-        harmonics.set((double) timbre.getHarmonics() / 100);
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
         vibrato.setDepth(TimbreUtils.safeLfoDepth(timbre.getVibrato()));
         volumeEnvelop.updateValues(
                 (double) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100,
-                1,
+                (double) timbre.getVolume() / 100,
                 (double) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100);
         harmonicsEnvelop.updateValues(
                 (double) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100,
-                0,
+                (double) timbre.getHarmonics() / 100,
                 (double) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100 - (double) timbre.getHarmonics() / 100);
     }
 
     @Override
     public void press(double frequency) {
-        pitch.set(frequency);
+        // Update pitch envelop sustain to played note
+        pitchEnvelop.updateValues(
+                NoteUtils.calculateNoteByOffset(frequency, (int) TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr())),
+                frequency,
+                NoteUtils.calculateNoteByOffset(frequency, (int) TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr()))
+        );
+        // Enqueue attack and sustain events to envelops
         volumeEnvelop.press();
-        if (timbre.getPitchAsr() != null) {
-            pitchEnvelop.updateValues(
-                    NoteUtils.calculateNoteByOffset(frequency, (int) timbre.getPitchAsr().getInitialValue()) - frequency,
-                    0,
-                    NoteUtils.calculateNoteByOffset(frequency, (int) timbre.getPitchAsr().getFinalValue()) - frequency
-            );
-            pitchEnvelop.press();
-        }
-        if (timbre.getHarmonicsAsr() != null) {
-            harmonicsEnvelop.press();
-        }
+        pitchEnvelop.press();
+        harmonicsEnvelop.press();
     }
 
     @Override

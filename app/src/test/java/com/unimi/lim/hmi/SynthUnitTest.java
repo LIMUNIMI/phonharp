@@ -99,7 +99,7 @@ public class SynthUnitTest {
     @Test
     public void testPitchEnvelop() {
         timbre.setVolumeAsr(new Timbre.Asr(1, 0, 0, 1));
-        timbre.setPitchAsr(new Timbre.Asr(-50, -50, 1, 1));
+        timbre.setPitchAsr(new Timbre.Asr(-3, -3, 0.5f, 0.5f));
         buildAndStart(timbre);
         play();
     }
@@ -107,7 +107,7 @@ public class SynthUnitTest {
     @Test
     public void testHarmonicsEnvelop() {
         timbre.setVolumeAsr(new Timbre.Asr(1, 0, 0, 1));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-50, -50, 1, 1));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-50, -50, 0.5f, 0.5f));
         buildAndStart(timbre);
         play();
     }
@@ -116,7 +116,7 @@ public class SynthUnitTest {
     public void testStaccato() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
         timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-90, -90f, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-3, -3, 0.15f, 0.15f));
         buildAndStart(timbre);
 
         sleep(500);
@@ -137,7 +137,7 @@ public class SynthUnitTest {
     public void testLegato() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
         timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));
-        timbre.setHarmonicsAsr(new Timbre.Asr(-90, -90, 0.15f, 0.15f));
+        timbre.setHarmonicsAsr(new Timbre.Asr(-3, -3, 0.15f, 0.15f));
         buildAndStart(timbre);
 
         sleep(500);

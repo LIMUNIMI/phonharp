@@ -13,6 +13,12 @@ public class NoteUtilsUnitTest {
     private final static double FUZZ_FACTOR = 0.01;
 
     @Test
+    public void testCalculateNoteByOffset_zero() {
+        double actual = NoteUtils.calculateNoteByOffset(Note.C4.getFrequency(), 0);
+        Assert.assertEquals(Note.C4.getFrequency(), actual, FUZZ_FACTOR);
+    }
+
+    @Test
     public void testCalculateNoteByOffset_plusOne() {
         double actual = NoteUtils.calculateNoteByOffset(Note.C4.getFrequency(), 1);
         Assert.assertEquals(Note.Cd4.getFrequency(), actual, FUZZ_FACTOR);
