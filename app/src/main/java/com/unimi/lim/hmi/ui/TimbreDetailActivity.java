@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
@@ -18,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
+import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
+import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 public class TimbreDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,12 +43,14 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         Toolbar toolbar = findViewById(R.id.toolbar_timbre_detail);
         setSupportActionBar(toolbar);
 
-        // Setup save and cancel button click listener
+        // Setup save, cancel and delete button click listener
         findViewById(R.id.timbre_save).setOnClickListener(this);
         findViewById(R.id.timbre_cancel).setOnClickListener(this);
         View deleteButton = findViewById(R.id.timbre_delete);
-        deleteButton.setVisibility(StringUtils.isNotEmpty(getIntent().getStringExtra(TIMBRE_ID)) ? View.VISIBLE : View.GONE);
         deleteButton.setOnClickListener(this);
+
+        // Delete button hide for new timbre, nothing to delete
+        deleteButton.setVisibility(StringUtils.isNotEmpty(getIntent().getStringExtra(TIMBRE_ID)) ? View.VISIBLE : View.GONE);
     }
 
     /**
@@ -65,7 +70,14 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
                 toParentActivity(false);
                 break;
             case R.id.timbre_delete:
-                showDeleteAlert(viewModel);
+                // Check if timbre is deletable: selected timbre cannot be delete
+                String selectedTimbreId = PreferenceManager.getDefaultSharedPreferences(this).getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
+                boolean canDelete = !selectedTimbreId.equals(viewModel.getWorking().getValue().getId());
+                if (canDelete) {
+                    showDeleteAlert(viewModel);
+                } else {
+                    showCannotDeleteAlert();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unable to handle onClick event on view " + view.getId());
@@ -73,7 +85,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     }
 
     /**
-     * Show delete button alert popup
+     * Show delete alert popup
      *
      * @param viewModel timbre view model
      */
@@ -86,6 +98,16 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
             toParentActivity(true);
         });
         alert.setNegativeButton(getResources().getString(R.string.delete_alert_no), (dialog, which) -> dialog.dismiss());
+        alert.show();
+    }
+
+    /**
+     * Show cannot delete message
+     */
+    private void showCannotDeleteAlert() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(getResources().getString(R.string.cannot_delete_alert_message));
+        alert.setNeutralButton(getResources().getString(R.string.cannot_delete_alert_cancel), (dialog, which) -> dialog.dismiss());
         alert.show();
     }
 

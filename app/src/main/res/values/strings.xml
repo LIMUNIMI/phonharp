@@ -47,6 +47,8 @@
     <string name="asr_final_shift">Final shift</string>
     <string name="asr_initial_value">Initial value</string>
     <string name="asr_final_value">Final value</string>
+    <string name="cannot_delete_alert_message">Unable to delete checked timbre: check another timbre from timbre list and then try again.</string>
+    <string name="cannot_delete_alert_cancel">Cancel</string>
     <string name="delete_alert_message">Are you sure you want to delete this timbre?</string>
     <string name="delete_alert_yes">Yes</string>
     <string name="delete_alert_no">No</string>
