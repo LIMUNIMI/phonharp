@@ -15,6 +15,9 @@ import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.music.Note;
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
@@ -27,10 +30,16 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
 
     private final static int REQUEST_CODE = 0;
 
+    private Synthesizer synthesizer;
+    private boolean playingSound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timbre_list);
+
+        // Setup synthesizer, timbre configuration is update when a timbre is selected
+        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().build();
 
         // When activity is created for the first time setup fragment data
         if (savedInstanceState == null) {
@@ -50,18 +59,38 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         addButton.setOnClickListener(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        synthesizer.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        synthesizer.release();
+        synthesizer.stop();
+    }
+
     /**
      * Select timbre, invoked when radio button is clicked
      *
-     * @param item clicked timbre on timbre list
+     * @param timbre clicked timbre on timbre list
      */
     @Override
-    public void onSelect(Timbre item) {
-        Log.d(getClass().getName(), "Selected timbre " + item.getId());
+    public void onSelect(Timbre timbre) {
+        Log.d(getClass().getName(), "Selected timbre " + timbre.getId());
         Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString(SELECTED_TIMBRE_ID, item.getId());
+        editor.putString(SELECTED_TIMBRE_ID, timbre.getId());
         editor.commit();
-        // TODO play audio sample
+        if (!playingSound) {
+            synthesizer.updateTimbreCfg(timbre);
+            synthesizer.press(Note.C3.getFrequency());
+            playingSound = true;
+        } else {
+            synthesizer.release();
+            playingSound = false;
+        }
     }
 
     /**

@@ -73,7 +73,9 @@ public class TimbreDao {
      */
     public synchronized List<Timbre> selectAll() {
         Log.d(getClass().getName(), "SelectAll");
-        return timbres.stream().sorted(Comparator.comparing(Timbre::getName)).collect(Collectors.toList());
+        return timbres.stream()
+                .sorted(Comparator.comparing(t -> StringUtils.defaultIfEmpty(t.getName(), StringUtils.EMPTY)))
+                .collect(Collectors.toList());
     }
 
     /**

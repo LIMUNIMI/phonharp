@@ -87,6 +87,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onPause() {
         super.onPause();
+        synthesizer.release();
         synthesizer.stop();
     }
 
@@ -101,7 +102,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     public boolean onTouch(View view, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             synthesizer.press(Note.C3.getFrequency());
-        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+        } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
             synthesizer.release();
         }
         return true;
