@@ -79,9 +79,17 @@ public class TimbreViewModel extends AndroidViewModel {
     public LiveData<Timbre> getWorking() {
         Log.d(getClass().getName(), "Retrieve working timbre");
         if (working == null) {
-            throw new IllegalStateException("Working timbre is null, invoke select before");
+            throw new IllegalStateException("Working timbre is null, invoke create working before");
         }
         return working;
+    }
+
+    public TimbreViewModel workingChanged(Timbre timbre) {
+        if (working == null) {
+            throw new IllegalStateException("Working timbre is null, invoke create working before");
+        }
+        working.setValue(timbre);
+        return this;
     }
 
     public TimbreViewModel saveWorking() {

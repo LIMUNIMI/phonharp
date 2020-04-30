@@ -28,7 +28,7 @@ public class JsynSynthesizer implements Synthesizer {
             return this;
         }
 
-        public Builder defaultAudioDeviceManager() {
+        public Builder androidAudioDeviceManager() {
             this.audioDeviceManager = new JSynAndroidAudioDevice();
             return this;
         }
@@ -54,12 +54,13 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr volumeEnvelop;
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
-    private final Timbre timbre;
+
+    private int pitchAsrInitialSemitoneOffset;
+    private int pitchAsrFinalSemitoneOffset;
 
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
         timbre = timbre != null ? timbre : new Timbre();
-        this.timbre = timbre;
 
         // Volume mixers: volMix1=envelop*tremolo, volMix2=controller*volMix1
         Multiply volMix1;
@@ -149,6 +150,8 @@ public class JsynSynthesizer implements Synthesizer {
                 TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr()),
                 TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100f);
         // Note that pitch envelop values depend on played note and are set on press method
+        pitchAsrInitialSemitoneOffset = (int) TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr());
+        pitchAsrFinalSemitoneOffset = (int) TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr());
         pitchEnvelop.update(
                 0,
                 TimbreUtils.safeAsrAttackTime(timbre.getPitchAsr()),
@@ -156,21 +159,22 @@ public class JsynSynthesizer implements Synthesizer {
                 TimbreUtils.safeAsrReleaseTime(timbre.getPitchAsr()),
                 0);
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
+        // If harmonicsEnvelopAsr is not configured (is null) then initial and final values are set to harmonics
         harmonicsEnvelop.update(
-                TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr()) / 100f - timbre.getHarmonics() / 100f,
+                (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getInitialValue() : timbre.getHarmonics()) / 100f,
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
                 timbre.getHarmonics() / 100f,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
-                TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr()) / 100f - timbre.getHarmonics() / 100f);
+                (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f);
     }
 
     @Override
     public void press(double frequency) {
         // Update pitch envelop sustain to played note
         pitchEnvelop.updateValues(
-                NoteUtils.calculateNoteByOffset(frequency, (int) TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr())),
+                NoteUtils.calculateNoteByOffset(frequency, pitchAsrInitialSemitoneOffset),
                 frequency,
-                NoteUtils.calculateNoteByOffset(frequency, (int) TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr()))
+                NoteUtils.calculateNoteByOffset(frequency, pitchAsrFinalSemitoneOffset)
         );
         // Enqueue attack and sustain events to envelops
         volumeEnvelop.press();

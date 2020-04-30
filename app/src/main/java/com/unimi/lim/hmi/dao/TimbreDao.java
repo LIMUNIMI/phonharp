@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -72,7 +73,7 @@ public class TimbreDao {
      */
     public synchronized List<Timbre> selectAll() {
         Log.d(getClass().getName(), "SelectAll");
-        return timbres.stream().collect(Collectors.toList());
+        return timbres.stream().sorted(Comparator.comparing(Timbre::getName)).collect(Collectors.toList());
     }
 
     /**

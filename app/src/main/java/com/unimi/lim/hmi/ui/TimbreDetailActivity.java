@@ -2,6 +2,8 @@ package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -10,7 +12,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unimi.lim.hmi.R;
+import com.unimi.lim.hmi.music.Note;
+import com.unimi.lim.hmi.synthetizer.Synthesizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
@@ -20,8 +26,9 @@ import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
-public class TimbreDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class TimbreDetailActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
+    private Synthesizer synthesizer;
     private String detailTimbreId;
 
     @Override
@@ -38,6 +45,13 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         } else {
             viewModel.createWorkingFrom(detailTimbreId);
         }
+
+        // Setup synthesizer and update its configuration each time the timbre is modified
+        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().build();
+        viewModel.getWorking().observe(this, timbre -> {
+            Log.d(getClass().getName(), "Updating timbre configuration");
+            synthesizer.updateTimbreCfg(timbre);
+        });
 
         // When activity is created for the first time inject timbre detail fragment
         if (savedInstanceState == null) {
@@ -58,6 +72,39 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
 
         // Delete button hide for new timbre, nothing to delete
         deleteButton.setVisibility(isNewItem ? View.GONE : View.VISIBLE);
+
+        // Play button touch listener
+        FloatingActionButton play = findViewById(R.id.timbre_play_floating);
+        play.setOnTouchListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        synthesizer.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        synthesizer.stop();
+    }
+
+    /**
+     * Handle play button touch to reproduce timbre audio sample
+     *
+     * @param view
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            synthesizer.press(Note.C3.getFrequency());
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            synthesizer.release();
+        }
+        return true;
     }
 
     /**

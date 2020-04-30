@@ -43,7 +43,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private Synthesizer synthesizer;
     private KeyHandler keyHandler;
 
-    private List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
+    private final static List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,6 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         String timbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-        // TODO use observe instead of getvalue
         Timbre timbre = viewModel.select(timbreId).getValue();
 
         // Initialize services
@@ -68,7 +67,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Note note = Note.valueOf(selectedNote.replace('#', 'd').concat(selectedOctave));
         Scale scale = new Scale(scaleType, note);
 
-        synthesizer = new JsynSynthesizer.Builder().defaultAudioDeviceManager().timbreCfg(timbre).build();
+        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
         keyHandler = new DelayedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
 
         // Setup keyboard listener
