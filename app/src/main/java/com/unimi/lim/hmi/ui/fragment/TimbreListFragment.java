@@ -58,7 +58,7 @@ public class TimbreListFragment extends Fragment {
 
             // Create timbre adapter and setup timbre list observer
             TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
-            viewModel.selectAll().getAll().observe(getViewLifecycleOwner(), timbres -> {
+            viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
                 // Retrieves selected timbre from preferences
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                 String selectedTimbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);

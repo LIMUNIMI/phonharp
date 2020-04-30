@@ -11,8 +11,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.util.List;
 
 public class TimbreViewModel extends AndroidViewModel {
@@ -25,75 +23,56 @@ public class TimbreViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public TimbreViewModel selectAll() {
+    public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
-            List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all = new MutableLiveData<>();
+            // If needed perform the asynchronously
+            List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
         }
-        return this;
+        return all;
     }
 
     public TimbreViewModel reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
+            // If needed perform select asynchronously
             List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
         }
         return this;
     }
 
-    public LiveData<List<Timbre>> getAll() {
-        Log.d(getClass().getName(), "Retrieve all timbre");
-        if (all == null) {
-            throw new IllegalStateException("All timbre is null, invoke selectAll before");
-        }
-        return all;
-    }
-
-    public TimbreViewModel select(String id) {
+    public LiveData<Timbre> select(String id) {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
             selected = new MutableLiveData<>();
+            // If needed perform select asynchronously
             Timbre timbre = TimbreDao.getInstance(getApplication().getApplicationContext()).selectById(id).orElseGet(() -> {
-                Log.d(getClass().getName(), "Unable to find timbre by provided id, create new empty timbre");
+                Log.w(getClass().getName(), "Unable to find timbre by provided id, create new empty timbre");
                 return new Timbre();
             });
             selected.setValue(timbre);
-        }
-        return this;
-    }
-
-    public LiveData<Timbre> getSelected() {
-        Log.d(getClass().getName(), "Retrieve selected timbre");
-        if (selected == null) {
-            throw new IllegalStateException("Selected timbre is null, invoke select before");
         }
         return selected;
     }
 
     public TimbreViewModel createWorking() {
-        if (working != null) {
-            throw new IllegalStateException("Working timbre can be created only one time per view model instance");
+        if (working == null) {
+            Log.d(getClass().getName(), "Create new timbre");
+            working = new MutableLiveData<>();
+            working.setValue(new Timbre());
         }
-        Log.d(getClass().getName(), "Create new timbre");
-        working = new MutableLiveData<>();
-        working.setValue(new Timbre());
         return this;
     }
 
-    public TimbreViewModel createWorkingFromSelected() {
-        if (working != null) {
-            throw new IllegalStateException("Working timbre can be created only one time per view model instance");
+    public TimbreViewModel createWorkingFrom(String timbreId) {
+        if (working == null) {
+            Log.d(getClass().getName(), "Create new timbre from selected");
+            working = new MutableLiveData<>();
+            working.setValue(select(timbreId).getValue());
         }
-        if (selected == null) {
-            throw new IllegalStateException("Selected timbre is null, invoke select before");
-        }
-        Log.d(getClass().getName(), "Create new timbre from selected");
-        Timbre cloned = SerializationUtils.clone(selected.getValue());
-        working = new MutableLiveData<>();
-        working.setValue(cloned);
         return this;
     }
 

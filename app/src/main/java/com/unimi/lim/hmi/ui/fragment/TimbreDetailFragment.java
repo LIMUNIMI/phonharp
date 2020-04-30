@@ -25,9 +25,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
-import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
-
 public class TimbreDetailFragment extends Fragment {
 
     private final Function<Integer, String> MILLIS_TO_SECONDS_DESCRIPTION = val -> String.format("%.2f%s", seekToModel(val), getResources().getString(R.string.seconds));
@@ -35,30 +32,8 @@ public class TimbreDetailFragment extends Fragment {
     private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", semitoneSeekToModel(val), getResources().getString(R.string.semitone));
     private final Function<Integer, String> HERTZ_DESCRIPTION = val -> String.format("%.1f%s", seekToModel(val), getResources().getString(R.string.hertz));
 
-    private TimbreViewModel viewModel;
-
-    public static Fragment newInstance(String timbreId, boolean isNewItem) {
-        TimbreDetailFragment fragment = new TimbreDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(TIMBRE_ID, timbreId);
-        args.putBoolean(IS_NEW_ITEM, isNewItem);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Setup current timbre
-        String timbreId = getArguments().getString(TIMBRE_ID);
-        boolean isNewItem = getArguments().getBoolean(IS_NEW_ITEM);
-        viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
-        if (isNewItem) {
-            viewModel.createWorking();
-        } else {
-            viewModel.select(timbreId).createWorkingFromSelected();
-        }
+    public static Fragment newInstance() {
+        return new TimbreDetailFragment();
     }
 
     @Override
@@ -70,7 +45,7 @@ public class TimbreDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel.getWorking().observe(getViewLifecycleOwner(), timbre -> {
+        ViewModelProviders.of(getActivity()).get(TimbreViewModel.class).getWorking().observe(getViewLifecycleOwner(), timbre -> {
             Log.d(getClass().getName(), "Editing timbre: " + timbre.toString());
 
             // Timbre name

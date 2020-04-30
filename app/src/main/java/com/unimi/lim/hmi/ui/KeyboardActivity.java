@@ -60,8 +60,8 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         String timbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-        viewModel.select(timbreId);
-        Timbre timbre = viewModel.getSelected().getValue();
+        // TODO use observe instead of getvalue
+        Timbre timbre = viewModel.select(timbreId).getValue();
 
         // Initialize services
         Scale.Type scaleType = Scale.Type.valueOf(selectedScaleType.toUpperCase());

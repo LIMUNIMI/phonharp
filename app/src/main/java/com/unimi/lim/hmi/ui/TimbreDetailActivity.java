@@ -14,8 +14,6 @@ import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
-import org.apache.commons.lang3.StringUtils;
-
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
@@ -24,18 +22,27 @@ import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 public class TimbreDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private String detailTimbreId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timbre_detail);
 
+        // Setup working timbre on the view model, used by TimbreDetailFragment
+        detailTimbreId = getIntent().getStringExtra(TIMBRE_ID);
+        Boolean isNewItem = getIntent().getBooleanExtra(IS_NEW_ITEM, true);
+        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        if (isNewItem) {
+            viewModel.createWorking();
+        } else {
+            viewModel.createWorkingFrom(detailTimbreId);
+        }
+
         // When activity is created for the first time inject timbre detail fragment
-        // Use newInstance to send parameters from the activity to the fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_timbre_detail_container, TimbreDetailFragment.newInstance(
-                            getIntent().getStringExtra(TIMBRE_ID),
-                            getIntent().getBooleanExtra(IS_NEW_ITEM, true)))
+                    .replace(R.id.fragment_timbre_detail_container, TimbreDetailFragment.newInstance())
                     .commitNow();
         }
 
@@ -50,7 +57,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         deleteButton.setOnClickListener(this);
 
         // Delete button hide for new timbre, nothing to delete
-        deleteButton.setVisibility(StringUtils.isNotEmpty(getIntent().getStringExtra(TIMBRE_ID)) ? View.VISIBLE : View.GONE);
+        deleteButton.setVisibility(isNewItem ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -72,7 +79,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
             case R.id.timbre_delete:
                 // Check if timbre is deletable: selected timbre cannot be delete
                 String selectedTimbreId = PreferenceManager.getDefaultSharedPreferences(this).getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
-                boolean canDelete = !selectedTimbreId.equals(viewModel.getWorking().getValue().getId());
+                boolean canDelete = !selectedTimbreId.equals(detailTimbreId);
                 if (canDelete) {
                     showDeleteAlert(viewModel);
                 } else {
