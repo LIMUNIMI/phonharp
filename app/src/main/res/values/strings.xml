@@ -26,6 +26,9 @@
     <!-- TimbreEditActivity -->
     <string name="timbre_name">Timbre name</string>
     <string name="percentage">%</string>
+    <string name="harmonics_all">All</string>
+    <string name="harmonics_odd">Odd</string>
+    <string name="harmonics_all_to_odd">all to odd</string>
     <string name="seconds">s</string>
     <string name="semitone">semitone</string>
     <string name="hertz">Hz</string>
@@ -43,8 +46,8 @@
     <string name="harmonics_asr">Harmonics Envelop</string>
     <string name="asr_attack">Attack</string>
     <string name="asr_release">Release</string>
-    <string name="asr_initial_shift">Initial shift</string>
-    <string name="asr_final_shift">Final shift</string>
+    <string name="asr_initial_offset">Initial offset</string>
+    <string name="asr_final_offset">Final offset</string>
     <string name="asr_initial_value">Initial value</string>
     <string name="asr_final_value">Final value</string>
     <string name="cannot_delete_alert_message">This timbre is currently in use: select another preferred timbre and try again.</string>

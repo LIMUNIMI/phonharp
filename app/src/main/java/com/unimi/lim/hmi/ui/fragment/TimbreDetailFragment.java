@@ -31,6 +31,10 @@ public class TimbreDetailFragment extends Fragment {
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
     private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", semitoneSeekToModel(val), getResources().getString(R.string.semitone));
     private final Function<Integer, String> HERTZ_DESCRIPTION = val -> String.format("%.1f%s", seekToModel(val), getResources().getString(R.string.hertz));
+    private final Function<Integer, String> HARMONICS_DESCRIPTION = val ->
+            val == 100 ? String.format("%s", getResources().getString(R.string.harmonics_odd)) :
+                    (val == 0 ? String.format("%s", getResources().getString(R.string.harmonics_all)) :
+                            String.format("%d%s %s", val, getResources().getString(R.string.percentage), getResources().getString(R.string.harmonics_all_to_odd)));
 
     public static Fragment newInstance() {
         return new TimbreDetailFragment();
@@ -74,7 +78,7 @@ public class TimbreDetailFragment extends Fragment {
 
         // Volume and Harmonics seek bar
         setupSeek(view, R.id.volume_seek, R.id.volume_text, 1, PERCENTAGE_DESCRIPTION, () -> timbre.getVolume(), val -> timbre.setVolume(val), onChange);
-        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, PERCENTAGE_DESCRIPTION, () -> timbre.getHarmonics(), val -> timbre.setHarmonics(val), onChange);
+        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, HARMONICS_DESCRIPTION, () -> timbre.getHarmonics(), val -> timbre.setHarmonics(val), onChange);
 
         // Switch
         setupSwitch(view, R.id.tremolo_enabled, R.id.tremolo_container,
@@ -114,8 +118,8 @@ public class TimbreDetailFragment extends Fragment {
                     timbre.setHarmonicsAsr(asr);
                     setupSeek(view, R.id.harmonics_asr_attack_seek, R.id.harmonics_asr_attack_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getHarmonicsAsr().getAttackTime()), val -> timbre.getHarmonicsAsr().setAttackTime(seekToModel(val)), onChange);
                     setupSeek(view, R.id.harmonics_asr_release_seek, R.id.harmonics_asr_release_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getHarmonicsAsr().getReleaseTime()), val -> timbre.getHarmonicsAsr().setReleaseTime(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.harmonics_asr_init_seek, R.id.harmonics_asr_init_text, 1, PERCENTAGE_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getInitialValue(), val -> timbre.getHarmonicsAsr().setInitialValue(val), onChange);
-                    setupSeek(view, R.id.harmonics_asr_final_seek, R.id.harmonics_asr_final_text, 1, PERCENTAGE_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getFinalValue(), val -> timbre.getHarmonicsAsr().setFinalValue(val), onChange);
+                    setupSeek(view, R.id.harmonics_asr_init_seek, R.id.harmonics_asr_init_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getInitialValue(), val -> timbre.getHarmonicsAsr().setInitialValue(val), onChange);
+                    setupSeek(view, R.id.harmonics_asr_final_seek, R.id.harmonics_asr_final_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getFinalValue(), val -> timbre.getHarmonicsAsr().setFinalValue(val), onChange);
                 },
                 () -> timbre.setHarmonicsAsr(null), onChange);
         setupSwitch(view, R.id.swipe_control_enabled, R.id.swipe_control_container, timbre.getController1() != null || timbre.getController2() != null, () -> {

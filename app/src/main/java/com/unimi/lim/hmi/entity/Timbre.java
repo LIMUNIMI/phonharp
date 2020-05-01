@@ -19,7 +19,7 @@ public class Timbre implements Serializable {
     private String id;
     private String name;
     private int volume = 100;
-    private int harmonics = 0;
+    private int harmonics = 50;
     private Lfo tremolo;
     private Lfo vibrato;
     private Asr volumeAsr;

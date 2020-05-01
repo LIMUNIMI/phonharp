@@ -427,7 +427,7 @@
                     android:layout_marginStart="@dimen/timbre_detail_component_margin"
                     android:layout_marginTop="@dimen/timbre_detail_component_margin"
                     android:layout_marginEnd="@dimen/timbre_detail_component_margin"
-                    android:text="@string/asr_initial_shift"
+                    android:text="@string/asr_initial_offset"
                     android:textAppearance="?attr/textAppearanceListItem" />
 
                 <TextView
@@ -479,7 +479,7 @@
                     android:layout_marginStart="@dimen/timbre_detail_component_margin"
                     android:layout_marginTop="@dimen/timbre_detail_component_margin"
                     android:layout_marginEnd="@dimen/timbre_detail_component_margin"
-                    android:text="@string/asr_final_shift"
+                    android:text="@string/asr_final_offset"
                     android:textAppearance="?attr/textAppearanceListItem" />
 
                 <TextView

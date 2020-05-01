@@ -93,7 +93,7 @@ public class JsynSynthesizer implements Synthesizer {
         volumeController = volMix2.inputA;
         pitchController = pitchMix2.inputA;
         harmonicsController = harmMix.inputB;
-        // Default value because is part of multiply operation
+        // Default value to 1 because is part of multiply operation
         volumeController.set(1);
 
         // Connect modules together
@@ -163,12 +163,13 @@ public class JsynSynthesizer implements Synthesizer {
                 0);
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         // If harmonicsEnvelopAsr is not configured (is null) then initial and final values are set to harmonics
+        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics)
         harmonicsEnvelop.update(
-                (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getInitialValue() : timbre.getHarmonics()) / 100f,
+                (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getInitialValue() : timbre.getHarmonics()) / 100f),
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
-                timbre.getHarmonics() / 100f,
+                1f - timbre.getHarmonics() / 100f,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
-                (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f);
+                (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f));
     }
 
     @Override
