@@ -55,7 +55,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         applyKeyboardPreferences(sharedPreferences);
         String selectedScaleType = sharedPreferences.getString(SCALE_TYPE, Scale.Type.MAJOR.name());
         String selectedNote = sharedPreferences.getString(NOTE, "C");
-        String selectedOctave = sharedPreferences.getString(OCTAVE, "4");
+        String selectedOctave = sharedPreferences.getString(OCTAVE, "3");
         String selectedOffset = sharedPreferences.getString(OFFSET, "0");
 
         String timbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
@@ -144,7 +144,6 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, true);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
         Log.d(getClass().getName(), "Halftone button enabled: " + showHalfTone);
-
 
         // Handedness
         ConstraintLayout layout = findViewById(R.id.layout_keyboard);

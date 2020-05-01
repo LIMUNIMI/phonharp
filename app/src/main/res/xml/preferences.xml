@@ -53,7 +53,7 @@
             android:title="@string/note_title" />
 
         <ListPreference
-            android:defaultValue="4"
+            android:defaultValue="3"
             android:entries="@array/octaves_names"
             android:entryValues="@array/octaves"
             android:key="octave"
