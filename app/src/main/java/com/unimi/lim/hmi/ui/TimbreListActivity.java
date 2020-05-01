@@ -3,6 +3,7 @@ package com.unimi.lim.hmi.ui;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -20,6 +21,7 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.TimbreUtils;
 
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
@@ -29,8 +31,10 @@ import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListListener, View.OnClickListener {
 
     private final static int REQUEST_CODE = 0;
+    private final static int SUSTAIN_SAMPLE_TIME = 1000;
 
     private Synthesizer synthesizer;
+    private final Handler releaseSoundHandler = new Handler();
     private boolean playingSound = false;
 
     @Override
@@ -73,24 +77,55 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     }
 
     /**
-     * Select timbre, invoked when radio button is clicked
+     * Select timbre, invoked when radio button is clicked. Also play a sample
      *
      * @param timbre clicked timbre on timbre list
      */
     @Override
     public void onSelect(Timbre timbre) {
+        // Store selected timbre id on system preferences
         Log.d(getClass().getName(), "Selected timbre " + timbre.getId());
         Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.putString(SELECTED_TIMBRE_ID, timbre.getId());
         editor.commit();
+
+        // Play audio sample
         if (!playingSound) {
-            synthesizer.updateTimbreCfg(timbre);
-            synthesizer.press(Note.C3.getFrequency());
-            playingSound = true;
+            playTimbreSample(timbre);
         } else {
-            synthesizer.release();
-            playingSound = false;
+            if (timbre.getId().equalsIgnoreCase(synthesizer.getTimbreId())) {
+                // Select the timbre again to stop audio sample
+                synthesizer.release();
+                playingSound = false;
+            } else {
+                // Another timbre was selected but current audio sample is not yes finished
+                // Play the new timbre
+                playTimbreSample(timbre);
+            }
         }
+    }
+
+    /**
+     * Play provided timbre and schedule stop action after sample time + timbre envelop time
+     *
+     * @param timbre
+     */
+    private void playTimbreSample(Timbre timbre) {
+        // Play sample of provided timbre
+        synthesizer.updateTimbreCfg(timbre);
+        synthesizer.press(Note.C3.getFrequency());
+        playingSound = true;
+
+        // A delayed function is invoked to stop the playing audio sample.
+        // This function is executed after sample time + timbre envelop time
+        float stopAfter = TimbreUtils.maxAsrAttackTime(timbre) * 1000 + TimbreUtils.maxAsrReleaseTime(timbre) * 1000 + SUSTAIN_SAMPLE_TIME;
+        releaseSoundHandler.postDelayed(() -> {
+            // Release only the owned audio sample
+            if (playingSound && timbre.getId().equals(synthesizer.getTimbreId())) {
+                synthesizer.release();
+                playingSound = false;
+            }
+        }, (long) stopAfter);
     }
 
     /**

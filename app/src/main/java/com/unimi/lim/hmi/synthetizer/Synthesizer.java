@@ -24,4 +24,6 @@ public interface Synthesizer {
 
     void controlVibratoDepth(double delta);
 
+    String getTimbreId();
+
 }

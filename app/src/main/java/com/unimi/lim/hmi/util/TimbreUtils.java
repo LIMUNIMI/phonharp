@@ -67,6 +67,14 @@ public class TimbreUtils {
         return asr == null ? defaultValue : asr.getReleaseTime();
     }
 
+    public static float maxAsrAttackTime(Timbre timbre) {
+        return Math.max(safeAsrAttackTime(timbre.getHarmonicsAsr()), Math.max(safeAsrAttackTime(timbre.getVolumeAsr()), safeAsrAttackTime(timbre.getPitchAsr())));
+    }
+
+    public static float maxAsrReleaseTime(Timbre timbre) {
+        return Math.max(safeAsrReleaseTime(timbre.getHarmonicsAsr()), Math.max(safeAsrReleaseTime(timbre.getVolumeAsr()), safeAsrReleaseTime(timbre.getPitchAsr())));
+    }
+
     public static String buildDescription(Timbre timbre) {
         StringBuilder builder = new StringBuilder();
         builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)
@@ -80,7 +88,6 @@ public class TimbreUtils {
         addAsrDescription(builder, HARM_ENV, timbre.getHarmonicsAsr());
         return builder.toString();
     }
-
 
     private static void addControllerDescription(StringBuilder builder, String ctrlName, Timbre.Controller ctrl) {
         if (ctrl == null) {

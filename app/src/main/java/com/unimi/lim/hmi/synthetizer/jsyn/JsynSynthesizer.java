@@ -55,6 +55,8 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
 
+    // From timbre config
+    private String timbreId;
     private int pitchAsrInitialSemitoneOffset;
     private int pitchAsrFinalSemitoneOffset;
 
@@ -138,6 +140,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void updateTimbreCfg(Timbre timbre) {
+        timbreId = timbre.getId();
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
@@ -166,6 +169,11 @@ public class JsynSynthesizer implements Synthesizer {
                 timbre.getHarmonics() / 100f,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
                 (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f);
+    }
+
+    @Override
+    public String getTimbreId() {
+        return timbreId;
     }
 
     @Override
