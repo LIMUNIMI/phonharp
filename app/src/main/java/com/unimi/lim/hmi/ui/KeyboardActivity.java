@@ -186,8 +186,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            boolean clicked = true;
-            int keyNum = 0;
+            int keyNum;
             switch (v.getId()) {
                 case R.id.key_frst:
                     keyNum = 0;
@@ -202,14 +201,12 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     keyNum = 3;
                     break;
                 default:
-                    clicked = false;
+                    throw new IllegalArgumentException("Unhandled view " + v.getId() + ", KeyListener can handle only playable keys");
             }
-            if (clicked) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    keyHandler.keyPressed(keyNum);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    keyHandler.keyReleased(keyNum);
-                }
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                keyHandler.keyPressed(keyNum);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                keyHandler.keyReleased(keyNum);
             }
             return true;
         }
