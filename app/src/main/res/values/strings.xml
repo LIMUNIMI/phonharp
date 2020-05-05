@@ -28,7 +28,7 @@
     <string name="percentage">%</string>
     <string name="harmonics_all">All</string>
     <string name="harmonics_odd">Odd</string>
-    <string name="harmonics_all_to_odd">all to odd</string>
+    <string name="harmonics_all_to_odd">Pulse width</string>
     <string name="seconds">s</string>
     <string name="semitone">semitone</string>
     <string name="hertz">Hz</string>

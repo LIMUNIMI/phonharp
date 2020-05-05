@@ -34,7 +34,7 @@ public class TimbreDetailFragment extends Fragment {
     private final Function<Integer, String> HARMONICS_DESCRIPTION = val ->
             val == 100 ? String.format("%s", getResources().getString(R.string.harmonics_odd)) :
                     (val == 0 ? String.format("%s", getResources().getString(R.string.harmonics_all)) :
-                            String.format("%d%s %s", val, getResources().getString(R.string.percentage), getResources().getString(R.string.harmonics_all_to_odd)));
+                            String.format("%s: %d%s ", getResources().getString(R.string.harmonics_all_to_odd), val/2, getResources().getString(R.string.percentage)));
 
     public static Fragment newInstance() {
         return new TimbreDetailFragment();
