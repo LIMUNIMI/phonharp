@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.PopupMenu;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,9 @@ import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
@@ -184,10 +187,19 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
      */
     private class KeyListener implements View.OnTouchListener {
 
+        private int touchSlop;
+        private final Map<Integer, Float> xCoord = new HashMap<>();
+
+        public KeyListener() {
+            ViewConfiguration vc = ViewConfiguration.get(getApplicationContext());
+            touchSlop = vc.getScaledTouchSlop();
+            Log.d(getClass().getName(), "TouchSlop " + touchSlop);
+        }
+
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
+        public boolean onTouch(View view, MotionEvent event) {
             int keyNum;
-            switch (v.getId()) {
+            switch (view.getId()) {
                 case R.id.key_frst:
                     keyNum = 0;
                     break;
@@ -201,12 +213,28 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     keyNum = 3;
                     break;
                 default:
-                    throw new IllegalArgumentException("Unhandled view " + v.getId() + ", KeyListener can handle only playable keys");
+                    throw new IllegalArgumentException("Unhandled view " + view.getId() + ", KeyListener can handle only playable keys");
             }
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                keyHandler.keyPressed(keyNum);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                keyHandler.keyReleased(keyNum);
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    xCoord.put(keyNum, event.getX());
+                    synthesizer.controlReset();
+                    keyHandler.keyPressed(keyNum);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    xCoord.remove(keyNum);
+                    keyHandler.keyReleased(keyNum);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Float prevX = xCoord.get(keyNum);
+                    Float diff = prevX - event.getX();
+                    if (Math.abs(diff) > touchSlop) {
+                        xCoord.put(keyNum, event.getX());
+                        Float step = diff / touchSlop / xCoord.size();
+                        synthesizer.controlVibratoDepth(step);
+                        String info = String.format(" - xdiff=%f, xstep=%f", diff, step);
+                        Log.d(getClass().getName(), "x - Moving key " + keyNum + info);
+                    }
             }
             return true;
         }

@@ -1,5 +1,7 @@
 package com.unimi.lim.hmi.synthetizer.jsyn;
 
+import android.util.Log;
+
 import com.jsyn.JSyn;
 import com.jsyn.devices.AudioDeviceManager;
 import com.jsyn.ports.UnitInputPort;
@@ -57,8 +59,15 @@ public class JsynSynthesizer implements Synthesizer {
 
     // From timbre config
     private String timbreId;
+    private double volume;
+    private double harmonics;
     private int pitchAsrInitialSemitoneOffset;
     private int pitchAsrFinalSemitoneOffset;
+    private int tremoloDepth;
+    private int vibratoDepth;
+
+    // Played note
+    double frequency;
 
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
@@ -141,15 +150,22 @@ public class JsynSynthesizer implements Synthesizer {
     @Override
     public void updateTimbreCfg(Timbre timbre) {
         timbreId = timbre.getId();
+        // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
+        volume = timbre.getVolume() / 100f;
+        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics)
+        harmonics = 1f - timbre.getHarmonics() / 100f;
+        tremoloDepth = TimbreUtils.safeLfoDepth(timbre.getTremolo());
+        vibratoDepth = TimbreUtils.safeLfoDepth(timbre.getVibrato());
+
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
-        tremolo.setDepth(TimbreUtils.safeLfoDepth(timbre.getTremolo()));
+        tremolo.setDepth(tremoloDepth);
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
-        vibrato.setDepth(TimbreUtils.safeLfoDepth(timbre.getVibrato()));
+        vibrato.setDepth(vibratoDepth);
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volumeEnvelop.update(
                 TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100f,
                 TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()),
-                timbre.getVolume() / 100f,
+                volume,
                 TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr()),
                 TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100f);
         // Note that pitch envelop values depend on played note and are set on press method
@@ -167,7 +183,7 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsEnvelop.update(
                 (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getInitialValue() : timbre.getHarmonics()) / 100f),
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
-                1f - timbre.getHarmonics() / 100f,
+                harmonics,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
                 (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f));
     }
@@ -178,12 +194,14 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
-    public void press(double frequency) {
+    public void press(double notefrequency) {
+        this.frequency = notefrequency;
+
         // Update pitch envelop sustain to played note
         pitchEnvelop.updateValues(
-                NoteUtils.calculateNoteByOffset(frequency, pitchAsrInitialSemitoneOffset),
-                frequency,
-                NoteUtils.calculateNoteByOffset(frequency, pitchAsrFinalSemitoneOffset)
+                NoteUtils.calculateNoteByOffset(notefrequency, pitchAsrInitialSemitoneOffset),
+                notefrequency,
+                NoteUtils.calculateNoteByOffset(notefrequency, pitchAsrFinalSemitoneOffset)
         );
         // Enqueue attack and sustain events to envelops
         volumeEnvelop.press();
@@ -199,27 +217,58 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
-    public void controlVolume(double delta) {
-        // TODO
+    public void controlVolume(float delta) {
+        double value = volumeController.get() + delta / 10;
+        if (volume * value >= 1) {
+            value = 1 / volume;
+        } else if (value <= 0) {
+            value = 0;
+        }
+        Log.d(getClass().getName(), "Volume controller value " + value);
+        volumeController.set(value);
     }
 
     @Override
-    public void controlPitch(double delta) {
-        // TODO
+    public void controlReset() {
+        volumeController.set(1);
+        pitchController.set(0);
+        harmonicsController.set(0);
+        tremolo.setDepth(tremoloDepth);
+        vibrato.setDepth(vibratoDepth);
     }
 
     @Override
-    public void controlHarmonics(double delta) {
-        // TODO
+    public void controlPitch(float delta) {
+        double pitchDelta = NoteUtils.calculateNoteByOffset(frequency, delta / 4) - frequency;
+        double value = pitchController.get() + pitchDelta;
+        Log.d(getClass().getName(), "Pitch controller value " + value);
+        pitchController.set(value);
     }
 
     @Override
-    public void controlTremoloDepth(double delta) {
-        // TODO
+    public void controlHarmonics(float delta) {
+        double value = harmonicsController.getValue() + delta / 50;
+        Log.d(getClass().getName(), "Harmonics controller value " + value);
+        harmonicsController.set(value);
     }
 
     @Override
-    public void controlVibratoDepth(double delta) {
-        // TODO
+    public void controlTremoloDepth(float delta) {
+        double value = tremolo.getDepth() + delta * 5;
+        if (value > 100 || value < 0) {
+            return;
+        }
+        Log.d(getClass().getName(), "Tremolo controller value " + value);
+        tremolo.setDepth((int) value);
+    }
+
+    @Override
+    public void controlVibratoDepth(float delta) {
+        double value = vibrato.getDepth() + delta * 5;
+        if (value > 100 || value < 0) {
+            return;
+        }
+        Log.d(getClass().getName(), "Vibrato controller value " + value);
+        vibrato.setDepth((int) value);
     }
 }

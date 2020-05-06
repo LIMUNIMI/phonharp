@@ -15,7 +15,7 @@ public class NoteUtils {
         return Note.values()[newOrdinal];
     }
 
-    public static double calculateNoteByOffset(double startNote, int semitones) {
+    public static double calculateNoteByOffset(double startNote, float semitones) {
         return startNote * Math.pow(CONST, semitones);
     }
 

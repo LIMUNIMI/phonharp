@@ -14,15 +14,17 @@ public interface Synthesizer {
 
     void release();
 
-    void controlVolume(double delta);
+    void controlReset();
 
-    void controlPitch(double delta);
+    void controlVolume(float delta);
 
-    void controlHarmonics(double delta);
+    void controlPitch(float delta);
 
-    void controlTremoloDepth(double delta);
+    void controlHarmonics(float delta);
 
-    void controlVibratoDepth(double delta);
+    void controlTremoloDepth(float delta);
+
+    void controlVibratoDepth(float delta);
 
     String getTimbreId();
 

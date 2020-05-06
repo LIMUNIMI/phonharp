@@ -5,6 +5,7 @@ import com.jsyn.data.SegmentedEnvelope;
 import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Add;
+import com.jsyn.unitgen.CrossFade;
 import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
 import com.jsyn.unitgen.PulseOscillator;
@@ -221,6 +222,8 @@ public class TimbreUnitTest {
 //
 //        synth.add(flp);
 //        play(PLAY_NOTE, flp.output);
+        CrossFade crossFade = new CrossFade();
+        crossFade.generate();
         play(PLAY_NOTE);
     }
 
