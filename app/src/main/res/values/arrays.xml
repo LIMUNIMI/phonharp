@@ -101,7 +101,9 @@
     <string-array name="swipe_control_names">
         <item>None</item>
         <item>Volume</item>
+        <item>Harmonics</item>
         <item>Pitch bend</item>
-        <item>Pulse width</item>
+        <item>Tremolo depth</item>
+        <item>Vibrato depth</item>
     </string-array>
 </resources>

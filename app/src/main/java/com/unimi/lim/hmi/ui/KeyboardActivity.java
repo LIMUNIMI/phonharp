@@ -18,8 +18,7 @@ import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
-import com.unimi.lim.hmi.keyboard.DelayedKeyHandler;
-import com.unimi.lim.hmi.keyboard.KeyHandler;
+import com.unimi.lim.hmi.music.KeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
@@ -30,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
@@ -43,7 +43,7 @@ import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
 public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    private Synthesizer synthesizer;
+    private Synthesizer synth;
     private KeyHandler keyHandler;
 
     private final static List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
@@ -70,8 +70,8 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Note note = Note.valueOf(selectedNote.replace('#', 'd').concat(selectedOctave));
         Scale scale = new Scale(scaleType, note);
 
-        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
-        keyHandler = new DelayedKeyHandler(synthesizer, scale, Integer.valueOf(selectedOffset));
+        synth = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
+        keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset));
 
         // Setup keyboard listener
         KeyListener keyListener = new KeyListener();
@@ -88,25 +88,23 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     @Override
     protected void onStart() {
         super.onStart();
-        keyHandler.onStart();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        keyHandler.onDestroy();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        synthesizer.start();
+        synth.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        synthesizer.stop();
+        synth.stop();
     }
 
     // *********************************************************************************************
@@ -188,7 +186,8 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private class KeyListener implements View.OnTouchListener {
 
         private int touchSlop;
-        private final Map<Integer, Float> xCoord = new HashMap<>();
+        private final Map<Integer, Float> xCoords = new HashMap<>();
+        private final Map<Integer, Float> yCoords = new HashMap<>();
 
         public KeyListener() {
             ViewConfiguration vc = ViewConfiguration.get(getApplicationContext());
@@ -217,26 +216,40 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    xCoord.put(keyNum, event.getX());
-                    synthesizer.controlReset();
+                    setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
                     break;
                 case MotionEvent.ACTION_UP:
-                    xCoord.remove(keyNum);
+                    resetCoords(keyNum);
                     keyHandler.keyReleased(keyNum);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    Float prevX = xCoord.get(keyNum);
-                    Float diff = prevX - event.getX();
-                    if (Math.abs(diff) > touchSlop) {
-                        xCoord.put(keyNum, event.getX());
-                        Float step = diff / touchSlop / xCoord.size();
-                        synthesizer.controlVibratoDepth(step);
-                        String info = String.format(" - xdiff=%f, xstep=%f", diff, step);
-                        Log.d(getClass().getName(), "x - Moving key " + keyNum + info);
-                    }
+                    handleCoords(xCoords, event.getX(), keyNum, step -> keyHandler.control1(step));
+                    handleCoords(yCoords, event.getY(), keyNum, step -> keyHandler.control2(step));
             }
             return true;
+        }
+
+        private void setCoords(int keyNum, MotionEvent event) {
+            xCoords.put(keyNum, event.getX());
+            yCoords.put(keyNum, event.getY());
+        }
+
+        private void resetCoords(int keyNum) {
+            xCoords.remove(keyNum);
+            yCoords.remove(keyNum);
+        }
+
+        private void handleCoords(Map<Integer, Float> coords, Float coord, int keyNum, Consumer<Float> controllerConsumer) {
+            Float previous = coords.get(keyNum);
+            Float diff = previous - coord;
+            if (Math.abs(diff) > touchSlop) {
+                coords.put(keyNum, coord);
+                Float step = diff / touchSlop / coords.size();
+                controllerConsumer.accept(step);
+                String info = String.format(" - diff=%f, step=%f", diff, step);
+                Log.d(getClass().getName(), "Moving key " + keyNum + info);
+            }
         }
     }
 

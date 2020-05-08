@@ -1,1 +1,1 @@
-[{"id":"04b1be44-78b0-4a8a-84c5-12be11027e51","name":"Timbre 1","volume":50,"harmonics":50,"tremolo":{"rate":6.0,"depth":20},"volumeAsr":{"initialValue":0.0,"finalValue":0.0,"attackTime":0.2,"releaseTime":0.2}}]
+[{"id":"04b1be44-78b0-4a8a-84c5-12be11027e51","name":"Timbre 1","volume":50,"harmonics":50,"multitapHysteresisEnabled": true, "tremolo":{"rate":6.0,"depth":20},"volumeAsr":{"initialValue":0.0,"finalValue":0.0,"attackTime":0.2,"releaseTime":0.2}}]

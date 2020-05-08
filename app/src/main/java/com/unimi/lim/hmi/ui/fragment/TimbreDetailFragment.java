@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -17,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
@@ -34,10 +38,22 @@ public class TimbreDetailFragment extends Fragment {
     private final Function<Integer, String> HARMONICS_DESCRIPTION = val ->
             val == 100 ? String.format("%s", getResources().getString(R.string.harmonics_odd)) :
                     (val == 0 ? String.format("%s", getResources().getString(R.string.harmonics_all)) :
-                            String.format("%s: %d%s ", getResources().getString(R.string.harmonics_all_to_odd), val/2, getResources().getString(R.string.percentage)));
+                            String.format("%s: %d%s ", getResources().getString(R.string.harmonics_all_to_odd), val / 2, getResources().getString(R.string.percentage)));
+
+    private final BiMap<Integer, Timbre.Controller> CONTROLLER_BIMAP;
 
     public static Fragment newInstance() {
         return new TimbreDetailFragment();
+    }
+
+    public TimbreDetailFragment() {
+        CONTROLLER_BIMAP = HashBiMap.create();
+        CONTROLLER_BIMAP.put(0, Timbre.Controller.NONE);
+        CONTROLLER_BIMAP.put(1, Timbre.Controller.VOLUME);
+        CONTROLLER_BIMAP.put(2, Timbre.Controller.HARMONICS);
+        CONTROLLER_BIMAP.put(3, Timbre.Controller.PITCH);
+        CONTROLLER_BIMAP.put(4, Timbre.Controller.TREMOLO);
+        CONTROLLER_BIMAP.put(5, Timbre.Controller.VIBRATO);
     }
 
     @Override
@@ -123,13 +139,13 @@ public class TimbreDetailFragment extends Fragment {
                 },
                 () -> timbre.setHarmonicsAsr(null), onChange);
         setupSwitch(view, R.id.swipe_control_enabled, R.id.swipe_control_container, timbre.getController1() != null || timbre.getController2() != null, () -> {
-                    // TODO setup swipe controller
+                    setupSwipeControllerSpinner(view, R.id.swipe_horiz_spinner, timbre.getController1(), pos -> timbre.setController1(CONTROLLER_BIMAP.get(pos)), onChange);
+                    setupSwipeControllerSpinner(view, R.id.swipe_vert_spinner, timbre.getController2(), pos -> timbre.setController2(CONTROLLER_BIMAP.get(pos)), onChange);
                 },
                 () -> {
-                    // TODO
-                }, () -> {
-                    // TODO
-                });
+                    timbre.setController1(null);
+                    timbre.setController2(null);
+                }, onChange);
     }
 
     private void setupSeek(View view, int seekId, int textViewId, int seekStep, Function<Integer, String> text, Supplier<Integer> supplier, Consumer<Integer> consumer, Runnable onChange) {
@@ -158,6 +174,24 @@ public class TimbreDetailFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setupSwipeControllerSpinner(View view, int spinnerId, Timbre.Controller controller, Consumer<Integer> consumer, Runnable onChange) {
+        controller = controller != null ? controller : Timbre.Controller.NONE;
+        Spinner spinner = view.findViewById(spinnerId);
+        spinner.setSelection(CONTROLLER_BIMAP.inverse().get(controller));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                consumer.accept(position);
+                onChange.run();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        });
     }
 
     private void setupSwitch(View view, int switchId, int containerId, boolean isEnabled, Runnable onEnable, Runnable onDisable, Runnable onChange) {

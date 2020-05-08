@@ -9,6 +9,7 @@ public class Timbre implements Serializable {
     private transient boolean checked = false;
 
     public enum Controller {
+        NONE,
         VOLUME,
         PITCH,
         HARMONICS,
@@ -20,6 +21,7 @@ public class Timbre implements Serializable {
     private String name;
     private int volume = 100;
     private int harmonics = 50;
+    private boolean multitapHysteresisEnabled = true;
     private Lfo tremolo;
     private Lfo vibrato;
     private Asr volumeAsr;
@@ -67,6 +69,14 @@ public class Timbre implements Serializable {
 
     public void setHarmonics(int harmonics) {
         this.harmonics = harmonics;
+    }
+
+    public boolean isMultitapHysteresisEnabled() {
+        return multitapHysteresisEnabled;
+    }
+
+    public void setMultitapHysteresisEnabled(boolean multitapHysteresisEnabled) {
+        this.multitapHysteresisEnabled = multitapHysteresisEnabled;
     }
 
     public Lfo getTremolo() {

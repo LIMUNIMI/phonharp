@@ -57,8 +57,9 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
 
-    // From timbre config
-    private String timbreId;
+    private Timbre timbre;
+
+    // From timbre config, values are converted from stored values (timbre instance) to jsyn values
     private double volume;
     private double harmonics;
     private int pitchAsrInitialSemitoneOffset;
@@ -149,7 +150,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void updateTimbreCfg(Timbre timbre) {
-        timbreId = timbre.getId();
+        this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volume = timbre.getVolume() / 100f;
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics)
@@ -190,7 +191,22 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public String getTimbreId() {
-        return timbreId;
+        return timbre.getId();
+    }
+
+    @Override
+    public Timbre.Controller getController1() {
+        return timbre.getController1();
+    }
+
+    @Override
+    public Timbre.Controller getController2() {
+        return timbre.getController2();
+    }
+
+    @Override
+    public boolean isMultitapHysteresisEnaled() {
+        return timbre.isMultitapHysteresisEnabled();
     }
 
     @Override
@@ -217,18 +233,6 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
-    public void controlVolume(float delta) {
-        double value = volumeController.get() + delta / 10;
-        if (volume * value >= 1) {
-            value = 1 / volume;
-        } else if (value <= 0) {
-            value = 0;
-        }
-        Log.d(getClass().getName(), "Volume controller value " + value);
-        volumeController.set(value);
-    }
-
-    @Override
     public void controlReset() {
         volumeController.set(1);
         pitchController.set(0);
@@ -238,8 +242,22 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
+    public void controlVolume(float delta) {
+        double value = volumeController.get() + delta;
+        if (volume * value >= 1) {
+            // Lock maximum value to 1
+            value = 1 / volume;
+        } else if (value <= 0) {
+            // Lock minimum value to 0
+            value = 0;
+        }
+        Log.d(getClass().getName(), "Volume controller value " + value);
+        volumeController.set(value);
+    }
+
+    @Override
     public void controlPitch(float delta) {
-        double pitchDelta = NoteUtils.calculateNoteByOffset(frequency, delta / 4) - frequency;
+        double pitchDelta = NoteUtils.calculateNoteByOffset(frequency, delta) - frequency;
         double value = pitchController.get() + pitchDelta;
         Log.d(getClass().getName(), "Pitch controller value " + value);
         pitchController.set(value);
@@ -247,14 +265,14 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void controlHarmonics(float delta) {
-        double value = harmonicsController.getValue() + delta / 50;
+        double value = harmonicsController.getValue() + delta;
         Log.d(getClass().getName(), "Harmonics controller value " + value);
         harmonicsController.set(value);
     }
 
     @Override
     public void controlTremoloDepth(float delta) {
-        double value = tremolo.getDepth() + delta * 5;
+        double value = tremolo.getDepth() + delta;
         if (value > 100 || value < 0) {
             return;
         }
@@ -264,7 +282,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void controlVibratoDepth(float delta) {
-        double value = vibrato.getDepth() + delta * 5;
+        double value = vibrato.getDepth() + delta;
         if (value > 100 || value < 0) {
             return;
         }
