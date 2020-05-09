@@ -213,6 +213,9 @@ public class JsynSynthesizer implements Synthesizer {
     public void press(double notefrequency) {
         this.frequency = notefrequency;
 
+        // Adjust vibrato depending on note frequency
+        vibrato.update(notefrequency);
+
         // Update pitch envelop sustain to played note
         pitchEnvelop.updateValues(
                 NoteUtils.calculateNoteByOffset(notefrequency, pitchAsrInitialSemitoneOffset),

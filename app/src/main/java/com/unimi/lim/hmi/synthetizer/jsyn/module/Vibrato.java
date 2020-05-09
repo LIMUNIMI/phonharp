@@ -1,11 +1,16 @@
 package com.unimi.lim.hmi.synthetizer.jsyn.module;
 
+import android.util.Log;
+
 import com.jsyn.ports.UnitOutputPort;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
+import com.unimi.lim.hmi.util.NoteUtils;
 
 public class Vibrato extends Lfo {
-
     public UnitOutputPort output;
+
+    // Maximum vibrato oscillator amplitude, in semitones (3 semitones)
+    private final static int MAX_AMPLITUDE = 3;
 
     private int depth;
 
@@ -30,21 +35,25 @@ public class Vibrato extends Lfo {
     }
 
     /**
-     * Giving depth setup modulator amplitude and dcoffset
+     * Set vibrato oscillator amplitude depending on configured depth and carrier frequency
+     *
+     * @param carrierFrequency
+     */
+    public void update(double carrierFrequency) {
+        float depthToSemitone = (float) MAX_AMPLITUDE / 100 * depth;
+        double amplitude = NoteUtils.calculateNoteByOffset(carrierFrequency, depthToSemitone) - carrierFrequency;
+        Log.d(getClass().getName(), "Update vibrato amplitude, semitones " + depthToSemitone + ", carrier freq " + carrierFrequency + ", amplitude " + amplitude);
+
+        setAmplitude(amplitude);
+    }
+
+    /**
+     * Set depth value
      *
      * @param depth depth value between 0 and 100
      */
     public void setDepth(int depth) {
-        if (depth < 0 || depth > 100) {
-            throw new IllegalArgumentException("Invalid depth value, expected bewtween 0 and 100 bus is " + depth);
-        }
         this.depth = depth;
-
-        // depth = amplitude / frequency * 100
-        // Giving depth and frequency calculates amplitude
-        // calculates both amplitude and dcoffset
-        double amplitude = (double) depth * getFrequency() / 100;
-        setAmplitude(amplitude);
     }
 
     /**

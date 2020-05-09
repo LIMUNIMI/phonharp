@@ -80,13 +80,14 @@ public class SynthUnitTest {
 
     @Test
     public void testVibrato() {
-        timbre.setVibrato(new Timbre.Lfo(6, 100));
         buildAndStart(timbre);
-        play();
-        // Changes vibrato config on the fly
-        timbre.setVibrato(new Timbre.Lfo(20, 100));
-        synth.updateTimbreCfg(timbre);
-        play();
+        for (int i = 1; i <= 3; i++) {
+            int depth = i * 30;
+            System.out.println("Depth " + depth + "%");
+            timbre.setVibrato(new Timbre.Lfo(6, depth));
+            synth.updateTimbreCfg(timbre);
+            play();
+        }
     }
 
     @Test
