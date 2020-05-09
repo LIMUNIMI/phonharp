@@ -287,5 +287,6 @@ public class JsynSynthesizer implements Synthesizer {
         }
         Log.d(getClass().getName(), "Vibrato controller value " + value);
         vibrato.setDepth((int) value);
+        vibrato.update(noteFrequency);
     }
 }

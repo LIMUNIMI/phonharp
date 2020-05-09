@@ -10,7 +10,7 @@ public class Vibrato extends Lfo {
     public UnitOutputPort output;
 
     // Maximum vibrato oscillator amplitude, in semitones (3 semitones)
-    private final static int MAX_AMPLITUDE = 3;
+    private final static int MAX_AMPLITUDE = 2;
 
     private int depth;
 

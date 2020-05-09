@@ -12,12 +12,11 @@ public class KeyHandler {
 
     // Constant values, can be moved to configurations
     private final static int HALF_TONE_SEMITONES = -1;
-    private final static int HYSTERESIS_DELAY = 50;
     private final static float CONTROL_VOLUME_FACTOR = 1f / 10;
-    private final static float CONTROL_PITCH_FACTOR = 1f / 4;
+    private final static float CONTROL_PITCH_FACTOR = 1f / 8;
     private final static float CONTROL_HARMONICS_FACTOR = 1f / 50;
-    private final static float CONTROL_TREMOLO_FACTOR = 5;
-    private final static float CONTROL_VIBRATO_FACTOR = 5;
+    private final static float CONTROL_TREMOLO_FACTOR = 2.5f;
+    private final static float CONTROL_VIBRATO_FACTOR = 2.5f;
 
     // Key handler data
     private final Synthesizer synth;
@@ -98,10 +97,12 @@ public class KeyHandler {
         if (timbre.getTapHysteresis() == 0) {
             invokeSynth();
         } else if (!delayedPlayInvoked) {
+            long delay = (long) (timbre.getTapHysteresis() * 1000);
+            Log.d(getClass().getName(), "Delay millis " + delay);
             delayedPlayer.postDelayed(() -> {
                 invokeSynth();
                 delayedPlayInvoked = false;
-            }, HYSTERESIS_DELAY);
+            }, delay);
             delayedPlayInvoked = true;
         }
     }
