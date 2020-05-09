@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.unimi.lim.hmi.entity.Timbre;
-import com.unimi.lim.hmi.music.Note;
-import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 
 import static com.unimi.lim.hmi.entity.Timbre.Controller.NONE;
@@ -25,17 +23,19 @@ public class KeyHandler {
     private final Synthesizer synth;
     private final Scale scale;
     private final int keyOffset;
+    private final Timbre timbre;
     private final Handler delayedPlayer;
 
     private boolean delayedPlayInvoked;
     private int noteNum = -1;
     private int halfTone = 0;
 
-    public KeyHandler(Synthesizer synth, Scale scale, int keyOffset) {
+    public KeyHandler(Synthesizer synth, Scale scale, int keyOffset, Timbre timbre) {
         this.scale = scale;
         this.synth = synth;
         this.keyOffset = keyOffset;
         this.delayedPlayer = new Handler();
+        this.timbre = timbre;
     }
 
     public void keyPressed(int keyNum) {
@@ -63,11 +63,11 @@ public class KeyHandler {
     }
 
     public void control1(float delta) {
-        control(delta, synth.getController1());
+        control(delta, timbre.getController1());
     }
 
     public void control2(float delta) {
-        control(delta, synth.getController2());
+        control(delta, timbre.getController2());
     }
 
     private void control(float delta, Timbre.Controller controller) {
@@ -95,7 +95,7 @@ public class KeyHandler {
     }
 
     private void play() {
-        if (!synth.isMultitapHysteresisEnaled()) {
+        if (timbre.getTapHysteresis() == 0) {
             invokeSynth();
         } else if (!delayedPlayInvoked) {
             delayedPlayer.postDelayed(() -> {

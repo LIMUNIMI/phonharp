@@ -71,7 +71,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Scale scale = new Scale(scaleType, note);
 
         synth = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
-        keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset));
+        keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
         // Setup keyboard listener
         KeyListener keyListener = new KeyListener();

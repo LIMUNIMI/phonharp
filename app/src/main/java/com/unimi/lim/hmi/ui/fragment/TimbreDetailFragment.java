@@ -29,8 +29,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_TAP_HYSTERESIS;
+
 public class TimbreDetailFragment extends Fragment {
 
+    private final Function<Integer, String> MILLIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> MILLIS_TO_SECONDS_DESCRIPTION = val -> String.format("%.2f%s", seekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
     private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", semitoneSeekToModel(val), getResources().getString(R.string.semitone));
@@ -146,6 +149,12 @@ public class TimbreDetailFragment extends Fragment {
                     timbre.setController1(null);
                     timbre.setController2(null);
                 }, onChange);
+        setupSwitch(view, R.id.tap_hysteresis_enabled, R.id.tap_hysteresis_container, timbre.getTapHysteresis() != 0, () -> {
+                    float tapHysteresis = timbre.getTapHysteresis() != 0 ? timbre.getTapHysteresis() : DEFAULT_TAP_HYSTERESIS;
+                    timbre.setTapHysteresis(tapHysteresis);
+                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, MILLIS_DESCRIPTION, () -> modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
+                },
+                () -> timbre.setTapHysteresis(0f), onChange);
     }
 
     private void setupSeek(View view, int seekId, int textViewId, int seekStep, Function<Integer, String> text, Supplier<Integer> supplier, Consumer<Integer> consumer, Runnable onChange) {

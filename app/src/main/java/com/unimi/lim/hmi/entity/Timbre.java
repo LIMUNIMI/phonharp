@@ -8,6 +8,8 @@ public class Timbre implements Serializable {
     // Since there is only one field we leave it here and avoid to create decorator objects
     private transient boolean checked = false;
 
+    public final static float DEFAULT_TAP_HYSTERESIS = 0.05f;
+
     public enum Controller {
         NONE,
         VOLUME,
@@ -21,7 +23,7 @@ public class Timbre implements Serializable {
     private String name;
     private int volume = 100;
     private int harmonics = 50;
-    private boolean multitapHysteresisEnabled = true;
+    private float tapHysteresis = DEFAULT_TAP_HYSTERESIS;
     private Lfo tremolo;
     private Lfo vibrato;
     private Asr volumeAsr;
@@ -71,12 +73,12 @@ public class Timbre implements Serializable {
         this.harmonics = harmonics;
     }
 
-    public boolean isMultitapHysteresisEnabled() {
-        return multitapHysteresisEnabled;
+    public float getTapHysteresis() {
+        return tapHysteresis;
     }
 
-    public void setMultitapHysteresisEnabled(boolean multitapHysteresisEnabled) {
-        this.multitapHysteresisEnabled = multitapHysteresisEnabled;
+    public void setTapHysteresis(float tapHysteresis) {
+        this.tapHysteresis = tapHysteresis;
     }
 
     public Lfo getTremolo() {
@@ -145,8 +147,8 @@ public class Timbre implements Serializable {
 
     public static class Lfo implements Serializable {
 
-        private float rate;
-        private int depth;
+        private float rate = 6;
+        private int depth = 50;
 
         public Lfo() {
         }
@@ -254,4 +256,5 @@ public class Timbre implements Serializable {
             this.high = high;
         }
     }
+
 }

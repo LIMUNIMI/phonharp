@@ -195,21 +195,6 @@ public class JsynSynthesizer implements Synthesizer {
     }
 
     @Override
-    public Timbre.Controller getController1() {
-        return timbre.getController1();
-    }
-
-    @Override
-    public Timbre.Controller getController2() {
-        return timbre.getController2();
-    }
-
-    @Override
-    public boolean isMultitapHysteresisEnaled() {
-        return timbre.isMultitapHysteresisEnabled();
-    }
-
-    @Override
     public void press(double notefrequency) {
         this.frequency = notefrequency;
 

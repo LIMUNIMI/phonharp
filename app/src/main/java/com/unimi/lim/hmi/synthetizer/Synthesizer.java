@@ -28,10 +28,4 @@ public interface Synthesizer {
 
     String getTimbreId();
 
-    Timbre.Controller getController1();
-
-    Timbre.Controller getController2();
-
-    boolean isMultitapHysteresisEnaled();
-
 }

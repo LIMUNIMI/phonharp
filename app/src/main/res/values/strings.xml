@@ -30,10 +30,13 @@
     <string name="harmonics_odd">Odd</string>
     <string name="harmonics_all_to_odd">Pulse width</string>
     <string name="seconds">s</string>
+    <string name="milliseconds">ms</string>
     <string name="semitone">semitone</string>
     <string name="hertz">Hz</string>
     <string name="volume">Volume</string>
     <string name="harmonics">Harmonics</string>
+    <string name="tap_hysteresis">Multitap Hysteresis</string>
+    <string name="tap_hysteresis_delay">Delay</string>
     <string name="swipe_controller">Swipe controller</string>
     <string name="swipe_horizontal">Swipe horizontal</string>
     <string name="swipe_vertical">Swipe vertical</string>

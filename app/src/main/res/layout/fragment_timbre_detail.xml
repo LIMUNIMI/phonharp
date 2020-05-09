@@ -82,7 +82,60 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/timbre_detail_component_margin"
                 android:max="100" />
+        </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/tap_hysteresis_enabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:text="@string/tap_hysteresis"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorAccent" />
+
+            <LinearLayout
+                android:id="@+id/tap_hysteresis_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tap_hysteresis_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                    android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                    android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                    android:text="@string/tap_hysteresis_delay"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+                <TextView
+                    android:id="@+id/tap_hysteresis_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                    android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/darker_gray" />
+
+                <SeekBar
+                    android:id="@+id/tap_hysteresis_seek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/timbre_detail_component_margin"
+                    android:max="50" />
+            </LinearLayout>
         </LinearLayout>
 
         <View
