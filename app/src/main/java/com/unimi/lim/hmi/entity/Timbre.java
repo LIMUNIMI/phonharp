@@ -179,8 +179,8 @@ public class Timbre implements Serializable {
 
         private float initialValue;
         private float finalValue;
-        private float attackTime;
-        private float releaseTime;
+        private float attackTime = 0.2f;
+        private float releaseTime = 0.2f;
 
         public Asr() {
 

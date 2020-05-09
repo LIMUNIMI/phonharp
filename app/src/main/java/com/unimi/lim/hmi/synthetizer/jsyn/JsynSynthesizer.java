@@ -68,7 +68,9 @@ public class JsynSynthesizer implements Synthesizer {
     private int vibratoDepth;
 
     // Played note
-    double frequency;
+    private double noteFrequency;
+    // True if one or more keys are pressed
+    private boolean pressing = false;
 
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
@@ -196,7 +198,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void press(double notefrequency) {
-        this.frequency = notefrequency;
+        this.noteFrequency = notefrequency;
 
         // Adjust vibrato depending on note frequency
         vibrato.update(notefrequency);
@@ -207,10 +209,18 @@ public class JsynSynthesizer implements Synthesizer {
                 notefrequency,
                 NoteUtils.calculateNoteByOffset(notefrequency, pitchAsrFinalSemitoneOffset)
         );
-        // Enqueue attack and sustain events to envelops
-        volumeEnvelop.press();
-        pitchEnvelop.press();
-        harmonicsEnvelop.press();
+
+        if (!pressing) {
+            // Enqueue attack and sustain events to envelops
+            volumeEnvelop.press();
+            pitchEnvelop.press();
+            harmonicsEnvelop.press();
+        } else {
+            volumeEnvelop.sustain();
+            pitchEnvelop.sustain();
+            harmonicsEnvelop.sustain();
+        }
+        pressing = true;
     }
 
     @Override
@@ -218,6 +228,7 @@ public class JsynSynthesizer implements Synthesizer {
         volumeEnvelop.release();
         pitchEnvelop.release();
         harmonicsEnvelop.release();
+        pressing = false;
     }
 
     @Override
@@ -245,7 +256,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     @Override
     public void controlPitch(float delta) {
-        double pitchDelta = NoteUtils.calculateNoteByOffset(frequency, delta) - frequency;
+        double pitchDelta = NoteUtils.calculateNoteByOffset(noteFrequency, delta) - noteFrequency;
         double value = pitchController.get() + pitchDelta;
         Log.d(getClass().getName(), "Pitch controller value " + value);
         pitchController.set(value);

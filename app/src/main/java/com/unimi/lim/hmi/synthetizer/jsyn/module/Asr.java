@@ -11,7 +11,7 @@ public class Asr extends Circuit {
 
     private VariableRateMonoReader envPlayer;
     private SegmentedEnvelope envData;
-    private double[] pairs = new double[6];
+    private double[] pairs = new double[8];
 
     /**
      * Asr constructor
@@ -77,6 +77,7 @@ public class Asr extends Circuit {
         envData.writeDouble(0, initialValue);
         envData.writeDouble(1, sustainValue);
         envData.writeDouble(2, finalValue);
+        envData.writeDouble(3, sustainValue);
     }
 
     /**
@@ -92,12 +93,15 @@ public class Asr extends Circuit {
         // First frame is used to setup initial value, indeed first frame time is 0
         pairs[0] = 0;
         pairs[1] = initialValue;
-        // Attack frame
+        // Attack frame, reaches sustain value after attackTime
         pairs[2] = attackTime;
         pairs[3] = sustainValue;
-        // Release frame
+        // Release frame, reaches final value after releaseTime
         pairs[4] = releaseTime;
         pairs[5] = finalValue;
+        // Shortcut to sustain value, reaches sustain value immediately
+        pairs[6] = 0;
+        pairs[7] = sustainValue;
         // Setup SegmentedEnvelope
         envData.write(pairs);
     }
@@ -117,6 +121,15 @@ public class Asr extends Circuit {
      */
     public void release() {
         envPlayer.dataQueue.queue(envData, 2, 1);
+    }
+
+    /**
+     * Shortcut to sustain value, reaches sustain value immediately
+     */
+    public void sustain() {
+        // TODO comment or uncomment queue clear
+//        envPlayer.dataQueue.clear();
+        envPlayer.dataQueue.queue(envData, 3, 1);
     }
 
 }
