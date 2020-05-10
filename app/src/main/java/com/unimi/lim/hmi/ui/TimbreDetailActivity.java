@@ -50,7 +50,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().build();
         viewModel.getWorking().observe(this, timbre -> {
             Log.d(getClass().getName(), "Updating timbre configuration");
-            synthesizer.updateTimbreCfg(timbre);
+            synthesizer.updateSynthesizerCfg(timbre);
         });
 
         // When activity is created for the first time inject timbre detail fragment

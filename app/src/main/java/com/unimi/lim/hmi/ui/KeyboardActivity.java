@@ -18,7 +18,7 @@ import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
-import com.unimi.lim.hmi.music.KeyHandler;
+import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;

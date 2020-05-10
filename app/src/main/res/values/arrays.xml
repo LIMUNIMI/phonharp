@@ -44,15 +44,6 @@
         <item>right-handed</item>
     </string-array>
 
-    <string-array name="swipe_control">
-        <item>none</item>
-        <item>volume</item>
-        <item>pitch</item>
-        <item>pulse-width</item>
-    </string-array>
-
-    <!-- TODO move to localization -->
-
     <string-array name="notes_names">
         <item>C</item>
         <item>C#/Db</item>

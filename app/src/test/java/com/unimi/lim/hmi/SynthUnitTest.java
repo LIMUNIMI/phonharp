@@ -42,11 +42,11 @@ public class SynthUnitTest {
         play();
 
         timbre.setVolume(50);
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
 
         timbre.setVolume(10);
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
     }
 
@@ -54,15 +54,15 @@ public class SynthUnitTest {
     public void testHarmonics() {
         buildAndStart(timbre);
         timbre.setHarmonics(0);
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
 
         timbre.setHarmonics(45);
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
 
         timbre.setHarmonics(90);
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
 
     }
@@ -74,7 +74,7 @@ public class SynthUnitTest {
         play();
         // Changes tremolo config on the fly
         timbre.setTremolo(new Timbre.Lfo(20, 50));
-        synth.updateTimbreCfg(timbre);
+        synth.updateSynthesizerCfg(timbre);
         play();
     }
 
@@ -85,7 +85,7 @@ public class SynthUnitTest {
             int depth = i * 30;
             System.out.println("Depth " + depth + "%");
             timbre.setVibrato(new Timbre.Lfo(6, depth));
-            synth.updateTimbreCfg(timbre);
+            synth.updateSynthesizerCfg(timbre);
             play();
         }
     }

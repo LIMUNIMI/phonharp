@@ -8,7 +8,7 @@ public interface Synthesizer {
 
     void stop();
 
-    void updateTimbreCfg(Timbre timbre);
+    void updateSynthesizerCfg(Timbre timbre);
 
     void press(double frequency);
 

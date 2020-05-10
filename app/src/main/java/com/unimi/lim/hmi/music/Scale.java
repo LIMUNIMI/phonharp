@@ -10,6 +10,12 @@ public class Scale {
     private Type type;
     private Integer startIdx;
 
+    /**
+     * Setup scale instance and calculate initial note array index depending on specified scale note (eg. C4)
+     *
+     * @param type      major or minor
+     * @param startNote scale note
+     */
     public Scale(Type type, Note startNote) {
         this.type = type;
 
@@ -53,8 +59,10 @@ public class Scale {
             noteIdx -= (noteNumInOctave > 4 ? 1 : 0);
         }
 
-        // FIXME checks for out of bound
-        return Note.values()[startIdx + noteIdx + modifier];
+        // Calculate resulting index; in case of index out of bound always plays the last available note
+        int idx = startIdx + noteIdx + modifier;
+        idx = idx < Note.values().length ? idx : Note.values().length - 1;
+        return Note.values()[idx];
     }
 
 }

@@ -1,5 +1,8 @@
 package com.unimi.lim.hmi.music;
 
+/**
+ * Note frequencies from octave 0 to octave 6
+ */
 public enum Note {
     C0(16.35),
     Cd0(17.32),

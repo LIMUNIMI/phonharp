@@ -134,4 +134,9 @@ public class ScaleUnitTest {
     public void minScaleNote12_isCorrect() {
         assertEquals(Note.F5, minScale.getNote(12));
     }
+
+    @Test
+    public void outOfBound_isCorrect() {
+        assertEquals(Note.B6, minScale.getNote(120));
+    }
 }

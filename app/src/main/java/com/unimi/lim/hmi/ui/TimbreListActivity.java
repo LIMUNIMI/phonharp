@@ -112,7 +112,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
      */
     private void playTimbreSample(Timbre timbre) {
         // Play sample of provided timbre
-        synthesizer.updateTimbreCfg(timbre);
+        synthesizer.updateSynthesizerCfg(timbre);
         synthesizer.press(Note.C3.getFrequency());
         playingSound = true;
 

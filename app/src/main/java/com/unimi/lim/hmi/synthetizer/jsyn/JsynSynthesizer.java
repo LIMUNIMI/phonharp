@@ -20,31 +20,56 @@ import com.unimi.lim.hmi.util.TimbreUtils;
 
 public class JsynSynthesizer implements Synthesizer {
 
+    /**
+     * Builder with available configurations to create a new synth instance
+     */
     public static class Builder {
 
         private Timbre timbre;
         private AudioDeviceManager audioDeviceManager;
 
+        /**
+         * Setup specified timbre configuration, if not used then default timbre wille be used
+         *
+         * @param timbre
+         * @return Builder instance
+         */
         public Builder timbreCfg(Timbre timbre) {
             this.timbre = timbre;
             return this;
         }
 
+        /**
+         * Setup android audio device manager, if not used then default audio device will be used
+         *
+         * @return Builder instance
+         */
         public Builder androidAudioDeviceManager() {
             this.audioDeviceManager = new JSynAndroidAudioDevice();
             return this;
         }
 
+        /**
+         * Setup specified audio device manager, if not used then default audio device will be used
+         *
+         * @return Builder instance
+         */
         public Builder audioDeviceManager(AudioDeviceManager audioDeviceManager) {
             this.audioDeviceManager = audioDeviceManager;
             return this;
         }
 
+        /**
+         * Return synth instance
+         *
+         * @return synth instance
+         */
         public JsynSynthesizer build() {
             return new JsynSynthesizer(audioDeviceManager, timbre);
         }
     }
 
+    // Jsyn modules and synth properties
     private final com.jsyn.Synthesizer synth;
     private final LineOut lineOut;
     private final PulseOscillator osc;
@@ -57,6 +82,7 @@ public class JsynSynthesizer implements Synthesizer {
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
 
+    // Timbre configuration
     private Timbre timbre;
 
     // From timbre config, values are converted from stored values (timbre instance) to jsyn values
@@ -69,7 +95,7 @@ public class JsynSynthesizer implements Synthesizer {
 
     // Played note
     private double noteFrequency;
-    // True if one or more keys are pressed
+    // True if keys are pressed
     private boolean pressing = false;
 
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
@@ -129,9 +155,12 @@ public class JsynSynthesizer implements Synthesizer {
         osc.output.connect(0, lineOut.input, 0);
         osc.output.connect(0, lineOut.input, 1);
 
-        updateTimbreCfg(timbre);
+        updateSynthesizerCfg(timbre);
     }
 
+    /**
+     * Startup synth and synth modules
+     */
     @Override
     public void start() {
         synth.start();
@@ -141,6 +170,9 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsEnvelop.start();
     }
 
+    /**
+     * Stop synth and synth modules
+     */
     @Override
     public void stop() {
         volumeEnvelop.stop();
@@ -150,8 +182,14 @@ public class JsynSynthesizer implements Synthesizer {
         synth.stop();
     }
 
+
+    /**
+     * Update timbre configuration
+     *
+     * @param timbre
+     */
     @Override
-    public void updateTimbreCfg(Timbre timbre) {
+    public void updateSynthesizerCfg(Timbre timbre) {
         this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volume = timbre.getVolume() / 100f;
@@ -191,11 +229,21 @@ public class JsynSynthesizer implements Synthesizer {
                 (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f));
     }
 
+    /**
+     * Configuration Id
+     *
+     * @return configuration id
+     */
     @Override
     public String getTimbreId() {
         return timbre.getId();
     }
 
+    /**
+     * Play specified note frequency
+     *
+     * @param notefrequency
+     */
     @Override
     public void press(double notefrequency) {
         this.noteFrequency = notefrequency;
@@ -223,6 +271,9 @@ public class JsynSynthesizer implements Synthesizer {
         pressing = true;
     }
 
+    /**
+     * Release playing sound
+     */
     @Override
     public void release() {
         volumeEnvelop.release();
@@ -231,6 +282,9 @@ public class JsynSynthesizer implements Synthesizer {
         pressing = false;
     }
 
+    /**
+     * Reset dynamic controller state
+     */
     @Override
     public void controlReset() {
         volumeController.set(1);
@@ -240,6 +294,11 @@ public class JsynSynthesizer implements Synthesizer {
         vibrato.setDepth(vibratoDepth);
     }
 
+    /**
+     * Control volume, specified delta value is added to current volume value (volume range is 0-1)
+     *
+     * @param delta volume delta
+     */
     @Override
     public void controlVolume(float delta) {
         double value = volumeController.get() + delta;
@@ -254,6 +313,11 @@ public class JsynSynthesizer implements Synthesizer {
         volumeController.set(value);
     }
 
+    /**
+     * Control pitch, specified delta is added to current pitch
+     *
+     * @param delta in semitones
+     */
     @Override
     public void controlPitch(float delta) {
         double pitchDelta = NoteUtils.calculateNoteByOffset(noteFrequency, delta) - noteFrequency;
@@ -262,6 +326,11 @@ public class JsynSynthesizer implements Synthesizer {
         pitchController.set(value);
     }
 
+    /**
+     * Control harmonics, specified delta is added to current harmonics value (harmonics range is -1/1)
+     *
+     * @param delta harmonics delta
+     */
     @Override
     public void controlHarmonics(float delta) {
         double value = harmonicsController.getValue() + delta;
@@ -269,6 +338,11 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsController.set(value);
     }
 
+    /**
+     * Control tremolo depth, specified delta is added to current depth (depth range is 0-100)
+     *
+     * @param delta tremolo depth delta
+     */
     @Override
     public void controlTremoloDepth(float delta) {
         double value = tremolo.getDepth() + delta;
@@ -279,6 +353,11 @@ public class JsynSynthesizer implements Synthesizer {
         tremolo.setDepth((int) value);
     }
 
+    /**
+     * Control vibrato depth, specified delta is added to current depth (depth range is 0-100)
+     *
+     * @param delta vibrato depth delta
+     */
     @Override
     public void controlVibratoDepth(float delta) {
         double value = vibrato.getDepth() + delta;
