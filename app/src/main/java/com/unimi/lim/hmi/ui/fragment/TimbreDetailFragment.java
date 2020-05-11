@@ -34,9 +34,12 @@ import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_TAP_HYSTERESIS;
 
 public class TimbreDetailFragment extends Fragment {
 
+    private final static float SEEK_TO_MODEL_EXP = 3f / 2f;
+    private final static float MODEL_TO_SEEK_EXP = 2f / 3f;
+
     // Utility functions to handle descriptions
     private final Function<Integer, String> MILLIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
-    private final Function<Integer, String> SECONDS_DESCRIPTION = val -> String.format("%.2f%s", seekToModel(val), getResources().getString(R.string.seconds));
+    private final Function<Integer, String> PORTAMENTO_DESCRIPTION = val -> String.format("%.0f%s", portamentoSeekToModel(val) * 1000, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> ASR_TIME_DESCRIPTION = val -> String.format("%.2f%s", asrTimeSeekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
     private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", asrPitchSeekToModel(val), getResources().getString(R.string.semitone));
@@ -185,7 +188,7 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Hysteresis Seek bar
                     float portamento = timbre.getPortamento() != 0 ? timbre.getPortamento() : DEFAULT_PORTAMENTO_TIME;
                     timbre.setPortamento(portamento);
-                    setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 10, SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 1, PORTAMENTO_DESCRIPTION, () -> portamentoModelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(portamentoSeekToModel(val)), onChange);
                 },
                 () -> timbre.setPortamento(0f), onChange);
     }
@@ -327,13 +330,13 @@ public class TimbreDetailFragment extends Fragment {
     }
 
     /**
-     * Convert asr time from seek to model: m = (s/1000)^(3/2) * 5, where 1000 is seek bar max value and 5 is time max value in seconds (5 seconds)
+     * Convert asr time from seek to model: m = (s/1000)^(3/2) * 5, where 10000 is seek bar max value and 5 is time max value in seconds (5 seconds)
      *
      * @param value seek value
      * @return model value
      */
     private float asrTimeSeekToModel(int value) {
-        return (float) Math.pow((double) value / 10000, 3f / 2f) * 5;
+        return (float) Math.pow((double) value / 10000, SEEK_TO_MODEL_EXP) * 5;
     }
 
     /**
@@ -343,7 +346,27 @@ public class TimbreDetailFragment extends Fragment {
      * @return
      */
     private int asrTimeModelToSeek(float value) {
-        return (int) (Math.pow(value / 5, 2f / 3f) * 10000);
+        return (int) (Math.pow(value / 5, MODEL_TO_SEEK_EXP) * 10000);
+    }
+
+    /**
+     * Convert asr time value from model to seek. s = (m)^(2/3) * 10000, where 10000 is seek bar max value and 5 is time max value in seconds (5 seconds)
+     *
+     * @param value
+     * @return
+     */
+    private int portamentoModelToSeek(float value) {
+        return (int) (Math.pow(value, MODEL_TO_SEEK_EXP) * 10000);
+    }
+
+    /**
+     * Convert asr time from seek to model: m = (s/1000)^(3/2), where 1000 is seek bar max value and 5 is time max value in seconds (5 seconds)
+     *
+     * @param value seek value
+     * @return model value
+     */
+    private float portamentoSeekToModel(int value) {
+        return (float) Math.pow((double) value / 10000, SEEK_TO_MODEL_EXP);
     }
 
     /**

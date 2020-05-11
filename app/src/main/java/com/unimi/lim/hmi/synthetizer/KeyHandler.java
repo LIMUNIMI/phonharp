@@ -153,12 +153,12 @@ public class KeyHandler {
         long start = System.currentTimeMillis();
         if (noteNum < 0) {
             synth.release();
-            Log.d(getClass().getName(), "Note released " + (System.currentTimeMillis() - start));
+//            Log.d(getClass().getName(), "Note released " + (System.currentTimeMillis() - start));
         } else {
             // Calculate the note on the scale
             Note note = scale.getNote(noteNum + keyOffset, halfTone);
             synth.press(note.getFrequency());
-            Log.d(getClass().getName(), "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
+//            Log.d(getClass().getName(), "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
         }
     }
 

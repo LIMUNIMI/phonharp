@@ -188,7 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="1000" />
+                    android:max="10000" />
             </LinearLayout>
         </LinearLayout>
 
