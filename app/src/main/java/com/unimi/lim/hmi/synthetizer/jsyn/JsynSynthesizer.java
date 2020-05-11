@@ -193,8 +193,8 @@ public class JsynSynthesizer implements Synthesizer {
         this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volume = timbre.getVolume() / 100f;
-        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics)
-        harmonics = 1f - timbre.getHarmonics() / 100f;
+        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics). Also, avoid continuous signal.
+        harmonics = Math.min(1f - timbre.getHarmonics() / 100f, 0.95);
         tremoloDepth = TimbreUtils.safeLfoDepth(timbre.getTremolo());
         vibratoDepth = TimbreUtils.safeLfoDepth(timbre.getVibrato());
 

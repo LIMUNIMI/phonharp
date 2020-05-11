@@ -254,7 +254,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="20000" />
+                    android:max="50000" />
 
                 <TextView
                     android:id="@+id/tremolo_depth_title"
@@ -335,7 +335,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="20000" />
+                    android:max="50000" />
 
                 <TextView
                     android:id="@+id/vibrato_depth_title"
@@ -416,7 +416,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="2000" />
+                    android:max="10000" />
 
                 <TextView
                     android:id="@+id/volume_asr_release_title"
@@ -442,7 +442,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="2000" />
+                    android:max="10000" />
             </LinearLayout>
 
         </LinearLayout>
@@ -523,7 +523,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="2000" />
+                    android:max="10000" />
 
                 <TextView
                     android:id="@+id/pitch_asr_final_title"
@@ -575,7 +575,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-                    android:max="2000" />
+                    android:max="10000" />
             </LinearLayout>
 
         </LinearLayout>
@@ -658,7 +658,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
 
-                    android:max="2000" />
+                    android:max="10000" />
 
                 <TextView
                     android:id="@+id/pwidth_asr_final_title"
@@ -711,8 +711,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/timbre_detail_component_margin"
-
-                    android:max="2000" />
+                    android:max="10000" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

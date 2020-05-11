@@ -58,14 +58,22 @@ public class NoteUtilsUnitTest {
         for (int i = 0; i < n; i++) {
             NoteUtils.getNoteByOffset(data[i], 1);
         }
-        System.out.println("getNoteByOffset " + (System.currentTimeMillis() - start));
+        System.out.println("getNoteByOffset x" + n + ", " + (System.currentTimeMillis() - start));
 
         // calculateNoteByOffset
         start = System.currentTimeMillis();
         for (int i = 0; i < n; i++) {
             NoteUtils.calculateNoteByOffset(data[i].getFrequency(), 1);
         }
-        System.out.println("calculateNoteByOffset " + (System.currentTimeMillis() - start));
+        System.out.println("calculateNoteByOffset x" + n + ", " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        NoteUtils.getNoteByOffset(Note.C4, 1);
+        System.out.println("getNoteByOffset single " + (System.currentTimeMillis() - start));
+
+        start = System.currentTimeMillis();
+        NoteUtils.calculateNoteByOffset(Note.C4.getFrequency(), 1);
+        System.out.println("calculateNoteByOffset single " + (System.currentTimeMillis() - start));
     }
 
 

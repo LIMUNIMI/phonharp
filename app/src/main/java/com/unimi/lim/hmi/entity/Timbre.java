@@ -8,7 +8,13 @@ public class Timbre implements Serializable {
     // Since there is only one field we leave it here and avoid to create decorator objects
     private transient boolean checked = false;
 
-    public final static float DEFAULT_TAP_HYSTERESIS = 0.05f;
+    public final static int DEFAULT_VOLUME = 100;   // percentage
+    public final static int DEFAULT_HARMONICS = 50; // percentage
+    public final static float DEFAULT_TAP_HYSTERESIS = 0.05f; // seconds
+    public final static float DEFAULT_LFO_RATE = 6; // hertz
+    public final static int DEFAULT_LFO_DEPTH = 5; // percentage
+    public final static float DEFAULT_ASR_ATTACK_TIME = 0.2f; // seconds
+    public final static float DEFAULT_ASR_RELEASE_TIME = 0.2f; // seconds
 
     public enum Controller {
         NONE,
@@ -21,8 +27,8 @@ public class Timbre implements Serializable {
 
     private String id;
     private String name;
-    private int volume = 100;
-    private int harmonics = 50;
+    private int volume = DEFAULT_VOLUME;
+    private int harmonics = DEFAULT_HARMONICS;
     private float tapHysteresis = DEFAULT_TAP_HYSTERESIS;
     private Lfo tremolo;
     private Lfo vibrato;
@@ -147,8 +153,8 @@ public class Timbre implements Serializable {
 
     public static class Lfo implements Serializable {
 
-        private float rate = 6;
-        private int depth = 50;
+        private float rate = DEFAULT_LFO_RATE;
+        private int depth = DEFAULT_LFO_DEPTH;
 
         public Lfo() {
         }
@@ -179,8 +185,8 @@ public class Timbre implements Serializable {
 
         private float initialValue;
         private float finalValue;
-        private float attackTime = 0.2f;
-        private float releaseTime = 0.2f;
+        private float attackTime = DEFAULT_ASR_ATTACK_TIME;
+        private float releaseTime = DEFAULT_ASR_RELEASE_TIME;
 
         public Asr() {
 

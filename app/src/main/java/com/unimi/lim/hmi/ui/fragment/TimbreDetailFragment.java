@@ -35,9 +35,9 @@ public class TimbreDetailFragment extends Fragment {
 
     // Utility functions to handle descriptions
     private final Function<Integer, String> MILLIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
-    private final Function<Integer, String> MILLIS_TO_SECONDS_DESCRIPTION = val -> String.format("%.2f%s", seekToModel(val), getResources().getString(R.string.seconds));
+    private final Function<Integer, String> ASR_TIME_DESCRIPTION = val -> String.format("%.2f%s", asrTimeSeekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
-    private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", semitoneSeekToModel(val), getResources().getString(R.string.semitone));
+    private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", asrPitchSeekToModel(val), getResources().getString(R.string.semitone));
     private final Function<Integer, String> HERTZ_DESCRIPTION = val -> String.format("%.1f%s", seekToModel(val), getResources().getString(R.string.hertz));
     private final Function<Integer, String> HARMONICS_DESCRIPTION = val ->
             val == 100 ? String.format("%s", getResources().getString(R.string.harmonics_odd)) :
@@ -129,8 +129,8 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Volume ASR Seek bars
                     Timbre.Asr asr = timbre.getVolumeAsr() != null ? timbre.getVolumeAsr() : new Timbre.Asr();
                     timbre.setVolumeAsr(asr);
-                    setupSeek(view, R.id.volume_asr_attack_seek, R.id.volume_asr_attack_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getVolumeAsr().getAttackTime()), val -> timbre.getVolumeAsr().setAttackTime(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.volume_asr_release_seek, R.id.volume_asr_release_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getVolumeAsr().getReleaseTime()), val -> timbre.getVolumeAsr().setReleaseTime(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.volume_asr_attack_seek, R.id.volume_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getVolumeAsr().getAttackTime()), val -> timbre.getVolumeAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.volume_asr_release_seek, R.id.volume_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getVolumeAsr().getReleaseTime()), val -> timbre.getVolumeAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
                 },
                 () -> timbre.setVolumeAsr(null), onChange);
 
@@ -139,10 +139,10 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Pitch ASR Seek bars
                     Timbre.Asr asr = timbre.getPitchAsr() != null ? timbre.getPitchAsr() : new Timbre.Asr();
                     timbre.setPitchAsr(asr);
-                    setupSeek(view, R.id.pitch_asr_attack_seek, R.id.pitch_asr_attack_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getPitchAsr().getAttackTime()), val -> timbre.getPitchAsr().setAttackTime(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_release_seek, R.id.pitch_asr_release_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getPitchAsr().getReleaseTime()), val -> timbre.getPitchAsr().setReleaseTime(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_init_seek, R.id.pitch_asr_init_text, 1, SEMITONE_DESCRIPTION, () -> semitoneModelToSeek(timbre.getPitchAsr().getInitialValue()), val -> timbre.getPitchAsr().setInitialValue(semitoneSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_final_seek, R.id.pitch_asr_final_text, 1, SEMITONE_DESCRIPTION, () -> semitoneModelToSeek(timbre.getPitchAsr().getFinalValue()), val -> timbre.getPitchAsr().setFinalValue(semitoneSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_attack_seek, R.id.pitch_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getPitchAsr().getAttackTime()), val -> timbre.getPitchAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_release_seek, R.id.pitch_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getPitchAsr().getReleaseTime()), val -> timbre.getPitchAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_init_seek, R.id.pitch_asr_init_text, 1, SEMITONE_DESCRIPTION, () -> asrPitchModelToSeek(timbre.getPitchAsr().getInitialValue()), val -> timbre.getPitchAsr().setInitialValue(asrPitchSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_final_seek, R.id.pitch_asr_final_text, 1, SEMITONE_DESCRIPTION, () -> asrPitchModelToSeek(timbre.getPitchAsr().getFinalValue()), val -> timbre.getPitchAsr().setFinalValue(asrPitchSeekToModel(val)), onChange);
                 },
                 () -> timbre.setPitchAsr(null), onChange);
 
@@ -151,8 +151,8 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Harmonics ASR Seek bars
                     Timbre.Asr asr = timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr() : new Timbre.Asr();
                     timbre.setHarmonicsAsr(asr);
-                    setupSeek(view, R.id.harmonics_asr_attack_seek, R.id.harmonics_asr_attack_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getHarmonicsAsr().getAttackTime()), val -> timbre.getHarmonicsAsr().setAttackTime(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.harmonics_asr_release_seek, R.id.harmonics_asr_release_text, 50, MILLIS_TO_SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getHarmonicsAsr().getReleaseTime()), val -> timbre.getHarmonicsAsr().setReleaseTime(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.harmonics_asr_attack_seek, R.id.harmonics_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getHarmonicsAsr().getAttackTime()), val -> timbre.getHarmonicsAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.harmonics_asr_release_seek, R.id.harmonics_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getHarmonicsAsr().getReleaseTime()), val -> timbre.getHarmonicsAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
                     setupSeek(view, R.id.harmonics_asr_init_seek, R.id.harmonics_asr_init_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getInitialValue(), val -> timbre.getHarmonicsAsr().setInitialValue(val), onChange);
                     setupSeek(view, R.id.harmonics_asr_final_seek, R.id.harmonics_asr_final_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getFinalValue(), val -> timbre.getHarmonicsAsr().setFinalValue(val), onChange);
                 },
@@ -316,22 +316,42 @@ public class TimbreDetailFragment extends Fragment {
     }
 
     /**
-     * Convert semitones value from seek to model
+     * Convert asr time from seek to model: m = (s/1000)^(3/2) * 5, where 1000 is seek bar max value and 5 is time max value in seconds (5 seconds)
+     *
+     * @param value seek value
+     * @return model value
+     */
+    private float asrTimeSeekToModel(int value) {
+        return (float) Math.pow((double) value / 10000, 3f / 2f) * 5;
+    }
+
+    /**
+     * Convert asr time value from model to seek. s = (m / 5)^(2/3) * 1000, where 1000 is seek bar max value and 5 is time max value in seconds (5 seconds)
+     *
+     * @param value
+     * @return
+     */
+    private int asrTimeModelToSeek(float value) {
+        return (int) (Math.pow(value / 5, 2f / 3f) * 10000);
+    }
+
+    /**
+     * Convert semitones value from seek to model. Seek range is 0/48, model range is -24/+24.
      *
      * @param value seek semitone value
      * @return model semitone value
      */
-    private float semitoneSeekToModel(int value) {
+    private float asrPitchSeekToModel(int value) {
         return (float) value - 24;
     }
 
     /**
-     * Convert semitones value from model to seek
+     * Convert semitones value from model to seek. Seek range is 0/48, model range is -24/+24.
      *
      * @param value model semitone value
      * @return seek semitone value
      */
-    private int semitoneModelToSeek(float value) {
+    private int asrPitchModelToSeek(float value) {
         return (int) value + 24;
     }
 
