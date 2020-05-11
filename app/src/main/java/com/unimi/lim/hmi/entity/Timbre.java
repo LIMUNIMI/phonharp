@@ -11,6 +11,7 @@ public class Timbre implements Serializable {
     public final static int DEFAULT_VOLUME = 100;   // percentage
     public final static int DEFAULT_HARMONICS = 50; // percentage
     public final static float DEFAULT_TAP_HYSTERESIS = 0.05f; // seconds
+    public final static float DEFAULT_PORTAMENTO_TIME = 0.05f; // seconds
     public final static float DEFAULT_LFO_RATE = 6; // hertz
     public final static int DEFAULT_LFO_DEPTH = 5; // percentage
     public final static float DEFAULT_ASR_ATTACK_TIME = 0.2f; // seconds
@@ -30,6 +31,7 @@ public class Timbre implements Serializable {
     private int volume = DEFAULT_VOLUME;
     private int harmonics = DEFAULT_HARMONICS;
     private float tapHysteresis = DEFAULT_TAP_HYSTERESIS;
+    private float portamento;
     private Lfo tremolo;
     private Lfo vibrato;
     private Asr volumeAsr;
@@ -85,6 +87,14 @@ public class Timbre implements Serializable {
 
     public void setTapHysteresis(float tapHysteresis) {
         this.tapHysteresis = tapHysteresis;
+    }
+
+    public float getPortamento() {
+        return portamento;
+    }
+
+    public void setPortamento(float portamento) {
+        this.portamento = portamento;
     }
 
     public Lfo getTremolo() {

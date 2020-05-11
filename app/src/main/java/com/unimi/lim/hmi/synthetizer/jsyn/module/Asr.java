@@ -90,6 +90,20 @@ public class Asr extends Circuit {
      * @param finalValue   final value (note that volume value range and pulse width value rage is between 0 and 1)
      */
     public void update(double initialValue, double attackTime, double sustainValue, double releaseTime, double finalValue) {
+        update(initialValue, attackTime, sustainValue, releaseTime, finalValue, 0);
+    }
+
+    /**
+     * Update envelop values and time
+     *
+     * @param initialValue   initial value (note that volume value range and pulse width value rage is between 0 and 1)
+     * @param attackTime     attack time in seconds
+     * @param sustainValue   sustain value (note that volume value range and pulse width value rage is between 0 and 1)
+     * @param releaseTime    release time in seconds
+     * @param finalValue     final value (note that volume value range and pulse width value rage is between 0 and 1)
+     * @param portamentoTime portamento time in seconds
+     */
+    public void update(double initialValue, double attackTime, double sustainValue, double releaseTime, double finalValue, double portamentoTime) {
         // First frame is used to setup initial value, indeed first frame time is 0
         pairs[0] = 0;
         pairs[1] = initialValue;
@@ -99,8 +113,8 @@ public class Asr extends Circuit {
         // Release frame, reaches final value after releaseTime
         pairs[4] = releaseTime;
         pairs[5] = finalValue;
-        // Shortcut to sustain value, reaches sustain value immediately
-        pairs[6] = 0;
+        // Shortcut to sustain value, reaches sustain value portamento time or immediately if portamento time was not specified
+        pairs[6] = portamentoTime;
         pairs[7] = sustainValue;
         // Setup SegmentedEnvelope
         envData.write(pairs);
@@ -110,7 +124,6 @@ public class Asr extends Circuit {
      * Starting from initial value reaches sustain value after attack time seconds
      */
     public void press() {
-        // TODO comment or uncomment queue clear
         envPlayer.dataQueue.clear();
         envPlayer.dataQueue.queue(envData, 0, 1);
         envPlayer.dataQueue.queue(envData, 1, 1);
@@ -120,15 +133,14 @@ public class Asr extends Circuit {
      * Starting from sustain value reaches final value after release time seconds
      */
     public void release() {
+        envPlayer.dataQueue.clear(); // clear to queue to release immediately; eventually stop attack phase
         envPlayer.dataQueue.queue(envData, 2, 1);
     }
 
     /**
-     * Shortcut to sustain value, reaches sustain value immediately
+     * Shortcut to sustain value, reaches sustain value after portamento time or immediately if portamento time was not specified
      */
     public void sustain() {
-        // TODO comment or uncomment queue clear
-//        envPlayer.dataQueue.clear();
         envPlayer.dataQueue.queue(envData, 3, 1);
     }
 

@@ -29,12 +29,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_PORTAMENTO_TIME;
 import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_TAP_HYSTERESIS;
 
 public class TimbreDetailFragment extends Fragment {
 
     // Utility functions to handle descriptions
     private final Function<Integer, String> MILLIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
+    private final Function<Integer, String> SECONDS_DESCRIPTION = val -> String.format("%.2f%s", seekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> ASR_TIME_DESCRIPTION = val -> String.format("%.2f%s", asrTimeSeekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
     private final Function<Integer, String> SEMITONE_DESCRIPTION = val -> String.format("%.0f %s", asrPitchSeekToModel(val), getResources().getString(R.string.semitone));
@@ -177,6 +179,15 @@ public class TimbreDetailFragment extends Fragment {
                     setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, MILLIS_DESCRIPTION, () -> modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
                 },
                 () -> timbre.setTapHysteresis(0f), onChange);
+
+        // Portamento Switch
+        setupSwitch(view, R.id.portamento_enabled, R.id.portamento_container, timbre.getPortamento() != 0, () -> {
+                    // Setup Hysteresis Seek bar
+                    float portamento = timbre.getPortamento() != 0 ? timbre.getPortamento() : DEFAULT_PORTAMENTO_TIME;
+                    timbre.setPortamento(portamento);
+                    setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 10, SECONDS_DESCRIPTION, () -> modelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(seekToModel(val)), onChange);
+                },
+                () -> timbre.setPortamento(0f), onChange);
     }
 
     /**

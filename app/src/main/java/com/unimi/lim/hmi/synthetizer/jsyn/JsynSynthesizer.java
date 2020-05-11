@@ -217,7 +217,8 @@ public class JsynSynthesizer implements Synthesizer {
                 TimbreUtils.safeAsrAttackTime(timbre.getPitchAsr()),
                 0,
                 TimbreUtils.safeAsrReleaseTime(timbre.getPitchAsr()),
-                0);
+                0,
+                timbre.getPortamento());
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         // If harmonicsEnvelopAsr is not configured (is null) then initial and final values are set to harmonics
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics)
@@ -259,11 +260,12 @@ public class JsynSynthesizer implements Synthesizer {
         );
 
         if (!pressing) {
-            // Enqueue attack and sustain events to envelops
+            // Enqueue attack events to envelops
             volumeEnvelop.press();
             pitchEnvelop.press();
             harmonicsEnvelop.press();
         } else {
+            // In case of legato hols sustain. Note that pitch envelop may reaches new sustain value after portamento delay
             volumeEnvelop.sustain();
             pitchEnvelop.sustain();
             harmonicsEnvelop.sustain();

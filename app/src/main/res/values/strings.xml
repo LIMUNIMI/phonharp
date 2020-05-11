@@ -40,6 +40,8 @@
     <string name="swipe_controller">Swipe controller</string>
     <string name="swipe_horizontal">Swipe horizontal</string>
     <string name="swipe_vertical">Swipe vertical</string>
+    <string name="portamento">Portamento</string>
+    <string name="portamento_delay">Delay</string>
     <string name="tremolo">Tremolo</string>
     <string name="vibrato">Vibrato</string>
     <string name="rate">Rate</string>
