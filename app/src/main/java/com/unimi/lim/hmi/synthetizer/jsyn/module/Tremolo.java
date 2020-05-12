@@ -6,7 +6,7 @@ import com.unimi.lim.hmi.synthetizer.WaveForm;
 
 public class Tremolo extends Lfo {
 
-    public UnitOutputPort output;
+    public final UnitOutputPort output;
 
     private final Add modulator;
     private int depth;

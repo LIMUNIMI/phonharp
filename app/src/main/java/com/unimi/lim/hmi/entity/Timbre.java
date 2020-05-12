@@ -244,32 +244,23 @@ public class Timbre implements Serializable {
 
     public static class Equalizer implements Serializable {
 
-        private float bass;
-        private float mid;
-        private float high;
+        private float lowShelfGain;
+        private float highShelfGain;
 
-        public float getBass() {
-            return bass;
+        public float getLowShelfGain() {
+            return lowShelfGain;
         }
 
-        public void setBass(float bass) {
-            this.bass = bass;
+        public void setLowShelfGain(float lowShelfGain) {
+            this.lowShelfGain = lowShelfGain;
         }
 
-        public float getMid() {
-            return mid;
+        public float getHighShelfGain() {
+            return highShelfGain;
         }
 
-        public void setMid(float mid) {
-            this.mid = mid;
-        }
-
-        public float getHigh() {
-            return high;
-        }
-
-        public void setHigh(float high) {
-            this.high = high;
+        public void setHighShelfGain(float highShelfGain) {
+            this.highShelfGain = highShelfGain;
         }
     }
 

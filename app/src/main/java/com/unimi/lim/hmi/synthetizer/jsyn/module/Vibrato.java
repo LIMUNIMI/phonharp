@@ -7,7 +7,8 @@ import com.unimi.lim.hmi.synthetizer.WaveForm;
 import com.unimi.lim.hmi.util.NoteUtils;
 
 public class Vibrato extends Lfo {
-    public UnitOutputPort output;
+
+    public final UnitOutputPort output;
 
     // Maximum vibrato oscillator amplitude, in semitones (2 semitones)
     private final static int MAX_AMPLITUDE = 2;

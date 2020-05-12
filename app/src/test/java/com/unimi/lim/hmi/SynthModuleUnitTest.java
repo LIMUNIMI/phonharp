@@ -6,6 +6,7 @@ import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.PulseOscillator;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
+import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
 
@@ -120,16 +121,53 @@ public class SynthModuleUnitTest {
         lineOut.stop();
     }
 
+    @Test
+    public void testEqualizer() {
+        System.out.println("Without EQ");
+//        play(Note.C4);
+
+        osc.output.disconnect(0, lineOut.input, 0);
+        osc.output.disconnect(0, lineOut.input, 1);
+
+        Equalizer eq = new Equalizer(osc.output);
+        synth.add(eq);
+
+        eq.output.connect(0, lineOut.input, 0);
+        eq.output.connect(0, lineOut.input, 1);
+
+        System.out.println("EQ 0 0");
+        eq.setLowShelfGain(0);
+        eq.setHighShelfGain(0);
+        play(Note.C4);
+
+        double max = 16;
+
+        System.out.println("EQ 0 4");
+        eq.setLowShelfGain(0);
+        eq.setHighShelfGain(max);
+        play(Note.C4);
+
+        System.out.println("EQ 4 0");
+        eq.setLowShelfGain(max);
+        eq.setHighShelfGain(0);
+        play(Note.C4);
+
+        System.out.println("EQ 4 4");
+        eq.setLowShelfGain(0);
+        eq.setHighShelfGain(max);
+        play(Note.C4);
+
+    }
+
 
     private void play() {
         play(null);
     }
 
     private void play(Note note) {
+        note = note != null ? note : PLAY_NOTE;
         System.out.println("Playing note " + note);
-        if (note != null) {
-            osc.frequency.set(PLAY_NOTE.getFrequency());
-        }
+        osc.frequency.set(note.getFrequency());
         lineOut.start();
         sleep(PLAY_DURATION);
         lineOut.stop();

@@ -5,9 +5,11 @@ import com.jsyn.data.SegmentedEnvelope;
 import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Add;
-import com.jsyn.unitgen.CrossFade;
+import com.jsyn.unitgen.FilterHighShelf;
+import com.jsyn.unitgen.FilterLowShelf;
 import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
+import com.jsyn.unitgen.PassThrough;
 import com.jsyn.unitgen.PulseOscillator;
 import com.jsyn.unitgen.SineOscillator;
 import com.jsyn.unitgen.TriangleOscillator;
@@ -24,8 +26,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TimbreUnitTest {
 
-    private static final Note PLAY_NOTE = Note.C3;
-    private static final double PLAY_DURATION = 3;
+    private static final Note PLAY_NOTE = Note.C4;
+    private static final double PLAY_DURATION = 2;
 
     private com.jsyn.Synthesizer synth;
     private PulseOscillator osc;
@@ -210,21 +212,35 @@ public class TimbreUnitTest {
 
     @Test
     public void z_TestVari() {
-//        System.out.println("Normal f=" + PLAY_NOTE.getFrequency());
-//        play(PLAY_NOTE);
-//
-//        double cutoffFreq = PLAY_NOTE.getFrequency() / 2;
-//        System.out.println("LowPass filter cf=" + cutoffFreq);
-//        FilterLowPass flp = new FilterLowPass();
-//        flp.frequency.set(cutoffFreq);
-//        flp.amplitude.set(1);
-//        flp.input.connect(osc.output);
-//
-//        synth.add(flp);
-//        play(PLAY_NOTE, flp.output);
-        CrossFade crossFade = new CrossFade();
-        crossFade.generate();
-        play(PLAY_NOTE);
+
+        // from jsyn
+
+        System.out.println("Original...");
+//        play(PLAY_NOTE); // 261.63
+
+        PassThrough mixer = new PassThrough();
+        synth.add(mixer);
+
+        FilterHighShelf high = new FilterHighShelf();
+        synth.add(high);
+        high.input.connect(osc.output);
+//        high.output.connect(mixer.input);
+
+        high.frequency.set(12000);
+        high.gain.set(1);
+        high.slope.set(0.5);
+
+        FilterLowShelf low = new FilterLowShelf();
+        synth.add(low);
+        low.input.connect(osc.output);
+        low.output.connect(mixer.input);
+
+        low.frequency.set(80);
+        low.gain.set(16);
+        low.slope.set(1);
+
+        System.out.println("Low shelf...");
+        play(Note.C4, mixer.output);
     }
 
 
@@ -330,6 +346,8 @@ public class TimbreUnitTest {
     }
 
     private void play(Note note, UnitOutputPort outputPort) {
+        osc.frequency.set(note.getFrequency());
+
         osc.output.disconnect(0, lineOut.input, 0);
         osc.output.disconnect(0, lineOut.input, 1);
 

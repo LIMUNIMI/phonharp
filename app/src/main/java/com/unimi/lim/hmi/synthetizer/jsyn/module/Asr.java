@@ -7,7 +7,7 @@ import com.jsyn.unitgen.VariableRateMonoReader;
 
 public class Asr extends Circuit {
 
-    public UnitOutputPort output;
+    public final UnitOutputPort output;
 
     private VariableRateMonoReader envPlayer;
     private SegmentedEnvelope envData;
