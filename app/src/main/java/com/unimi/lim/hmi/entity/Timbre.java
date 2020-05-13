@@ -247,6 +247,14 @@ public class Timbre implements Serializable {
         private int lowShelfGain;
         private int highShelfGain;
 
+        public Equalizer() {
+        }
+
+        public Equalizer(int lowShelfGain, int highShelfGain) {
+            this.lowShelfGain = lowShelfGain;
+            this.highShelfGain = highShelfGain;
+        }
+
         public int getLowShelfGain() {
             return lowShelfGain;
         }
@@ -255,7 +263,7 @@ public class Timbre implements Serializable {
             this.lowShelfGain = lowShelfGain;
         }
 
-        public float getHighShelfGain() {
+        public int getHighShelfGain() {
             return highShelfGain;
         }
 

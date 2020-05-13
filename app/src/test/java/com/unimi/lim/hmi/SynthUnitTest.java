@@ -114,6 +114,28 @@ public class SynthUnitTest {
     }
 
     @Test
+    public void testEq() {
+        timbre.setHarmonics(100);
+        timbre.setEqualizer(new Timbre.Equalizer(0, 0));
+        buildAndStart(timbre);
+
+        System.out.println("Clean");
+        play();
+
+        System.out.println("Low gain");
+        timbre.getEqualizer().setLowShelfGain(15);
+        timbre.getEqualizer().setHighShelfGain(0);
+        synth.updateSynthesizerCfg(timbre);
+        play();
+
+        System.out.println("High gain");
+        timbre.getEqualizer().setLowShelfGain(0);
+        timbre.getEqualizer().setHighShelfGain(15);
+        synth.updateSynthesizerCfg(timbre);
+        play();
+    }
+
+    @Test
     public void testStaccato() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 0.15f, 0.15f));
         timbre.setPitchAsr(new Timbre.Asr(-50, -50, 0.15f, 0.15f));

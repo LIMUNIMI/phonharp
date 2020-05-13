@@ -9,6 +9,7 @@ import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
+import com.unimi.lim.hmi.util.ConversionUtils;
 
 import org.junit.After;
 import org.junit.Before;
@@ -129,33 +130,30 @@ public class SynthModuleUnitTest {
         osc.output.disconnect(0, lineOut.input, 0);
         osc.output.disconnect(0, lineOut.input, 1);
 
-        Equalizer eq = new Equalizer(osc.output);
+        Equalizer eq = new Equalizer();
         synth.add(eq);
 
+        osc.output.connect(eq.input);
         eq.output.connect(0, lineOut.input, 0);
         eq.output.connect(0, lineOut.input, 1);
 
-        System.out.println("EQ 0 0");
-        eq.setLowShelfGain(0);
-        eq.setHighShelfGain(0);
-        play(Note.C4);
+        System.out.println("Clean");
+        eq.setLowShelfGain(1);
+        eq.setHighShelfGain(1);
+        play(Note.C3);
 
-        double max = 16;
+        double max = ConversionUtils.dBtoAbsoluteValue(15);
+        double flat = ConversionUtils.dBtoAbsoluteValue(0);
 
-        System.out.println("EQ 0 4");
-        eq.setLowShelfGain(0);
-        eq.setHighShelfGain(max);
-        play(Note.C4);
-
-        System.out.println("EQ 4 0");
+        System.out.println("Low gain");
         eq.setLowShelfGain(max);
-        eq.setHighShelfGain(0);
-        play(Note.C4);
+        eq.setHighShelfGain(flat);
+        play(Note.C3);
 
-        System.out.println("EQ 4 4");
-        eq.setLowShelfGain(0);
+        System.out.println("High gain");
+        eq.setLowShelfGain(flat);
         eq.setHighShelfGain(max);
-        play(Note.C4);
+        play(Note.C3);
 
     }
 

@@ -13,8 +13,10 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
+import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
+import com.unimi.lim.hmi.util.ConversionUtils;
 import com.unimi.lim.hmi.util.NoteUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
@@ -78,6 +80,7 @@ public class JsynSynthesizer implements Synthesizer {
     private final UnitInputPort harmonicsController;
     private final Tremolo tremolo;
     private final Vibrato vibrato;
+    private final Equalizer equalizer;
     private final Asr volumeEnvelop;
     private final Asr pitchEnvelop;
     private final Asr harmonicsEnvelop;
@@ -121,6 +124,7 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(pitchMix1 = new Add());
         synth.add(pitchMix2 = new Add());
         synth.add(harmMix = new Add());
+        synth.add(equalizer = new Equalizer());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
         synth.add(volumeEnvelop = new Asr());
@@ -151,9 +155,12 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsEnvelop.output.connect(harmMix.inputA);
         harmMix.output.connect(osc.width);
 
+        // Equalizer
+        osc.output.connect(equalizer.input);
+
         // Line out
-        osc.output.connect(0, lineOut.input, 0);
-        osc.output.connect(0, lineOut.input, 1);
+        equalizer.output.connect(0, lineOut.input, 0);
+        equalizer.output.connect(0, lineOut.input, 1);
 
         updateSynthesizerCfg(timbre);
     }
@@ -197,6 +204,13 @@ public class JsynSynthesizer implements Synthesizer {
         harmonics = Math.min(1f - timbre.getHarmonics() / 100f, 0.95);
         tremoloDepth = TimbreUtils.safeLfoDepth(timbre.getTremolo());
         vibratoDepth = TimbreUtils.safeLfoDepth(timbre.getVibrato());
+
+        // Equalizer gain, note that timbre dB values are converted to absolute value
+        equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
+        equalizer.setHighShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqHighShelfGain(timbre.getEqualizer())));
+
+        // TODO remove
+        Log.d(getClass().getName(), "Shelf values " + ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())) + ", " + ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqHighShelfGain(timbre.getEqualizer())));
 
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(tremoloDepth);

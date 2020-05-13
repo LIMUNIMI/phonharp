@@ -1,7 +1,5 @@
 package com.unimi.lim.hmi.synthetizer.jsyn.module;
 
-import android.util.Log;
-
 import com.jsyn.ports.UnitOutputPort;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
 import com.unimi.lim.hmi.util.NoteUtils;
@@ -43,8 +41,6 @@ public class Vibrato extends Lfo {
     public void update(double carrierFrequency) {
         float depthToSemitone = (float) MAX_AMPLITUDE / 100 * depth;
         double amplitude = NoteUtils.calculateNoteByOffset(carrierFrequency, depthToSemitone) - carrierFrequency;
-        Log.d(getClass().getName(), "Update vibrato amplitude, semitones " + depthToSemitone + ", carrier freq " + carrierFrequency + ", amplitude " + amplitude);
-
         setAmplitude(amplitude);
     }
 

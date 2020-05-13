@@ -19,6 +19,14 @@ public class TimbreUtils {
     private TimbreUtils() {
     }
 
+    public static int safeEqLowShelfGain(Timbre.Equalizer eq) {
+        return eq != null ? eq.getLowShelfGain() : 0;
+    }
+
+    public static int safeEqHighShelfGain(Timbre.Equalizer eq) {
+        return eq != null ? eq.getHighShelfGain() : 0;
+    }
+
     public static float safeLfoRate(Timbre.Lfo lfo) {
         return safeLfoRate(lfo, 0);
     }

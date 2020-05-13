@@ -38,7 +38,8 @@ public class TimbreDetailFragment extends Fragment {
     private final static float MODEL_TO_SEEK_EXP = 2f / 3f;
 
     // Utility functions to handle descriptions
-    private final Function<Integer, String> MILLIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
+    private final Function<Integer, String> GAIN_DESCRIPTION = val -> String.format("%d%s", eqSeekToModel(val), getResources().getString(R.string.decibel));
+    private final Function<Integer, String> HYSTERESOS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> PORTAMENTO_DESCRIPTION = val -> String.format("%.0f%s", portamentoSeekToModel(val) * 1000, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> ASR_TIME_DESCRIPTION = val -> String.format("%.2f%s", asrTimeSeekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
@@ -75,7 +76,7 @@ public class TimbreDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Retrieve current timbre; use getValue instead of observe because timbre will be modified by the user but we dont want to setup view element each time
+        // Retrieve current timbre; use getValue instead of observe because timbre will be modified by the user but we dont want to setup view element each time timbre is modified
         TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
         Timbre timbre = viewModel.getWorking().getValue();
         Log.d(getClass().getName(), "Editing timbre: " + timbre.toString());
@@ -179,7 +180,7 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Hysteresis Seek bar
                     float tapHysteresis = timbre.getTapHysteresis() != 0 ? timbre.getTapHysteresis() : DEFAULT_TAP_HYSTERESIS;
                     timbre.setTapHysteresis(tapHysteresis);
-                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, MILLIS_DESCRIPTION, () -> modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, HYSTERESOS_DESCRIPTION, () -> modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
                 },
                 () -> timbre.setTapHysteresis(0f), onChange);
 
@@ -191,6 +192,18 @@ public class TimbreDetailFragment extends Fragment {
                     setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 1, PORTAMENTO_DESCRIPTION, () -> portamentoModelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(portamentoSeekToModel(val)), onChange);
                 },
                 () -> timbre.setPortamento(0f), onChange);
+
+        // Equalizer Switch
+        setupSwitch(view, R.id.equalizer_enabled, R.id.equalizer_container,
+                timbre.getEqualizer() != null,
+                () -> {
+                    // Setup Tremolo Seek bars
+                    Timbre.Equalizer eq = timbre.getEqualizer() != null ? timbre.getEqualizer() : new Timbre.Equalizer();
+                    timbre.setEqualizer(eq);
+                    setupSeek(view, R.id.equalizer_low_shelf_seek, R.id.equalizer_low_shelf_text, 1, GAIN_DESCRIPTION, () -> eqModelToSeek(timbre.getEqualizer().getLowShelfGain()), val -> timbre.getEqualizer().setLowShelfGain(eqSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.equalizer_high_shelf_seek, R.id.equalizer_high_shelf_text, 1, GAIN_DESCRIPTION, () -> eqModelToSeek(timbre.getEqualizer().getHighShelfGain()), val -> timbre.getEqualizer().setHighShelfGain(eqSeekToModel(val)), onChange);
+                },
+                () -> timbre.setTremolo(null), onChange);
     }
 
     /**
@@ -389,4 +402,23 @@ public class TimbreDetailFragment extends Fragment {
         return (int) value + 24;
     }
 
+    /**
+     * Convert eq gain from seek to model. Seek range is 0/30, model range is -15/+15
+     *
+     * @param value seek dB gain value
+     * @return model dB gain value
+     */
+    private int eqSeekToModel(int value) {
+        return value - 15;
+    }
+
+    /**
+     * Convert eq gain from model to seek. Seek range is 0/30, model range is -15/+15
+     *
+     * @param value model dB gain value
+     * @return seek dB gain value
+     */
+    private int eqModelToSeek(int value) {
+        return value + 15;
+    }
 }

@@ -31,6 +31,7 @@
     <string name="harmonics_all_to_odd">Pulse width</string>
     <string name="seconds">s</string>
     <string name="milliseconds">ms</string>
+    <string name="decibel">dB</string>
     <string name="semitone">semitone</string>
     <string name="hertz">Hz</string>
     <string name="volume">Volume</string>
@@ -46,6 +47,9 @@
     <string name="vibrato">Vibrato</string>
     <string name="rate">Rate</string>
     <string name="depth">Depth</string>
+    <string name="equalizer">Equalizer</string>
+    <string name="low_shelf">Low</string>
+    <string name="high_shelf">High</string>
     <string name="volume_asr">Volume Envelop</string>
     <string name="pitch_asr">Pitch Envelop</string>
     <string name="harmonics_asr">Harmonics Envelop</string>
