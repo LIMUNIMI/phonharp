@@ -243,15 +243,15 @@ public class Timbre implements Serializable {
     }
 
     public static class Equalizer implements Serializable {
+        // dB value
+        private int lowShelfGain;
+        private int highShelfGain;
 
-        private float lowShelfGain;
-        private float highShelfGain;
-
-        public float getLowShelfGain() {
+        public int getLowShelfGain() {
             return lowShelfGain;
         }
 
-        public void setLowShelfGain(float lowShelfGain) {
+        public void setLowShelfGain(int lowShelfGain) {
             this.lowShelfGain = lowShelfGain;
         }
 
@@ -259,7 +259,7 @@ public class Timbre implements Serializable {
             return highShelfGain;
         }
 
-        public void setHighShelfGain(float highShelfGain) {
+        public void setHighShelfGain(int highShelfGain) {
             this.highShelfGain = highShelfGain;
         }
     }
