@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/timbre_detail_layout_margin"
+        android:orientation="vertical">
+
+        <Switch
+            android:id="@+id/swipe_control_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/timbre_detail_component_margin"
+            android:text="@string/swipe_controller"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorAccent" />
+
+        <LinearLayout
+            android:id="@+id/swipe_control_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/swipe_horiz_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="@string/swipe_horizontal"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <Spinner
+                android:id="@+id/swipe_horiz_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:entries="@array/swipe_control_names" />
+
+            <TextView
+                android:id="@+id/swipe_vert_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/timbre_detail_component_margin"
+                android:layout_marginTop="@dimen/timbre_detail_component_margin"
+                android:layout_marginEnd="@dimen/timbre_detail_component_margin"
+                android:text="@string/swipe_vertical"
+                android:textAppearance="?attr/textAppearanceListItem" />
+
+            <Spinner
+                android:id="@+id/swipe_vert_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/timbre_detail_component_margin"
+                android:entries="@array/swipe_control_names" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</merge>

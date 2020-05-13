@@ -1,48 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_timbre_detail"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.TimbreDetailFragment">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- focusableInTouchMode to remove auto focus on TextInputEditText -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusableInTouchMode="true"
+        android:layout_margin="@dimen/timbre_detail_layout_margin"
         android:orientation="vertical">
 
-        <LinearLayout
+        <Switch
+            android:id="@+id/vibrato_enabled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/timbre_detail_layout_margin"
+            android:layout_margin="@dimen/timbre_detail_component_margin"
+            android:text="@string/vibrato"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorAccent" />
+
+        <LinearLayout
+            android:id="@+id/vibrato_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/timbre_detail_component_margin">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/timbre_name"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/timbre_name" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <TextView
-                android:id="@+id/volume_title"
+                android:id="@+id/vibrato_rate_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/timbre_detail_component_margin"
                 android:layout_marginTop="@dimen/timbre_detail_component_margin"
                 android:layout_marginEnd="@dimen/timbre_detail_component_margin"
-                android:text="@string/volume"
+                android:text="@string/rate"
                 android:textAppearance="?attr/textAppearanceListItem" />
 
             <TextView
-                android:id="@+id/volume_text"
+                android:id="@+id/vibrato_rate_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/timbre_detail_component_margin"
@@ -51,24 +47,24 @@
                 android:textColor="@android:color/darker_gray" />
 
             <SeekBar
-                android:id="@+id/volume_seek"
+                android:id="@+id/vibrato_rate_seek"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/timbre_detail_component_margin"
-                android:max="100" />
+                android:max="50000" />
 
             <TextView
-                android:id="@+id/harmonics_title"
+                android:id="@+id/vibrato_depth_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/timbre_detail_component_margin"
                 android:layout_marginTop="@dimen/timbre_detail_component_margin"
                 android:layout_marginEnd="@dimen/timbre_detail_component_margin"
-                android:text="@string/harmonics"
+                android:text="@string/depth"
                 android:textAppearance="?attr/textAppearanceListItem" />
 
             <TextView
-                android:id="@+id/harmonics_text"
+                android:id="@+id/vibrato_depth_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/timbre_detail_component_margin"
@@ -77,28 +73,12 @@
                 android:textColor="@android:color/darker_gray" />
 
             <SeekBar
-                android:id="@+id/harmonics_seek"
+                android:id="@+id/vibrato_depth_seek"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/timbre_detail_component_margin"
                 android:max="100" />
         </LinearLayout>
 
-        <include layout="@layout/include_hysteresis" />
-
-        <include layout="@layout/include_portamento" />
-
-        <include layout="@layout/include_swipe_control" />
-
-        <include layout="@layout/include_tremolo" />
-
-        <include layout="@layout/include_vibrato" />
-
-        <include layout="@layout/include_volume_asr" />
-
-        <include layout="@layout/include_pitch_asr" />
-
-        <include layout="@layout/include_harmonics_asr" />
-
     </LinearLayout>
-</ScrollView>
+</merge>
