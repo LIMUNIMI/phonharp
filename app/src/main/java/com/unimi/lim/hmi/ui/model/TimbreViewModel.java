@@ -11,6 +11,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.unimi.lim.hmi.dao.TimbreDao;
 import com.unimi.lim.hmi.entity.Timbre;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.List;
 
 public class TimbreViewModel extends AndroidViewModel {
@@ -71,7 +73,8 @@ public class TimbreViewModel extends AndroidViewModel {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre from selected");
             working = new MutableLiveData<>();
-            working.setValue(select(timbreId).getValue());
+            Timbre copy = SerializationUtils.clone(select(timbreId).getValue());
+            working.setValue(copy);
         }
         return this;
     }
@@ -97,7 +100,6 @@ public class TimbreViewModel extends AndroidViewModel {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
         Log.d(getClass().getName(), "Saving timbre " + working.getValue());
-        // TODO show notification if save fails
         TimbreDao.getInstance(getApplication().getApplicationContext()).save(working.getValue());
         return this;
     }
@@ -108,7 +110,6 @@ public class TimbreViewModel extends AndroidViewModel {
         }
         Log.d(getClass().getName(), "Deleting timbre " + working.getValue());
         if (working.getValue().getId() != null) {
-            // TODO show notification if save fails
             TimbreDao.getInstance(getApplication().getApplicationContext()).delete(working.getValue().getId());
         }
         return this;
