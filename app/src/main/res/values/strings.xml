@@ -45,6 +45,7 @@
     <string name="portamento_delay">Delay</string>
     <string name="tremolo">Tremolo</string>
     <string name="vibrato">Vibrato</string>
+    <string name="pwm">PWM</string>
     <string name="rate">Rate</string>
     <string name="depth">Depth</string>
     <string name="equalizer">Equalizer</string>

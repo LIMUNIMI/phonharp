@@ -209,9 +209,6 @@ public class JsynSynthesizer implements Synthesizer {
         equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
         equalizer.setHighShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqHighShelfGain(timbre.getEqualizer())));
 
-        // TODO remove
-        Log.d(getClass().getName(), "Shelf values " + ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())) + ", " + ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqHighShelfGain(timbre.getEqualizer())));
-
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(tremoloDepth);
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));

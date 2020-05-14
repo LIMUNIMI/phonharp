@@ -96,5 +96,6 @@
         <item>Pitch bend</item>
         <item>Tremolo depth</item>
         <item>Vibrato depth</item>
+        <item>PWM depth</item>
     </string-array>
 </resources>

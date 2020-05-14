@@ -23,7 +23,8 @@ public class Timbre implements Serializable {
         PITCH,
         HARMONICS,
         VIBRATO,
-        TREMOLO
+        TREMOLO,
+        PWM
     }
 
     private String id;
@@ -34,6 +35,7 @@ public class Timbre implements Serializable {
     private float portamento;
     private Lfo tremolo;
     private Lfo vibrato;
+    private Lfo pwm;
     private Asr volumeAsr;
     private Asr pitchAsr;
     private Asr harmonicsAsr;
@@ -111,6 +113,14 @@ public class Timbre implements Serializable {
 
     public void setVibrato(Lfo vibrato) {
         this.vibrato = vibrato;
+    }
+
+    public Lfo getPwm() {
+        return pwm;
+    }
+
+    public void setPwm(Lfo pwm) {
+        this.pwm = pwm;
     }
 
     public Asr getVolumeAsr() {

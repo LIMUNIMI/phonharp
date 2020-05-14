@@ -7,11 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,18 +14,18 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_PORTAMENTO_TIME;
 import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_TAP_HYSTERESIS;
+import static com.unimi.lim.hmi.ui.common.SetupUtils.setupSeek;
+import static com.unimi.lim.hmi.ui.common.SetupUtils.setupSpinner;
+import static com.unimi.lim.hmi.ui.common.SetupUtils.setupSwitch;
 
 public class TimbreDetailFragment extends Fragment {
 
@@ -50,21 +45,18 @@ public class TimbreDetailFragment extends Fragment {
                     (val == 0 ? String.format("%s", getResources().getString(R.string.harmonics_all)) :
                             String.format("%s: %d%s ", getResources().getString(R.string.harmonics_all_to_odd), val / 2, getResources().getString(R.string.percentage)));
     // Mapping between controller enum and controller spinner IDs
-    private final BiMap<Integer, Timbre.Controller> CONTROLLER_BIMAP;
+    private final ImmutableBiMap<Integer, Timbre.Controller> CONTROLLER_BIMAP = new ImmutableBiMap.Builder<Integer, Timbre.Controller>()
+            .put(0, Timbre.Controller.NONE)
+            .put(1, Timbre.Controller.VOLUME)
+            .put(2, Timbre.Controller.HARMONICS)
+            .put(3, Timbre.Controller.PITCH)
+            .put(4, Timbre.Controller.TREMOLO)
+            .put(5, Timbre.Controller.VIBRATO)
+            .put(6, Timbre.Controller.PWM)
+            .build();
 
     public static Fragment newInstance() {
         return new TimbreDetailFragment();
-    }
-
-    public TimbreDetailFragment() {
-        // Mapping between controller spinner IDs and controller enum
-        CONTROLLER_BIMAP = HashBiMap.create();
-        CONTROLLER_BIMAP.put(0, Timbre.Controller.NONE);
-        CONTROLLER_BIMAP.put(1, Timbre.Controller.VOLUME);
-        CONTROLLER_BIMAP.put(2, Timbre.Controller.HARMONICS);
-        CONTROLLER_BIMAP.put(3, Timbre.Controller.PITCH);
-        CONTROLLER_BIMAP.put(4, Timbre.Controller.TREMOLO);
-        CONTROLLER_BIMAP.put(5, Timbre.Controller.VIBRATO);
     }
 
     @Override
@@ -105,8 +97,8 @@ public class TimbreDetailFragment extends Fragment {
         Runnable onChange = () -> viewModel.workingChanged(timbre);
 
         // Volume and Harmonics seek bar
-        setupSeek(view, R.id.volume_seek, R.id.volume_text, 1, PERCENTAGE_DESCRIPTION, () -> timbre.getVolume(), val -> timbre.setVolume(val), onChange);
-        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, HARMONICS_DESCRIPTION, () -> timbre.getHarmonics(), val -> timbre.setHarmonics(val), onChange);
+        setupSeek(view, R.id.volume_seek, R.id.volume_text, 1, PERCENTAGE_DESCRIPTION, timbre.getVolume(), val -> timbre.setVolume(val), onChange);
+        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, HARMONICS_DESCRIPTION, timbre.getHarmonics(), val -> timbre.setHarmonics(val), onChange);
 
         // Tremolo Switch
         setupSwitch(view, R.id.tremolo_enabled, R.id.tremolo_container,
@@ -115,8 +107,8 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Tremolo Seek bars
                     Timbre.Lfo lfo = timbre.getTremolo() != null ? timbre.getTremolo() : new Timbre.Lfo();
                     timbre.setTremolo(lfo);
-                    setupSeek(view, R.id.tremolo_rate_seek, R.id.tremolo_rate_text, 100, HERTZ_DESCRIPTION, () -> modelToSeek(timbre.getTremolo().getRate()), val -> timbre.getTremolo().setRate(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.tremolo_depth_seek, R.id.tremolo_depth_text, 1, PERCENTAGE_DESCRIPTION, () -> timbre.getTremolo().getDepth(), val -> timbre.getTremolo().setDepth(val), onChange);
+                    setupSeek(view, R.id.tremolo_rate_seek, R.id.tremolo_rate_text, 100, HERTZ_DESCRIPTION, modelToSeek(timbre.getTremolo().getRate()), val -> timbre.getTremolo().setRate(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.tremolo_depth_seek, R.id.tremolo_depth_text, 1, PERCENTAGE_DESCRIPTION, timbre.getTremolo().getDepth(), val -> timbre.getTremolo().setDepth(val), onChange);
                 },
                 () -> timbre.setTremolo(null), onChange);
 
@@ -125,18 +117,28 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Vibrato Seek bars
                     Timbre.Lfo lfo = timbre.getVibrato() != null ? timbre.getVibrato() : new Timbre.Lfo();
                     timbre.setVibrato(lfo);
-                    setupSeek(view, R.id.vibrato_rate_seek, R.id.vibrato_rate_text, 100, HERTZ_DESCRIPTION, () -> modelToSeek(timbre.getVibrato().getRate()), val -> timbre.getVibrato().setRate(seekToModel(val)), onChange);
-                    setupSeek(view, R.id.vibrato_depth_seek, R.id.vibrato_depth_text, 1, PERCENTAGE_DESCRIPTION, () -> timbre.getVibrato().getDepth(), val -> timbre.getVibrato().setDepth(val), onChange);
+                    setupSeek(view, R.id.vibrato_rate_seek, R.id.vibrato_rate_text, 100, HERTZ_DESCRIPTION, modelToSeek(timbre.getVibrato().getRate()), val -> timbre.getVibrato().setRate(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.vibrato_depth_seek, R.id.vibrato_depth_text, 1, PERCENTAGE_DESCRIPTION, timbre.getVibrato().getDepth(), val -> timbre.getVibrato().setDepth(val), onChange);
                 },
                 () -> timbre.setVibrato(null), onChange);
+
+        // PWM Switch
+        setupSwitch(view, R.id.pwm_enabled, R.id.pwm_container, timbre.getPwm() != null, () -> {
+                    // Setup Pwm Seek bars
+                    Timbre.Lfo lfo = timbre.getPwm() != null ? timbre.getPwm() : new Timbre.Lfo();
+                    timbre.setPwm(lfo);
+                    setupSeek(view, R.id.pwm_rate_seek, R.id.pwm_rate_text, 100, HERTZ_DESCRIPTION, modelToSeek(timbre.getPwm().getRate()), val -> timbre.getPwm().setRate(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.pwm_depth_seek, R.id.pwm_depth_text, 1, PERCENTAGE_DESCRIPTION, timbre.getPwm().getDepth(), val -> timbre.getPwm().setDepth(val), onChange);
+                },
+                () -> timbre.setPwm(null), onChange);
 
         // Volume ASR Switch
         setupSwitch(view, R.id.volume_asr_enabled, R.id.volume_asr_container, timbre.getVolumeAsr() != null, () -> {
                     // Setup Volume ASR Seek bars
                     Timbre.Asr asr = timbre.getVolumeAsr() != null ? timbre.getVolumeAsr() : new Timbre.Asr();
                     timbre.setVolumeAsr(asr);
-                    setupSeek(view, R.id.volume_asr_attack_seek, R.id.volume_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getVolumeAsr().getAttackTime()), val -> timbre.getVolumeAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.volume_asr_release_seek, R.id.volume_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getVolumeAsr().getReleaseTime()), val -> timbre.getVolumeAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.volume_asr_attack_seek, R.id.volume_asr_attack_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getVolumeAsr().getAttackTime()), val -> timbre.getVolumeAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.volume_asr_release_seek, R.id.volume_asr_release_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getVolumeAsr().getReleaseTime()), val -> timbre.getVolumeAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
                 },
                 () -> timbre.setVolumeAsr(null), onChange);
 
@@ -145,10 +147,10 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Pitch ASR Seek bars
                     Timbre.Asr asr = timbre.getPitchAsr() != null ? timbre.getPitchAsr() : new Timbre.Asr();
                     timbre.setPitchAsr(asr);
-                    setupSeek(view, R.id.pitch_asr_attack_seek, R.id.pitch_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getPitchAsr().getAttackTime()), val -> timbre.getPitchAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_release_seek, R.id.pitch_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getPitchAsr().getReleaseTime()), val -> timbre.getPitchAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_init_seek, R.id.pitch_asr_init_text, 1, SEMITONE_DESCRIPTION, () -> asrPitchModelToSeek(timbre.getPitchAsr().getInitialValue()), val -> timbre.getPitchAsr().setInitialValue(asrPitchSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.pitch_asr_final_seek, R.id.pitch_asr_final_text, 1, SEMITONE_DESCRIPTION, () -> asrPitchModelToSeek(timbre.getPitchAsr().getFinalValue()), val -> timbre.getPitchAsr().setFinalValue(asrPitchSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_attack_seek, R.id.pitch_asr_attack_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getPitchAsr().getAttackTime()), val -> timbre.getPitchAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_release_seek, R.id.pitch_asr_release_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getPitchAsr().getReleaseTime()), val -> timbre.getPitchAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_init_seek, R.id.pitch_asr_init_text, 1, SEMITONE_DESCRIPTION, asrPitchModelToSeek(timbre.getPitchAsr().getInitialValue()), val -> timbre.getPitchAsr().setInitialValue(asrPitchSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.pitch_asr_final_seek, R.id.pitch_asr_final_text, 1, SEMITONE_DESCRIPTION, asrPitchModelToSeek(timbre.getPitchAsr().getFinalValue()), val -> timbre.getPitchAsr().setFinalValue(asrPitchSeekToModel(val)), onChange);
                 },
                 () -> timbre.setPitchAsr(null), onChange);
 
@@ -157,18 +159,18 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Harmonics ASR Seek bars
                     Timbre.Asr asr = timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr() : new Timbre.Asr();
                     timbre.setHarmonicsAsr(asr);
-                    setupSeek(view, R.id.harmonics_asr_attack_seek, R.id.harmonics_asr_attack_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getHarmonicsAsr().getAttackTime()), val -> timbre.getHarmonicsAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.harmonics_asr_release_seek, R.id.harmonics_asr_release_text, 1, ASR_TIME_DESCRIPTION, () -> asrTimeModelToSeek(timbre.getHarmonicsAsr().getReleaseTime()), val -> timbre.getHarmonicsAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.harmonics_asr_init_seek, R.id.harmonics_asr_init_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getInitialValue(), val -> timbre.getHarmonicsAsr().setInitialValue(val), onChange);
-                    setupSeek(view, R.id.harmonics_asr_final_seek, R.id.harmonics_asr_final_text, 1, HARMONICS_DESCRIPTION, () -> (int) timbre.getHarmonicsAsr().getFinalValue(), val -> timbre.getHarmonicsAsr().setFinalValue(val), onChange);
+                    setupSeek(view, R.id.harmonics_asr_attack_seek, R.id.harmonics_asr_attack_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getHarmonicsAsr().getAttackTime()), val -> timbre.getHarmonicsAsr().setAttackTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.harmonics_asr_release_seek, R.id.harmonics_asr_release_text, 1, ASR_TIME_DESCRIPTION, asrTimeModelToSeek(timbre.getHarmonicsAsr().getReleaseTime()), val -> timbre.getHarmonicsAsr().setReleaseTime(asrTimeSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.harmonics_asr_init_seek, R.id.harmonics_asr_init_text, 1, HARMONICS_DESCRIPTION, (int) timbre.getHarmonicsAsr().getInitialValue(), val -> timbre.getHarmonicsAsr().setInitialValue(val), onChange);
+                    setupSeek(view, R.id.harmonics_asr_final_seek, R.id.harmonics_asr_final_text, 1, HARMONICS_DESCRIPTION, (int) timbre.getHarmonicsAsr().getFinalValue(), val -> timbre.getHarmonicsAsr().setFinalValue(val), onChange);
                 },
                 () -> timbre.setHarmonicsAsr(null), onChange);
 
         // Swipe controller Switch
         setupSwitch(view, R.id.swipe_control_enabled, R.id.swipe_control_container, timbre.getController1() != null || timbre.getController2() != null, () -> {
                     // Setup Swipe controller Spinner
-                    setupSwipeControllerSpinner(view, R.id.swipe_horiz_spinner, timbre.getController1(), pos -> timbre.setController1(CONTROLLER_BIMAP.get(pos)), onChange);
-                    setupSwipeControllerSpinner(view, R.id.swipe_vert_spinner, timbre.getController2(), pos -> timbre.setController2(CONTROLLER_BIMAP.get(pos)), onChange);
+                    setupSpinner(view, R.id.swipe_horiz_spinner, timbre.getController1() != null ? timbre.getController1() : Timbre.Controller.NONE, CONTROLLER_BIMAP, pos -> timbre.setController1(CONTROLLER_BIMAP.get(pos)), onChange);
+                    setupSpinner(view, R.id.swipe_vert_spinner, timbre.getController2() != null ? timbre.getController2() : Timbre.Controller.NONE, CONTROLLER_BIMAP, pos -> timbre.setController2(CONTROLLER_BIMAP.get(pos)), onChange);
                 },
                 () -> {
                     timbre.setController1(null);
@@ -180,7 +182,7 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Hysteresis Seek bar
                     float tapHysteresis = timbre.getTapHysteresis() != 0 ? timbre.getTapHysteresis() : DEFAULT_TAP_HYSTERESIS;
                     timbre.setTapHysteresis(tapHysteresis);
-                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, HYSTERESOS_DESCRIPTION, () -> modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, HYSTERESOS_DESCRIPTION, modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
                 },
                 () -> timbre.setTapHysteresis(0f), onChange);
 
@@ -189,7 +191,7 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Hysteresis Seek bar
                     float portamento = timbre.getPortamento() != 0 ? timbre.getPortamento() : DEFAULT_PORTAMENTO_TIME;
                     timbre.setPortamento(portamento);
-                    setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 1, PORTAMENTO_DESCRIPTION, () -> portamentoModelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(portamentoSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.portamento_seek, R.id.portamento_text, 1, PORTAMENTO_DESCRIPTION, portamentoModelToSeek(timbre.getPortamento()), val -> timbre.setPortamento(portamentoSeekToModel(val)), onChange);
                 },
                 () -> timbre.setPortamento(0f), onChange);
 
@@ -197,130 +199,15 @@ public class TimbreDetailFragment extends Fragment {
         setupSwitch(view, R.id.equalizer_enabled, R.id.equalizer_container,
                 timbre.getEqualizer() != null,
                 () -> {
-                    // Setup Tremolo Seek bars
+                    // Setup Equalizer Seek bars
                     Timbre.Equalizer eq = timbre.getEqualizer() != null ? timbre.getEqualizer() : new Timbre.Equalizer();
                     timbre.setEqualizer(eq);
-                    setupSeek(view, R.id.equalizer_low_shelf_seek, R.id.equalizer_low_shelf_text, 1, GAIN_DESCRIPTION, () -> eqModelToSeek(timbre.getEqualizer().getLowShelfGain()), val -> timbre.getEqualizer().setLowShelfGain(eqSeekToModel(val)), onChange);
-                    setupSeek(view, R.id.equalizer_high_shelf_seek, R.id.equalizer_high_shelf_text, 1, GAIN_DESCRIPTION, () -> eqModelToSeek(timbre.getEqualizer().getHighShelfGain()), val -> timbre.getEqualizer().setHighShelfGain(eqSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.equalizer_low_shelf_seek, R.id.equalizer_low_shelf_text, 1, GAIN_DESCRIPTION, eqModelToSeek(timbre.getEqualizer().getLowShelfGain()), val -> timbre.getEqualizer().setLowShelfGain(eqSeekToModel(val)), onChange);
+                    setupSeek(view, R.id.equalizer_high_shelf_seek, R.id.equalizer_high_shelf_text, 1, GAIN_DESCRIPTION, eqModelToSeek(timbre.getEqualizer().getHighShelfGain()), val -> timbre.getEqualizer().setHighShelfGain(eqSeekToModel(val)), onChange);
                 },
-                () -> timbre.setTremolo(null), onChange);
+                () -> timbre.setEqualizer(null), onChange);
     }
 
-    /**
-     * Common method to setup spinners
-     *
-     * @param view       main view
-     * @param seekId     seek id
-     * @param textViewId text view that show seek value
-     * @param seekStep   seek stp
-     * @param text       text to be shown on specidied text view
-     * @param supplier   to setup initial seek value
-     * @param consumer   invoked when seek value changed
-     * @param onChange   invoked when seek value changed
-     */
-    private void setupSeek(View view, int seekId, int textViewId, int seekStep, Function<Integer, String> text, Supplier<Integer> supplier, Consumer<Integer> consumer, Runnable onChange) {
-        // Setup initial values
-        SeekBar seekBar = view.findViewById(seekId);
-        TextView textView = view.findViewById(textViewId);
-        seekBar.setProgress(supplier.get());
-        textView.setText(text.apply(seekBar.getProgress()));
-
-        // Setup seek change listener
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress = progress / seekStep;
-                progress = progress * seekStep;
-                consumer.accept(progress);
-                textView.setText(text.apply(progress));
-                onChange.run();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // do nothing
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // do nothing
-            }
-        });
-
-    }
-
-    /**
-     * Common method to setup swipe controller spinner
-     *
-     * @param view       main view
-     * @param spinnerId  spinner id
-     * @param controller initial spinner value
-     * @param consumer   invoked when spinner item is clicked
-     * @param onChange   invoked when spinner item is clicked
-     */
-    private void setupSwipeControllerSpinner(View view, int spinnerId, Timbre.Controller controller, Consumer<Integer> consumer, Runnable onChange) {
-        // Setup initial item
-        controller = controller != null ? controller : Timbre.Controller.NONE;
-        Spinner spinner = view.findViewById(spinnerId);
-        spinner.setSelection(CONTROLLER_BIMAP.inverse().get(controller));
-
-        // Setup item click listener
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                consumer.accept(position);
-                onChange.run();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // do nothing
-            }
-        });
-    }
-
-    /**
-     * Common method to setup switch
-     *
-     * @param view        main view
-     * @param switchId    switch id
-     * @param containerId container id, hide or shown when switch is disabled or enabled
-     * @param isEnabled   initial switch status
-     * @param onEnable    invoked when the switch is enabled
-     * @param onDisable   invoked when the switch is disabled
-     * @param onChange    invoked when switch status changes
-     */
-    private void setupSwitch(View view, int switchId, int containerId, boolean isEnabled, Runnable onEnable, Runnable onDisable, Runnable onChange) {
-        // Setup initial status
-        Switch aSwitch = view.findViewById(switchId);
-        View containerView = view.findViewById(containerId);
-        aSwitch.setChecked(isEnabled);
-        handleSwitchContainerVisibility(containerView, isEnabled, onEnable, onDisable);
-
-        // Setup change listener
-        aSwitch.setOnCheckedChangeListener((switchView, isChecked) -> {
-            handleSwitchContainerVisibility(containerView, isChecked, onEnable, onDisable);
-            onChange.run();
-        });
-    }
-
-    /**
-     * Show or hide provided container
-     *
-     * @param containerView container view
-     * @param isEnabled     true if enabled, false otherwise
-     * @param onEnable      invoked when the switch is enabled
-     * @param onDisable     invoked when the switch is disabled
-     */
-    private void handleSwitchContainerVisibility(View containerView, boolean isEnabled, Runnable onEnable, Runnable onDisable) {
-        if (isEnabled) {
-            containerView.setVisibility(View.VISIBLE);
-            onEnable.run();
-        } else {
-            containerView.setVisibility(View.GONE);
-            onDisable.run();
-        }
-    }
 
     /**
      * Convert seek value to model value

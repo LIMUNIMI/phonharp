@@ -9,8 +9,12 @@ public class TimbreUtils {
     private final static String HARMONICS = "HR";
     private final static String SWIPE_HORIZONTAL = "SWH";
     private final static String SWIPE_VERTICAL = "SWV";
+    private final static String HYSTERESIS = "HYS";
+    private final static String PORTAMENTO = "PT";
+    private final static String EQUALIZER = "EQ";
     private final static String VIBRATO = "VB";
     private final static String TREMOLO = "TR";
+    private final static String PWM = "PWM";
     private final static String VOL_ENV = "VENV";
     private final static String PITCH_ENV = "PENV";
     private final static String HARM_ENV = "HENV";
@@ -87,14 +91,39 @@ public class TimbreUtils {
         StringBuilder builder = new StringBuilder();
         builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)
                 .append(HARMONICS).append(timbre.getHarmonics()).append(SEPARATOR);
+        addHysteresisDescription(builder, timbre);
+        addPortamentoDescription(builder, timbre);
         addControllerDescription(builder, SWIPE_HORIZONTAL, timbre.getController1());
         addControllerDescription(builder, SWIPE_VERTICAL, timbre.getController2());
+        addEqualizerDescription(builder, timbre);
         addLfoDescription(builder, VIBRATO, timbre.getVibrato());
         addLfoDescription(builder, TREMOLO, timbre.getTremolo());
+        addLfoDescription(builder, PWM, timbre.getPwm());
         addAsrDescription(builder, VOL_ENV, timbre.getVolumeAsr());
         addAsrDescription(builder, PITCH_ENV, timbre.getPitchAsr());
         addAsrDescription(builder, HARM_ENV, timbre.getHarmonicsAsr());
         return builder.toString();
+    }
+
+    private static void addHysteresisDescription(StringBuilder builder, Timbre timbre) {
+        if (timbre.getTapHysteresis() == 0) {
+            return;
+        }
+        builder.append(HYSTERESIS).append(SEPARATOR);
+    }
+
+    private static void addPortamentoDescription(StringBuilder builder, Timbre timbre) {
+        if (timbre.getPortamento() == 0) {
+            return;
+        }
+        builder.append(PORTAMENTO).append(SEPARATOR);
+    }
+
+    private static void addEqualizerDescription(StringBuilder builder, Timbre timbre) {
+        if (timbre.getEqualizer() == null) {
+            return;
+        }
+        builder.append(EQUALIZER).append(SEPARATOR);
     }
 
     private static void addControllerDescription(StringBuilder builder, String ctrlName, Timbre.Controller ctrl) {
