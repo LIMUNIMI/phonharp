@@ -1,17 +1,15 @@
 package com.unimi.lim.hmi.synthetizer.jsyn.module;
 
 import com.jsyn.ports.UnitOutputPort;
-import com.jsyn.unitgen.Add;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
 
-public class Tremolo extends Lfo {
+public class Pwm extends Lfo {
 
     public final UnitOutputPort output;
 
-    private final Add modulator;
     private int depth;
 
-    public Tremolo() {
+    public Pwm() {
         this(0, 0);
     }
 
@@ -21,16 +19,13 @@ public class Tremolo extends Lfo {
      * @param frequency frequency
      * @param depth     between 0 and 100
      */
-    public Tremolo(double frequency, int depth) {
+    public Pwm(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
 
-        // Setup modulating wave amplitude (oscillator + dcoffset)
-        add(modulator = new Add());
         setDepth(depth);
-        modulator.inputB.connect(lfoOsc.output);
 
         // Provides output port to allow connections
-        output = modulator.output;
+        output = lfoOsc.output;
     }
 
     /**
@@ -40,15 +35,7 @@ public class Tremolo extends Lfo {
      */
     public void setDepth(int depth) {
         this.depth = depth;
-
-        // depth = amplitude / dcoffset * 100
-        // Giving depth and considering that amplitude + dcoffset = 1 (max amplitude value)
-        // calculates both amplitude and dcoffset
-        double amplitude = (double) 1 - ((double) 100 / (depth + 100));
-        double dcOffset = (double) 100 / (depth + 100);
-
-        setAmplitude(amplitude);
-        modulator.inputA.set(dcOffset);
+        setAmplitude((double) depth / 100);
     }
 
     /**

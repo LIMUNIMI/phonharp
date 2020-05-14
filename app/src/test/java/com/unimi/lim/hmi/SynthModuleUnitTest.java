@@ -7,6 +7,7 @@ import com.jsyn.unitgen.PulseOscillator;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.module.Pwm;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
 import com.unimi.lim.hmi.util.ConversionUtils;
@@ -66,6 +67,23 @@ public class SynthModuleUnitTest {
         adder.output.connect(osc.frequency);
 
         play();
+    }
+
+    @Test
+    public void testPwm() {
+        System.out.println("PWM...");
+        Pwm pwm = new Pwm(1, 50);
+        synth.add(pwm);
+
+        double width = 0.5;
+
+        Add mult = new Add();
+        mult.inputA.set(width);
+        mult.inputB.connect(pwm.output);
+
+        mult.output.connect(osc.width);
+
+        play(PLAY_NOTE);
     }
 
     @Test

@@ -20,6 +20,7 @@ public class KeyHandler {
     private final static float CONTROL_HARMONICS_FACTOR = 1f / 50;
     private final static float CONTROL_TREMOLO_FACTOR = 2.5f;
     private final static float CONTROL_VIBRATO_FACTOR = 2.5f;
+    private final static float CONTROL_PWM_FACTOR = 2.5f;
 
     // Key handler configurations
     private final Synthesizer synth;
@@ -126,6 +127,9 @@ public class KeyHandler {
             case VIBRATO:
                 synth.controlVibratoDepth(delta * CONTROL_VIBRATO_FACTOR);
                 break;
+            case PWM:
+                synth.controlPwmDepth(delta * CONTROL_PWM_FACTOR);
+                break;
         }
     }
 
@@ -153,12 +157,10 @@ public class KeyHandler {
         long start = System.currentTimeMillis();
         if (noteNum < 0) {
             synth.release();
-//            Log.d(getClass().getName(), "Note released " + (System.currentTimeMillis() - start));
         } else {
             // Calculate the note on the scale
             Note note = scale.getNote(noteNum + keyOffset, halfTone);
             synth.press(note.getFrequency());
-//            Log.d(getClass().getName(), "Playing note " + note.toString() + " " + (System.currentTimeMillis() - start));
         }
     }
 

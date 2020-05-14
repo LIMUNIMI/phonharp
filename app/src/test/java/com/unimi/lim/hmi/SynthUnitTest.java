@@ -91,6 +91,19 @@ public class SynthUnitTest {
     }
 
     @Test
+    public void testPwm() {
+        timbre.setHarmonics(100);
+        timbre.setPwm(new Timbre.Lfo(5, 10));
+        buildAndStart(timbre);
+        play();
+        // Changes pwm config on the fly
+        timbre.setHarmonics(100);
+        timbre.setPwm(new Timbre.Lfo(15, 10));
+        synth.updateSynthesizerCfg(timbre);
+        play();
+    }
+
+    @Test
     public void testVolumeEnvelop() {
         timbre.setVolumeAsr(new Timbre.Asr(0, 0, 1, 1));
         buildAndStart(timbre);

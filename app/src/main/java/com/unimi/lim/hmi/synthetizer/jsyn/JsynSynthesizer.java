@@ -14,6 +14,7 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
+import com.unimi.lim.hmi.synthetizer.jsyn.module.Pwm;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
 import com.unimi.lim.hmi.util.ConversionUtils;
@@ -80,6 +81,7 @@ public class JsynSynthesizer implements Synthesizer {
     private final UnitInputPort harmonicsController;
     private final Tremolo tremolo;
     private final Vibrato vibrato;
+    private final Pwm pwm;
     private final Equalizer equalizer;
     private final Asr volumeEnvelop;
     private final Asr pitchEnvelop;
@@ -95,6 +97,7 @@ public class JsynSynthesizer implements Synthesizer {
     private int pitchAsrFinalSemitoneOffset;
     private int tremoloDepth;
     private int vibratoDepth;
+    private int pwmDepth;
 
     // Played note
     private double noteFrequency;
@@ -113,8 +116,9 @@ public class JsynSynthesizer implements Synthesizer {
         Add pitchMix1;
         Add pitchMix2;
 
-        // Harmonics mixers: harmMix=envelop+controller
-        Add harmMix;
+        // Harmonics mixers: harmMix1=envelop+pwm, harmMix2=controller+harmMix1
+        Add harmMix1;
+        Add harmMix2;
 
         // Add generators to synthesizer
         synth.add(lineOut = new LineOut());
@@ -123,10 +127,12 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(volMix2 = new Multiply());
         synth.add(pitchMix1 = new Add());
         synth.add(pitchMix2 = new Add());
-        synth.add(harmMix = new Add());
+        synth.add(harmMix1 = new Add());
+        synth.add(harmMix2 = new Add());
         synth.add(equalizer = new Equalizer());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
+        synth.add(pwm = new Pwm());
         synth.add(volumeEnvelop = new Asr());
         synth.add(pitchEnvelop = new Asr());
         synth.add(harmonicsEnvelop = new Asr());
@@ -134,7 +140,7 @@ public class JsynSynthesizer implements Synthesizer {
         // Controlled values
         volumeController = volMix2.inputA;
         pitchController = pitchMix2.inputA;
-        harmonicsController = harmMix.inputB;
+        harmonicsController = harmMix2.inputA;
         // Default value to 1 because is part of multiply operation
         volumeController.set(1);
 
@@ -151,9 +157,11 @@ public class JsynSynthesizer implements Synthesizer {
         pitchMix1.output.connect(pitchMix2.inputB);
         pitchMix2.output.connect(osc.frequency);
 
-        // Harmonics mixers: harmMix=envelop+harmonics
-        harmonicsEnvelop.output.connect(harmMix.inputA);
-        harmMix.output.connect(osc.width);
+        // Harmonics mixers: harmMix1=envelop+harmonics
+        harmonicsEnvelop.output.connect(harmMix1.inputA);
+        pwm.output.connect(harmMix1.inputB);
+        harmMix1.output.connect(harmMix2.inputB);
+        harmMix2.output.connect(osc.width);
 
         // Equalizer
         osc.output.connect(equalizer.input);
@@ -202,17 +210,23 @@ public class JsynSynthesizer implements Synthesizer {
         volume = timbre.getVolume() / 100f;
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics). Also, avoid continuous signal.
         harmonics = Math.min(1f - timbre.getHarmonics() / 100f, 0.95);
-        tremoloDepth = TimbreUtils.safeLfoDepth(timbre.getTremolo());
-        vibratoDepth = TimbreUtils.safeLfoDepth(timbre.getVibrato());
 
         // Equalizer gain, note that timbre dB values are converted to absolute value
         equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
         equalizer.setHighShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqHighShelfGain(timbre.getEqualizer())));
 
+        // LFO
+        tremoloDepth = TimbreUtils.safeLfoDepth(timbre.getTremolo());
+        vibratoDepth = TimbreUtils.safeLfoDepth(timbre.getVibrato());
+        pwmDepth = TimbreUtils.safeLfoDepth(timbre.getPwm());
         tremolo.setFrequency(TimbreUtils.safeLfoRate(timbre.getTremolo()));
         tremolo.setDepth(tremoloDepth);
         vibrato.setFrequency(TimbreUtils.safeLfoRate(timbre.getVibrato()));
         vibrato.setDepth(vibratoDepth);
+        pwm.setFrequency(TimbreUtils.safeLfoRate(timbre.getPwm()));
+        pwm.setDepth(pwmDepth);
+
+        // ASR
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volumeEnvelop.update(
                 TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100f,
@@ -305,6 +319,7 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsController.set(0);
         tremolo.setDepth(tremoloDepth);
         vibrato.setDepth(vibratoDepth);
+        pwm.setDepth(pwmDepth);
     }
 
     /**
@@ -380,5 +395,20 @@ public class JsynSynthesizer implements Synthesizer {
         Log.d(getClass().getName(), "Vibrato controller value " + value);
         vibrato.setDepth((int) value);
         vibrato.update(noteFrequency);
+    }
+
+    /**
+     * Control PWM depth, specified delta is added to current depth (depth range is 0-100)
+     *
+     * @param delta vibrato depth delta
+     */
+    @Override
+    public void controlPwmDepth(float delta) {
+        double value = pwm.getDepth() + delta;
+        if (value > 100 || value < 0) {
+            return;
+        }
+        Log.d(getClass().getName(), "PWM controller value " + value);
+        pwm.setDepth((int) value);
     }
 }

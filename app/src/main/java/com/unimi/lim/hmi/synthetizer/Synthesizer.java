@@ -26,6 +26,8 @@ public interface Synthesizer {
 
     void controlVibratoDepth(float delta);
 
+    void controlPwmDepth(float delta);
+
     String getTimbreId();
 
 }
