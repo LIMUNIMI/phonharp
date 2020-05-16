@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         @Override

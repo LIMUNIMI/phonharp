@@ -175,7 +175,7 @@ public class TimbreDao {
      * Retrieve timbre list file writer
      *
      * @return timbre list file writer
-     * @throws IOException
+     * @throws IOException if file cannot be opened
      */
     private FileWriter getFileWriter() throws IOException {
         return new FileWriter(new File(applicationContext.getFilesDir(), TIMBRE_FILE_NAME));
@@ -185,7 +185,7 @@ public class TimbreDao {
      * Retrieve timbre list file reader.
      *
      * @return timbre list file reader
-     * @throws IOException
+     * @throws IOException if file cannot be opened
      */
     private FileReader getFileReader() throws IOException {
         // Try to open timbre file from internal storage.

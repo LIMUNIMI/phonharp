@@ -7,7 +7,7 @@ public class Scale {
         MINOR
     }
 
-    private Type type;
+    private final Type type;
     private Integer startIdx;
 
     /**

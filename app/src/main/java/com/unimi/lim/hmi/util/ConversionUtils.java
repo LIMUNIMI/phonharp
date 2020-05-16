@@ -28,7 +28,7 @@ public class ConversionUtils {
     /**
      * Convert percentage value to decimal value
      *
-     * @param percentage percentave value
+     * @param percentage percentage value
      * @return percentage / 100
      */
     public static float percentageToDecimal(float percentage) {

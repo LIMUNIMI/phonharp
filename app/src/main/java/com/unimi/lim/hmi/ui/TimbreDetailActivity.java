@@ -38,7 +38,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
 
         // Setup working timbre on the view model, used by TimbreDetailFragment
         detailTimbreId = getIntent().getStringExtra(TIMBRE_ID);
-        Boolean isNewItem = getIntent().getBooleanExtra(IS_NEW_ITEM, true);
+        boolean isNewItem = getIntent().getBooleanExtra(IS_NEW_ITEM, true);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
         if (isNewItem) {
             viewModel.createWorking();
@@ -100,9 +100,9 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     /**
      * Handle play button touch to reproduce timbre audio sample
      *
-     * @param view
-     * @param event
-     * @return
+     * @param view view
+     * @param event event
+     * @return true
      */
     @Override
     public boolean onTouch(View view, MotionEvent event) {
@@ -117,7 +117,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     /**
      * Handles save, cancel and delete buttons; also tells to parent activity if item list must be reloaded
      *
-     * @param view
+     * @param view view
      */
     @Override
     public void onClick(View view) {

@@ -8,8 +8,8 @@ import com.jsyn.unitgen.Minimum;
 
 public class Clipper extends Circuit {
 
-    public UnitInputPort input;
-    public UnitOutputPort output;
+    public final UnitInputPort input;
+    public final UnitOutputPort output;
 
     /**
      * Clip signal between provided minimum and maximum values

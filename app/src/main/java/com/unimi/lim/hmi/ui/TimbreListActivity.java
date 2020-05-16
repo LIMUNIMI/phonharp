@@ -115,7 +115,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     /**
      * Play provided timbre and schedule stop action after sample time + timbre envelop time
      *
-     * @param timbre
+     * @param timbre timbre
      */
     private void playTimbreSample(Timbre timbre) {
         // Play sample of provided timbre
@@ -149,7 +149,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     /**
      * Handles "add" timbre button click
      *
-     * @param view
+     * @param view view
      */
     @Override
     public void onClick(View view) {
@@ -161,9 +161,9 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     /**
      * Handles return code from timbre detail activity: if the timbre has been saved then timbre list must be refreshed
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode request code
+     * @param resultCode  result code
+     * @param data        data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

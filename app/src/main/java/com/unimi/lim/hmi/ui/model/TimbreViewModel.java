@@ -14,6 +14,7 @@ import com.unimi.lim.hmi.entity.Timbre;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TimbreViewModel extends AndroidViewModel {
 
@@ -44,16 +45,14 @@ public class TimbreViewModel extends AndroidViewModel {
     /**
      * Reload timbre, selectAll must be invoked fist
      *
-     * @return TimbreViewModel, useful for fluid interface
      */
-    public TimbreViewModel reloadAll() {
+    public void reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
             // If needed perform select asynchronously
             List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
         }
-        return this;
     }
 
     /**
@@ -79,31 +78,27 @@ public class TimbreViewModel extends AndroidViewModel {
     /**
      * Create working timbre from scratch, note that timbre is created once per activity lifecycle
      *
-     * @return TimbreViewModel, useful for fluid interface
      */
-    public TimbreViewModel createWorking() {
+    public void createWorking() {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre");
             working = new MutableLiveData<>();
             working.setValue(new Timbre());
         }
-        return this;
     }
 
     /**
      * Create working timbre from existing timbre, note that timbre is created once per activity lifecycle
      *
-     * @param timbreId
-     * @return TimbreViewModel, useful for fluid interface
+     * @param timbreId timbre id
      */
-    public TimbreViewModel createWorkingFrom(String timbreId) {
+    public void createWorkingFrom(String timbreId) {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre from selected");
             working = new MutableLiveData<>();
             Timbre copy = SerializationUtils.clone(select(timbreId).getValue());
             working.setValue(copy);
         }
-        return this;
     }
 
     /**
@@ -123,44 +118,38 @@ public class TimbreViewModel extends AndroidViewModel {
      * Update working timbre, note that working timbre observers will be notified
      *
      * @param timbre working timbre
-     * @return TimbreViewModel, useful for fluid interface
      */
-    public TimbreViewModel workingChanged(Timbre timbre) {
+    public void workingChanged(Timbre timbre) {
         if (working == null) {
             throw new IllegalStateException("Working timbre is null, invoke create working before");
         }
         working.setValue(timbre);
-        return this;
     }
 
     /**
      * Save working timbre, timbre dao is invoked
      *
-     * @return TimbreViewModel, useful for fluid interface
      */
-    public TimbreViewModel saveWorking() {
+    public void saveWorking() {
         if (working == null) {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
         Log.d(getClass().getName(), "Saving timbre " + working.getValue());
         TimbreDao.getInstance(getApplication().getApplicationContext()).save(working.getValue());
-        return this;
     }
 
     /**
      * Delete working timbre, timbre dao is invoked
      *
-     * @return TimbreViewModel, useful for fluid interface
      */
-    public TimbreViewModel deleteWorking() {
+    public void deleteWorking() {
         if (working == null) {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
         }
         Log.d(getClass().getName(), "Deleting timbre " + working.getValue());
-        if (working.getValue().getId() != null) {
+        if (Objects.requireNonNull(working.getValue()).getId() != null) {
             TimbreDao.getInstance(getApplication().getApplicationContext()).delete(working.getValue().getId());
         }
-        return this;
     }
 
 }

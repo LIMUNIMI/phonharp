@@ -9,9 +9,9 @@ public class Asr extends Circuit {
 
     public final UnitOutputPort output;
 
-    private VariableRateMonoReader envPlayer;
-    private SegmentedEnvelope envData;
-    private double[] pairs = new double[8];
+    private final VariableRateMonoReader envPlayer;
+    private final SegmentedEnvelope envData;
+    private final double[] pairs = new double[8];
 
     /**
      * Asr constructor

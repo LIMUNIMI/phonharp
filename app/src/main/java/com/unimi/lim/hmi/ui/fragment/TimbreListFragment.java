@@ -21,6 +21,8 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.adapter.TimbreListViewAdapter;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import java.util.Objects;
+
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 
@@ -53,11 +55,11 @@ public class TimbreListFragment extends Fragment {
             // Configure RecyclerView
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+            DividerItemDecoration itemDecor = new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(itemDecor);
 
             // Create timbre adapter and setup timbre list observer
-            TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
+            TimbreViewModel viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(TimbreViewModel.class);
             viewModel.selectAll().observe(getViewLifecycleOwner(), timbres -> {
                 // Retrieves selected timbre from preferences
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -73,10 +75,10 @@ public class TimbreListFragment extends Fragment {
     /**
      * Setup timbre click listener
      *
-     * @param context
+     * @param context application context
      */
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (!(context instanceof OnTimbreListListener)) {
             throw new RuntimeException(context.toString() + " must implement OnTimbreListListener");

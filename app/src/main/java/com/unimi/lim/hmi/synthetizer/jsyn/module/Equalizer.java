@@ -8,8 +8,8 @@ import com.jsyn.unitgen.FilterLowShelf;
 
 public class Equalizer extends Circuit {
 
-    public UnitOutputPort output;
-    public UnitInputPort input;
+    public final UnitOutputPort output;
+    public final UnitInputPort input;
 
     // Default values
     private final static double LOW_SHELF_FREQ = 200;       // hertz
@@ -32,6 +32,7 @@ public class Equalizer extends Circuit {
      * @param lowShelfSlope  dB/octave
      * @param highShelfSlope dB/octave
      */
+    @SuppressWarnings("WeakerAccess")
     public Equalizer(double lowShelfFreq, double highShelfFreq, double lowShelfSlope, double highShelfSlope) {
         add(lowShelf = new FilterLowShelf());
         add(highShelf = new FilterHighShelf());

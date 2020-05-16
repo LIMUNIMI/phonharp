@@ -37,7 +37,7 @@ public class JsynSynthesizer implements Synthesizer {
         /**
          * Setup specified timbre configuration, if not used then default timbre wille be used
          *
-         * @param timbre
+         * @param timbre timbre
          * @return Builder instance
          */
         public Builder timbreCfg(Timbre timbre) {
@@ -56,16 +56,6 @@ public class JsynSynthesizer implements Synthesizer {
         }
 
         /**
-         * Setup specified audio device manager, if not used then default audio device will be used
-         *
-         * @return Builder instance
-         */
-        public Builder audioDeviceManager(AudioDeviceManager audioDeviceManager) {
-            this.audioDeviceManager = audioDeviceManager;
-            return this;
-        }
-
-        /**
          * Return synth instance
          *
          * @return synth instance
@@ -80,7 +70,6 @@ public class JsynSynthesizer implements Synthesizer {
     // Jsyn modules and synth properties
     private final com.jsyn.Synthesizer synth;
     private final LineOut lineOut;
-    private final PulseOscillator osc;
     private final UnitInputPort volumeController;
     private final UnitInputPort pitchController;
     private final UnitInputPort harmonicsController;
@@ -97,7 +86,6 @@ public class JsynSynthesizer implements Synthesizer {
 
     // From timbre config, values are converted from stored values (timbre instance) to jsyn values
     private double volume;
-    private double harmonics;
     private int pitchAsrInitialSemitoneOffset;
     private int pitchAsrFinalSemitoneOffset;
     private int tremoloDepth;
@@ -112,6 +100,9 @@ public class JsynSynthesizer implements Synthesizer {
     private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
         timbre = timbre != null ? timbre : new Timbre();
+
+        // Main oscillator
+        PulseOscillator osc;
 
         // Volume mixers: volMix1=envelop*tremolo, volMix2=controller*volMix1
         Multiply volMix1;
@@ -209,15 +200,13 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Update timbre configuration
      *
-     * @param timbre
+     * @param timbre timbre
      */
     @Override
     public void updateSynthesizerCfg(Timbre timbre) {
         this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volume = percentageToDecimal(timbre.getVolume());
-        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics).
-        harmonics = 1f - percentageToDecimal(timbre.getHarmonics());
 
         // Equalizer gain, note that timbre dB values are converted to absolute value
         equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
@@ -258,7 +247,7 @@ public class JsynSynthesizer implements Synthesizer {
         harmonicsEnvelop.update(
                 (1f - percentageToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))),
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
-                harmonics,
+                1f - percentageToDecimal(timbre.getHarmonics()),
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
                 (1f - percentageToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))));
     }
@@ -276,7 +265,7 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Play specified note frequency
      *
-     * @param notefrequency
+     * @param notefrequency note frequency
      */
     @Override
     public void press(double notefrequency) {

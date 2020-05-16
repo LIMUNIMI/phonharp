@@ -1,5 +1,6 @@
 package com.unimi.lim.hmi.util;
 
+@SuppressWarnings("unused")
 public class Constant {
 
     private Constant() {

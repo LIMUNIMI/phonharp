@@ -2,13 +2,13 @@ package com.unimi.lim.hmi.ui.adapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.unimi.lim.hmi.R;
@@ -34,6 +34,7 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
         items.stream().filter(t -> selectedTimbreId.equalsIgnoreCase(t.getId())).findFirst().ifPresent(t -> t.setChecked(true));
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_timbre_list_item, parent, false);
@@ -43,8 +44,8 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     /**
      * Associate timbre values to view adapter fields
      *
-     * @param holder
-     * @param position
+     * @param holder   view holder
+     * @param position holder position on the list
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
@@ -107,22 +108,21 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View view;
-        public final LinearLayout textLayout;
-        public final TextView title;
-        public final TextView desc;
-        public final RadioButton radio;
-        public Timbre timbre;
+        final LinearLayout textLayout;
+        final TextView title;
+        final TextView desc;
+        final RadioButton radio;
+        Timbre timbre;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
-            this.view = view;
             textLayout = view.findViewById(R.id.timbre_list_item);
             title = view.findViewById(R.id.timbre_list_item_title);
             desc = view.findViewById(R.id.timbre_list_item_desc);
             radio = view.findViewById(R.id.timbre_list_item_rad);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return super.toString() + " '" + title.getText() + "'";

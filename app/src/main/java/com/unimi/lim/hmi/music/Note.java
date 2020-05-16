@@ -90,7 +90,7 @@ public enum Note {
     B6(1975.53),
     ;
 
-    private double frequency;
+    private final double frequency;
 
     Note(double frequency) {
         this.frequency = frequency;

@@ -18,9 +18,9 @@ import androidx.preference.PreferenceManager;
 
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
-import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.Scale;
+import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
@@ -86,16 +86,6 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     // LIFECYCLE
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         synth.start();
@@ -142,7 +132,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private void applyKeyboardPreferences(SharedPreferences sharedPreferences) {
 
         // Half-tone button
-        Boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, true);
+        boolean showHalfTone = sharedPreferences.getBoolean(HALF_TONE, true);
         findViewById(R.id.key_modifier).setVisibility(showHalfTone ? View.VISIBLE : View.GONE);
         Log.d(getClass().getName(), "Halftone button enabled: " + showHalfTone);
 
@@ -186,13 +176,13 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private class KeyListener implements View.OnTouchListener {
 
         // Distance in pixels a touch can wander before we think the user is moving
-        private int touchSlop;
+        private final int touchSlop;
 
         // Holds fingers coordinates on specific key. Map key is the key id (0 to 3), Map value is the coordinate.
         private final Map<Integer, Float> xCoords = new HashMap<>();
         private final Map<Integer, Float> yCoords = new HashMap<>();
 
-        public KeyListener() {
+        KeyListener() {
             ViewConfiguration vc = ViewConfiguration.get(getApplicationContext());
             touchSlop = vc.getScaledTouchSlop();
             Log.d(getClass().getName(), "TouchSlop " + touchSlop);
@@ -264,9 +254,12 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
          * @param keyNum             number pressed key where the finger is moving
          * @param controllerConsumer controller that should be invoked if pixel delta is greater than touch slop
          */
-        private void handleCoords(Map<Integer, Float> coords, Float coord, int keyNum, Consumer<Float> controllerConsumer) {
+        private void handleCoords(Map<Integer, Float> coords, float coord, int keyNum, Consumer<Float> controllerConsumer) {
             Float previous = coords.get(keyNum);
-            Float diff = previous - coord;
+            if (previous == null) {
+                return;
+            }
+            float diff = previous - coord;
             if (Math.abs(diff) > touchSlop) {
                 coords.put(keyNum, coord);
                 Float step = diff / touchSlop / coords.size();

@@ -19,6 +19,7 @@ import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import static com.unimi.lim.hmi.entity.Timbre.DEFAULT_PORTAMENTO_TIME;
@@ -34,7 +35,7 @@ public class TimbreDetailFragment extends Fragment {
 
     // Utility functions to handle descriptions
     private final Function<Integer, String> GAIN_DESCRIPTION = val -> String.format("%d%s", eqSeekToModel(val), getResources().getString(R.string.decibel));
-    private final Function<Integer, String> HYSTERESOS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
+    private final Function<Integer, String> HYSTERESIS_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> PORTAMENTO_DESCRIPTION = val -> String.format("%.0f%s", portamentoSeekToModel(val) * 1000, getResources().getString(R.string.milliseconds));
     private final Function<Integer, String> ASR_TIME_DESCRIPTION = val -> String.format("%.2f%s", asrTimeSeekToModel(val), getResources().getString(R.string.seconds));
     private final Function<Integer, String> PERCENTAGE_DESCRIPTION = val -> String.format("%d%s", val, getResources().getString(R.string.percentage));
@@ -69,9 +70,9 @@ public class TimbreDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Retrieve current timbre; use getValue instead of observe because timbre will be modified by the user but we dont want to setup view element each time timbre is modified
-        TimbreViewModel viewModel = ViewModelProviders.of(getActivity()).get(TimbreViewModel.class);
+        TimbreViewModel viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(TimbreViewModel.class);
         Timbre timbre = viewModel.getWorking().getValue();
-        Log.d(getClass().getName(), "Editing timbre: " + timbre.toString());
+        Log.d(getClass().getName(), "Editing timbre: " + Objects.requireNonNull(timbre).toString());
 
         // Timbre name
         TextInputEditText timbreName = view.findViewById(R.id.timbre_name);
@@ -97,8 +98,8 @@ public class TimbreDetailFragment extends Fragment {
         Runnable onChange = () -> viewModel.workingChanged(timbre);
 
         // Volume and Harmonics seek bar
-        setupSeek(view, R.id.volume_seek, R.id.volume_text, 1, PERCENTAGE_DESCRIPTION, timbre.getVolume(), val -> timbre.setVolume(val), onChange);
-        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, HARMONICS_DESCRIPTION, timbre.getHarmonics(), val -> timbre.setHarmonics(val), onChange);
+        setupSeek(view, R.id.volume_seek, R.id.volume_text, 1, PERCENTAGE_DESCRIPTION, timbre.getVolume(), timbre::setVolume, onChange);
+        setupSeek(view, R.id.harmonics_seek, R.id.harmonics_text, 1, HARMONICS_DESCRIPTION, timbre.getHarmonics(), timbre::setHarmonics, onChange);
 
         // Tremolo Switch
         setupSwitch(view, R.id.tremolo_enabled, R.id.tremolo_container,
@@ -182,7 +183,7 @@ public class TimbreDetailFragment extends Fragment {
                     // Setup Hysteresis Seek bar
                     float tapHysteresis = timbre.getTapHysteresis() != 0 ? timbre.getTapHysteresis() : DEFAULT_TAP_HYSTERESIS;
                     timbre.setTapHysteresis(tapHysteresis);
-                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, HYSTERESOS_DESCRIPTION, modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
+                    setupSeek(view, R.id.tap_hysteresis_seek, R.id.tap_hysteresis_text, 1, HYSTERESIS_DESCRIPTION, modelToSeek(timbre.getTapHysteresis()), val -> timbre.setTapHysteresis(seekToModel(val)), onChange);
                 },
                 () -> timbre.setTapHysteresis(0f), onChange);
 
@@ -242,8 +243,8 @@ public class TimbreDetailFragment extends Fragment {
     /**
      * Convert asr time value from model to seek. s = (m / 5)^(2/3) * 1000, where 1000 is seek bar max value and 5 is time max value in seconds (5 seconds)
      *
-     * @param value
-     * @return
+     * @param value time in seconds
+     * @return seconds to seek
      */
     private int asrTimeModelToSeek(float value) {
         return (int) (Math.pow(value / 5, MODEL_TO_SEEK_EXP) * 10000);
@@ -252,8 +253,8 @@ public class TimbreDetailFragment extends Fragment {
     /**
      * Convert asr time value from model to seek. s = (m)^(2/3) * 10000, where 10000 is seek bar max value and 5 is time max value in seconds (5 seconds)
      *
-     * @param value
-     * @return
+     * @param value seconds
+     * @return seconds to seek
      */
     private int portamentoModelToSeek(float value) {
         return (int) (Math.pow(value, MODEL_TO_SEEK_EXP) * 10000);

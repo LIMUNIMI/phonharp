@@ -2,6 +2,7 @@ package com.unimi.lim.hmi.entity;
 
 import java.io.Serializable;
 
+@SuppressWarnings("WeakerAccess")
 public class Timbre implements Serializable {
 
     // This field is strictly related to ui purposes

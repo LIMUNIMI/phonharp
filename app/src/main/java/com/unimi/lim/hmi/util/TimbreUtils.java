@@ -2,6 +2,7 @@ package com.unimi.lim.hmi.util;
 
 import com.unimi.lim.hmi.entity.Timbre;
 
+@SuppressWarnings("WeakerAccess")
 public class TimbreUtils {
 
     private final static String SEPARATOR = " ";
@@ -96,7 +97,7 @@ public class TimbreUtils {
     public static String buildDescription(Timbre timbre) {
         StringBuilder builder = new StringBuilder();
         builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)
-                .append(HARMONICS).append(timbre.getHarmonics()).append(SEPARATOR);
+                .append(HARMONICS).append(timbre.getHarmonics()/2).append(SEPARATOR);
         addHysteresisDescription(builder, timbre);
         addPortamentoDescription(builder, timbre);
         addControllerDescription(builder, SWIPE_HORIZONTAL, timbre.getController1());

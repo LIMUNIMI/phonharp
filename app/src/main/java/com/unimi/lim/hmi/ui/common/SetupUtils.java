@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableBiMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@SuppressWarnings("ConstantConditions")
 public class SetupUtils {
 
     private SetupUtils() {

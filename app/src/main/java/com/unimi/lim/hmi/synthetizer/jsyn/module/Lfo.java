@@ -7,9 +7,10 @@ import com.jsyn.unitgen.TriangleOscillator;
 import com.jsyn.unitgen.UnitOscillator;
 import com.unimi.lim.hmi.synthetizer.WaveForm;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Lfo extends Circuit {
 
-    protected final UnitOscillator lfoOsc;
+    final UnitOscillator lfoOsc;
 
     public Lfo(WaveForm waveForm) {
         this(0, 0, waveForm);

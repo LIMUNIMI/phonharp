@@ -20,6 +20,8 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 
+import androidx.annotation.NonNull;
+
 import com.jsyn.devices.AudioDeviceInputStream;
 import com.jsyn.devices.AudioDeviceManager;
 import com.jsyn.devices.AudioDeviceOutputStream;
@@ -34,15 +36,13 @@ import java.util.ArrayList;
 public class JSynAndroidAudioDevice implements AudioDeviceManager
 {
 
-	ArrayList<DeviceInfo> deviceRecords;
-	private double suggestedOutputLatency = 0.100;
-	private double suggestedInputLatency = 0.100;
-	private int defaultInputDeviceID = -1;
-	private int defaultOutputDeviceID = -1;
+	private final ArrayList<DeviceInfo> deviceRecords;
+	private final int defaultInputDeviceID;
+	private final int defaultOutputDeviceID;
 
 	public JSynAndroidAudioDevice()
 	{
-		deviceRecords = new ArrayList<DeviceInfo>();
+		deviceRecords = new ArrayList<>();
 		DeviceInfo deviceInfo = new DeviceInfo();
 
 		deviceInfo.name = "Android Audio";
@@ -65,6 +65,7 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager
 		int maxInputs;
 		int maxOutputs;
 
+		@NonNull
 		@Override
 		public String toString()
 		{
@@ -73,17 +74,19 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private class AndroidAudioStream
 	{
 		short[] shortBuffer;
-		int frameRate;
-		int deviceID;
-		int samplesPerFrame;
+		final int frameRate;
+		@SuppressWarnings("unused")
+		final int deviceID;
+		final int samplesPerFrame;
 		AudioTrack audioTrack;
 		int minBufferSize;
 		int bufferSize;
 
-		public AndroidAudioStream(int deviceID, int frameRate, int samplesPerFrame)
+		AndroidAudioStream(int deviceID, int frameRate, int samplesPerFrame)
 		{
 			this.deviceID = deviceID;
 			this.frameRate = frameRate;
@@ -100,7 +103,7 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager
 
 	private class AndroidAudioOutputStream extends AndroidAudioStream implements AudioDeviceOutputStream
 	{
-		public AndroidAudioOutputStream(int deviceID, int frameRate, int samplesPerFrame)
+		AndroidAudioOutputStream(int deviceID, int frameRate, int samplesPerFrame)
 		{
 			super( deviceID, frameRate, samplesPerFrame );
 		}
@@ -183,7 +186,7 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager
 	private class AndroidAudioInputStream extends AndroidAudioStream implements AudioDeviceInputStream
 	{
 
-		public AndroidAudioInputStream(int deviceID, int frameRate, int samplesPerFrame)
+		AndroidAudioInputStream(int deviceID, int frameRate, int samplesPerFrame)
 		{
 			super( deviceID, frameRate, samplesPerFrame );
 		}
@@ -311,14 +314,12 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager
 	@Override
 	public int setSuggestedOutputLatency( double latency )
 	{
-		suggestedOutputLatency = latency;
 		return 0;
 	}
 
 	@Override
 	public int setSuggestedInputLatency( double latency )
 	{
-		suggestedInputLatency = latency;
 		return 0;
 	}
 

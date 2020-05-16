@@ -142,7 +142,7 @@ public class KeyHandler {
             invokeSynth();
         } else if (!delayedPlayInvoked) {
             long delay = secondsToMillis(timbre.getTapHysteresis());
-            Log.d(getClass().getName(), "Delay millis " + delay);
+            Log.d(getClass().getName(), "Delay millis " + delay + ", original " + timbre.getTapHysteresis());
             delayedPlayer.postDelayed(() -> {
                 invokeSynth();
                 delayedPlayInvoked = false;
@@ -155,7 +155,6 @@ public class KeyHandler {
      * Invoke synthesizer press or release function
      */
     private void invokeSynth() {
-        long start = System.currentTimeMillis();
         if (noteNum < 0) {
             synth.release();
         } else {
