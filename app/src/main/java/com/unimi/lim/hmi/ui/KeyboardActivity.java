@@ -185,7 +185,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
      */
     private class KeyListener implements View.OnTouchListener {
 
+        // Distance in pixels a touch can wander before we think the user is moving
         private int touchSlop;
+
+        // Holds fingers coordinates on specific key. Map key is the key id (0 to 3), Map value is the coordinate.
         private final Map<Integer, Float> xCoords = new HashMap<>();
         private final Map<Integer, Float> yCoords = new HashMap<>();
 
@@ -230,16 +233,37 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             return true;
         }
 
+        /**
+         * Setup finger coordinate
+         *
+         * @param keyNum number of pressed key
+         * @param event  motion event
+         */
         private void setCoords(int keyNum, MotionEvent event) {
             xCoords.put(keyNum, event.getX());
             yCoords.put(keyNum, event.getY());
         }
 
+        /**
+         * Reset finger coordinate
+         *
+         * @param keyNum number of released key
+         */
         private void resetCoords(int keyNum) {
             xCoords.remove(keyNum);
             yCoords.remove(keyNum);
         }
 
+        /**
+         * Check if a finger has moved for more than touchSlop pixels in order to invoke the swipe controller.
+         * The number of steps, passed to the controller consumer, are given by pixel delta / touch slope.
+         * If more than one key is pressed then the step is divided by the number of pressed keys.
+         *
+         * @param coords             previous x or y coordinate map
+         * @param coord              actual x or y coordinate
+         * @param keyNum             number pressed key where the finger is moving
+         * @param controllerConsumer controller that should be invoked if pixel delta is greater than touch slop
+         */
         private void handleCoords(Map<Integer, Float> coords, Float coord, int keyNum, Consumer<Float> controllerConsumer) {
             Float previous = coords.get(keyNum);
             Float diff = previous - coord;

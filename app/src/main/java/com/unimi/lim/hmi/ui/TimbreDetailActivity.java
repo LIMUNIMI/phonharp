@@ -78,12 +78,18 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         play.setOnTouchListener(this);
     }
 
+    /**
+     * Startup the synth
+     */
     @Override
     public void onResume() {
         super.onResume();
         synthesizer.start();
     }
 
+    /**
+     * Release and stop the synth
+     */
     @Override
     public void onPause() {
         super.onPause();

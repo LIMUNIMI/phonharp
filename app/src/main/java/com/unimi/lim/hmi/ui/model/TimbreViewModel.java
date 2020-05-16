@@ -25,6 +25,11 @@ public class TimbreViewModel extends AndroidViewModel {
         super(application);
     }
 
+    /**
+     * Select all timbre, note that dao is invoked once per activity lifecycle
+     *
+     * @return all timbre
+     */
     public LiveData<List<Timbre>> selectAll() {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
@@ -36,6 +41,11 @@ public class TimbreViewModel extends AndroidViewModel {
         return all;
     }
 
+    /**
+     * Reload timbre, selectAll must be invoked fist
+     *
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
@@ -46,6 +56,12 @@ public class TimbreViewModel extends AndroidViewModel {
         return this;
     }
 
+    /**
+     * Select specified timbre, note that dao is invoked once per activity lifecycle
+     *
+     * @param id timbre id
+     * @return timbre
+     */
     public LiveData<Timbre> select(String id) {
         Log.d(getClass().getName(), "Select timbre with id " + id);
         if (selected == null) {
@@ -60,6 +76,11 @@ public class TimbreViewModel extends AndroidViewModel {
         return selected;
     }
 
+    /**
+     * Create working timbre from scratch, note that timbre is created once per activity lifecycle
+     *
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel createWorking() {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre");
@@ -69,6 +90,12 @@ public class TimbreViewModel extends AndroidViewModel {
         return this;
     }
 
+    /**
+     * Create working timbre from existing timbre, note that timbre is created once per activity lifecycle
+     *
+     * @param timbreId
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel createWorkingFrom(String timbreId) {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre from selected");
@@ -79,6 +106,11 @@ public class TimbreViewModel extends AndroidViewModel {
         return this;
     }
 
+    /**
+     * Retrieve working timbre
+     *
+     * @return working timbre
+     */
     public LiveData<Timbre> getWorking() {
         Log.d(getClass().getName(), "Retrieve working timbre");
         if (working == null) {
@@ -87,6 +119,12 @@ public class TimbreViewModel extends AndroidViewModel {
         return working;
     }
 
+    /**
+     * Update working timbre, note that working timbre observers will be notified
+     *
+     * @param timbre working timbre
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel workingChanged(Timbre timbre) {
         if (working == null) {
             throw new IllegalStateException("Working timbre is null, invoke create working before");
@@ -95,6 +133,11 @@ public class TimbreViewModel extends AndroidViewModel {
         return this;
     }
 
+    /**
+     * Save working timbre, timbre dao is invoked
+     *
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel saveWorking() {
         if (working == null) {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");
@@ -104,6 +147,11 @@ public class TimbreViewModel extends AndroidViewModel {
         return this;
     }
 
+    /**
+     * Delete working timbre, timbre dao is invoked
+     *
+     * @return TimbreViewModel, useful for fluid interface
+     */
     public TimbreViewModel deleteWorking() {
         if (working == null) {
             throw new IllegalStateException("Unable to save working timbre, working timbre is null, invoke create working before");

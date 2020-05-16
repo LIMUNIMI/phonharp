@@ -27,11 +27,12 @@ import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
+import static com.unimi.lim.hmi.util.ConversionUtils.secondsToMillis;
 
 public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListListener, View.OnClickListener {
 
     private final static int REQUEST_CODE = 0;
-    private final static int SUSTAIN_SAMPLE_TIME = 1000;
+    private final static int SUSTAIN_SAMPLE_TIME = 500;
 
     private Synthesizer synthesizer;
     private final Handler releaseSoundHandler = new Handler();
@@ -63,12 +64,18 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         addButton.setOnClickListener(this);
     }
 
+    /**
+     * Startup the synth
+     */
     @Override
     public void onResume() {
         super.onResume();
         synthesizer.start();
     }
 
+    /**
+     * Release and stop the synth
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -118,7 +125,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
 
         // A delayed function is invoked to stop the playing audio sample.
         // This function is executed after sample time + timbre envelop time
-        float stopAfter = TimbreUtils.maxAsrAttackTime(timbre) * 1000 + TimbreUtils.maxAsrReleaseTime(timbre) * 1000 + SUSTAIN_SAMPLE_TIME;
+        float stopAfter = secondsToMillis(TimbreUtils.maxAsrAttackTime(timbre)) + secondsToMillis(TimbreUtils.maxAsrReleaseTime(timbre)) + SUSTAIN_SAMPLE_TIME;
         releaseSoundHandler.postDelayed(() -> {
             // Release only the owned audio sample
             if (playingSound && timbre.getId().equals(synthesizer.getTimbreId())) {

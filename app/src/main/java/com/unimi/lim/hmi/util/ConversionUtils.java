@@ -25,8 +25,24 @@ public class ConversionUtils {
         return (int) (10 * Math.log10(abs));
     }
 
-    public static float percentaceToDecimal(int percentage) {
-        return (float) percentage / 100;
+    /**
+     * Convert percentage value to decimal value
+     *
+     * @param percentage percentave value
+     * @return percentage / 100
+     */
+    public static float percentageToDecimal(float percentage) {
+        return percentage / 100;
+    }
+
+    /**
+     * Convert seconds to milliseconds
+     *
+     * @param seconds seconds value
+     * @return milliseconds value
+     */
+    public static long secondsToMillis(float seconds) {
+        return (long) seconds * 1000;
     }
 
 }

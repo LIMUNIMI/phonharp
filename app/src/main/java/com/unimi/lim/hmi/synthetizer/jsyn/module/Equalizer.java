@@ -5,7 +5,6 @@ import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.unitgen.Circuit;
 import com.jsyn.unitgen.FilterHighShelf;
 import com.jsyn.unitgen.FilterLowShelf;
-import com.jsyn.unitgen.PassThrough;
 
 public class Equalizer extends Circuit {
 
@@ -13,8 +12,8 @@ public class Equalizer extends Circuit {
     public UnitInputPort input;
 
     // Default values
-    private final static double LOW_SHELF_FREQ = 200;
-    private final static double HIGH_SHELF_FREQ = 8000;
+    private final static double LOW_SHELF_FREQ = 200;       // hertz
+    private final static double HIGH_SHELF_FREQ = 8000;     // hertz
     private final static double SLOPE = 1;
 
     // EQ filters
@@ -25,6 +24,14 @@ public class Equalizer extends Circuit {
         this(LOW_SHELF_FREQ, HIGH_SHELF_FREQ, SLOPE, SLOPE);
     }
 
+    /**
+     * Equalizer constructor
+     *
+     * @param lowShelfFreq   hertz
+     * @param highShelfFreq  hertz
+     * @param lowShelfSlope  dB/octave
+     * @param highShelfSlope dB/octave
+     */
     public Equalizer(double lowShelfFreq, double highShelfFreq, double lowShelfSlope, double highShelfSlope) {
         add(lowShelf = new FilterLowShelf());
         add(highShelf = new FilterHighShelf());

@@ -19,7 +19,7 @@ public class Tremolo extends Lfo {
      * Constructor
      *
      * @param frequency frequency
-     * @param depth     between 0 and 100
+     * @param depth     between 0% and 100%
      */
     public Tremolo(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
@@ -36,7 +36,7 @@ public class Tremolo extends Lfo {
     /**
      * Giving depth setup modulator amplitude and dcoffset
      *
-     * @param depth depth value between 0 and 100
+     * @param depth depth value between 0% and 100%
      */
     public void setDepth(int depth) {
         this.depth = depth;

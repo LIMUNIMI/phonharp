@@ -87,6 +87,12 @@ public class TimbreUtils {
         return Math.max(safeAsrReleaseTime(timbre.getHarmonicsAsr()), Math.max(safeAsrReleaseTime(timbre.getVolumeAsr()), safeAsrReleaseTime(timbre.getPitchAsr())));
     }
 
+    /**
+     * Create timbre short description
+     *
+     * @param timbre timbre
+     * @return timbre short description
+     */
     public static String buildDescription(Timbre timbre) {
         StringBuilder builder = new StringBuilder();
         builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)

@@ -16,8 +16,8 @@ public class Pwm extends Lfo {
     /**
      * Constructor
      *
-     * @param frequency frequency
-     * @param depth     between 0 and 100
+     * @param frequency hertz
+     * @param depth     between 0% and 100%
      */
     public Pwm(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);

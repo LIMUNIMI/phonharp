@@ -21,7 +21,7 @@ public class Vibrato extends Lfo {
      * Constructor
      *
      * @param frequency frequency
-     * @param depth     between 0 and 100
+     * @param depth     between 0% and 100%
      */
     public Vibrato(double frequency, int depth) {
         super(frequency, WaveForm.TRIANGLE);
@@ -36,7 +36,7 @@ public class Vibrato extends Lfo {
     /**
      * Set vibrato oscillator amplitude depending on configured depth and carrier frequency
      *
-     * @param carrierFrequency
+     * @param carrierFrequency hertz
      */
     public void update(double carrierFrequency) {
         float depthToSemitone = (float) MAX_AMPLITUDE / 100 * depth;
@@ -47,7 +47,7 @@ public class Vibrato extends Lfo {
     /**
      * Set depth value
      *
-     * @param depth depth value between 0 and 100
+     * @param depth depth value between 0% and 100%
      */
     public void setDepth(int depth) {
         this.depth = depth;

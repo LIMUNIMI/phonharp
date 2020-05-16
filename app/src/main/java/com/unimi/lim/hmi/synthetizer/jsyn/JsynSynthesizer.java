@@ -22,7 +22,7 @@ import com.unimi.lim.hmi.util.ConversionUtils;
 import com.unimi.lim.hmi.util.NoteUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
-import static com.unimi.lim.hmi.util.ConversionUtils.percentaceToDecimal;
+import static com.unimi.lim.hmi.util.ConversionUtils.percentageToDecimal;
 
 public class JsynSynthesizer implements Synthesizer {
 
@@ -215,9 +215,9 @@ public class JsynSynthesizer implements Synthesizer {
     public void updateSynthesizerCfg(Timbre timbre) {
         this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
-        volume = percentaceToDecimal(timbre.getVolume());
+        volume = percentageToDecimal(timbre.getVolume());
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics).
-        harmonics = 1f - percentaceToDecimal(timbre.getHarmonics());
+        harmonics = 1f - percentageToDecimal(timbre.getHarmonics());
 
         // Equalizer gain, note that timbre dB values are converted to absolute value
         equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
@@ -237,11 +237,11 @@ public class JsynSynthesizer implements Synthesizer {
         // ASR
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volumeEnvelop.update(
-                percentaceToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr())),
+                percentageToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr())),
                 TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()),
                 volume,
                 TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr()),
-                percentaceToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr())));
+                percentageToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr())));
         // Note that pitch envelop values depend on played note and are set on press method
         pitchAsrInitialSemitoneOffset = (int) TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr());
         pitchAsrFinalSemitoneOffset = (int) TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr());
@@ -256,11 +256,11 @@ public class JsynSynthesizer implements Synthesizer {
         // If harmonicsEnvelopAsr is not configured (is null) then initial and final values are set to harmonics
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics)
         harmonicsEnvelop.update(
-                (1f - percentaceToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))),
+                (1f - percentageToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))),
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
                 harmonics,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
-                (1f - percentaceToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))));
+                (1f - percentageToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))));
     }
 
     /**
@@ -333,11 +333,11 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Control volume, specified delta value is added to current volume value (volume range is 0-1)
      *
-     * @param delta volume delta
+     * @param delta volume delta, percentage
      */
     @Override
     public void controlVolume(float delta) {
-        double value = volumeController.get() + delta;
+        double value = volumeController.get() + percentageToDecimal(delta);
         if (volume * value >= 1) {
             // Lock maximum value to 1
             value = 1 / volume;
@@ -365,11 +365,11 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Control harmonics, specified delta is added to current harmonics value (harmonics range is -1/1)
      *
-     * @param delta harmonics delta
+     * @param delta harmonics delta, percentage
      */
     @Override
     public void controlHarmonics(float delta) {
-        double value = harmonicsController.getValue() + delta;
+        double value = harmonicsController.getValue() + percentageToDecimal(delta);
         Log.d(getClass().getName(), "Harmonics controller value " + value);
         harmonicsController.set(value);
     }
@@ -377,7 +377,7 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Control tremolo depth, specified delta is added to current depth (depth range is 0-100)
      *
-     * @param delta tremolo depth delta
+     * @param delta tremolo depth delta, percentage
      */
     @Override
     public void controlTremoloDepth(float delta) {
@@ -392,7 +392,7 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Control vibrato depth, specified delta is added to current depth (depth range is 0-100)
      *
-     * @param delta vibrato depth delta
+     * @param delta vibrato depth delta, percentage
      */
     @Override
     public void controlVibratoDepth(float delta) {
@@ -408,7 +408,7 @@ public class JsynSynthesizer implements Synthesizer {
     /**
      * Control PWM depth, specified delta is added to current depth (depth range is 0-100)
      *
-     * @param delta vibrato depth delta
+     * @param delta vibrato depth delta, percentage
      */
     @Override
     public void controlPwmDepth(float delta) {
