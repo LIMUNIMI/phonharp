@@ -34,7 +34,7 @@
                 android:layout_marginStart="@dimen/timbre_detail_component_margin"
                 android:layout_marginTop="@dimen/timbre_detail_component_margin"
                 android:layout_marginEnd="@dimen/timbre_detail_component_margin"
-                android:text="@string/portamento_delay"
+                android:text="@string/portamento_time"
                 android:textAppearance="?attr/textAppearanceListItem" />
 
             <TextView

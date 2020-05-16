@@ -296,7 +296,7 @@ public class TimbreDetailFragment extends Fragment {
      * @return model dB gain value
      */
     private int eqSeekToModel(int value) {
-        return value - 15;
+        return value - 18;
     }
 
     /**
@@ -306,6 +306,6 @@ public class TimbreDetailFragment extends Fragment {
      * @return seek dB gain value
      */
     private int eqModelToSeek(int value) {
-        return value + 15;
+        return value + 18;
     }
 }

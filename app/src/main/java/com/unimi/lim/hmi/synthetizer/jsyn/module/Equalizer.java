@@ -13,8 +13,8 @@ public class Equalizer extends Circuit {
     public UnitInputPort input;
 
     // Default values
-    private final static double LOW_SHELF_FREQ = 80;
-    private final static double HIGH_SHELF_FREQ = 12000;
+    private final static double LOW_SHELF_FREQ = 200;
+    private final static double HIGH_SHELF_FREQ = 8000;
     private final static double SLOPE = 1;
 
     // EQ filters

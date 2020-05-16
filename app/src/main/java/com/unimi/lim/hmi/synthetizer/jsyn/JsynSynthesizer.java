@@ -13,6 +13,7 @@ import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
+import com.unimi.lim.hmi.synthetizer.jsyn.module.Clipper;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Equalizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Pwm;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Tremolo;
@@ -20,6 +21,8 @@ import com.unimi.lim.hmi.synthetizer.jsyn.module.Vibrato;
 import com.unimi.lim.hmi.util.ConversionUtils;
 import com.unimi.lim.hmi.util.NoteUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
+
+import static com.unimi.lim.hmi.util.ConversionUtils.percentaceToDecimal;
 
 public class JsynSynthesizer implements Synthesizer {
 
@@ -72,6 +75,8 @@ public class JsynSynthesizer implements Synthesizer {
         }
     }
 
+    private final static double MAX_HARMONICS = 0.95;
+
     // Jsyn modules and synth properties
     private final com.jsyn.Synthesizer synth;
     private final LineOut lineOut;
@@ -116,9 +121,10 @@ public class JsynSynthesizer implements Synthesizer {
         Add pitchMix1;
         Add pitchMix2;
 
-        // Harmonics mixers: harmMix1=envelop+pwm, harmMix2=controller+harmMix1
+        // Harmonics mixers: harmMix1=envelop+pwm, harmMix2=controller+harmMix1, harmClip=minimum(harmMix2, 0.95)
         Add harmMix1;
         Add harmMix2;
+        Clipper harmClip;
 
         // Add generators to synthesizer
         synth.add(lineOut = new LineOut());
@@ -129,6 +135,7 @@ public class JsynSynthesizer implements Synthesizer {
         synth.add(pitchMix2 = new Add());
         synth.add(harmMix1 = new Add());
         synth.add(harmMix2 = new Add());
+        synth.add(harmClip = new Clipper(-MAX_HARMONICS, MAX_HARMONICS));
         synth.add(equalizer = new Equalizer());
         synth.add(tremolo = new Tremolo());
         synth.add(vibrato = new Vibrato());
@@ -157,11 +164,12 @@ public class JsynSynthesizer implements Synthesizer {
         pitchMix1.output.connect(pitchMix2.inputB);
         pitchMix2.output.connect(osc.frequency);
 
-        // Harmonics mixers: harmMix1=envelop+harmonics
+        // Harmonics mixers: harmMix1=envelop+pwm, harmMix2=controller+harmMix1, harmClip=minimum(harmMix2, 0.95)
         harmonicsEnvelop.output.connect(harmMix1.inputA);
         pwm.output.connect(harmMix1.inputB);
         harmMix1.output.connect(harmMix2.inputB);
-        harmMix2.output.connect(osc.width);
+        harmMix2.output.connect(harmClip.input);
+        harmClip.output.connect(osc.width);
 
         // Equalizer
         osc.output.connect(equalizer.input);
@@ -207,9 +215,9 @@ public class JsynSynthesizer implements Synthesizer {
     public void updateSynthesizerCfg(Timbre timbre) {
         this.timbre = timbre;
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
-        volume = timbre.getVolume() / 100f;
-        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics). Also, avoid continuous signal.
-        harmonics = Math.min(1f - timbre.getHarmonics() / 100f, 0.95);
+        volume = percentaceToDecimal(timbre.getVolume());
+        // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics) but jsyn values goes from 0 (odd harmonics) to 1 (all harmonics).
+        harmonics = 1f - percentaceToDecimal(timbre.getHarmonics());
 
         // Equalizer gain, note that timbre dB values are converted to absolute value
         equalizer.setLowShelfGain(ConversionUtils.dBtoAbsoluteValue(TimbreUtils.safeEqLowShelfGain(timbre.getEqualizer())));
@@ -229,11 +237,11 @@ public class JsynSynthesizer implements Synthesizer {
         // ASR
         // Note that values are divided by 100 because ui and stored ranges are 0-100 but jsyn range is 0-1
         volumeEnvelop.update(
-                TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr()) / 100f,
+                percentaceToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getVolumeAsr())),
                 TimbreUtils.safeAsrAttackTime(timbre.getVolumeAsr()),
                 volume,
                 TimbreUtils.safeAsrReleaseTime(timbre.getVolumeAsr()),
-                TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr()) / 100f);
+                percentaceToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getVolumeAsr())));
         // Note that pitch envelop values depend on played note and are set on press method
         pitchAsrInitialSemitoneOffset = (int) TimbreUtils.safeAsrInitialValue(timbre.getPitchAsr());
         pitchAsrFinalSemitoneOffset = (int) TimbreUtils.safeAsrFinalValue(timbre.getPitchAsr());
@@ -248,11 +256,11 @@ public class JsynSynthesizer implements Synthesizer {
         // If harmonicsEnvelopAsr is not configured (is null) then initial and final values are set to harmonics
         // 1 minus because stored value goes from 0 (all harmonics) to 100 (odd harmonics)
         harmonicsEnvelop.update(
-                (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getInitialValue() : timbre.getHarmonics()) / 100f),
+                (1f - percentaceToDecimal((int) TimbreUtils.safeAsrInitialValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))),
                 TimbreUtils.safeAsrAttackTime(timbre.getHarmonicsAsr()),
                 harmonics,
                 TimbreUtils.safeAsrReleaseTime(timbre.getHarmonicsAsr()),
-                (1f - (timbre.getHarmonicsAsr() != null ? timbre.getHarmonicsAsr().getFinalValue() : timbre.getHarmonics()) / 100f));
+                (1f - percentaceToDecimal((int) TimbreUtils.safeAsrFinalValue(timbre.getHarmonicsAsr(), timbre.getHarmonics()))));
     }
 
     /**

@@ -8,7 +8,7 @@ public class Timbre implements Serializable {
     // Since there is only one field we leave it here and avoid to create decorator objects
     private transient boolean checked = false;
 
-    public final static int DEFAULT_VOLUME = 100;   // percentage
+    public final static int DEFAULT_VOLUME = 50;   // percentage
     public final static int DEFAULT_HARMONICS = 50; // percentage
     public final static float DEFAULT_TAP_HYSTERESIS = 0.05f; // seconds
     public final static float DEFAULT_PORTAMENTO_TIME = 0.05f; // seconds

@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/timbre_detail_component_margin"
-                android:max="30" />
+                android:max="36" />
 
             <TextView
                 android:id="@+id/equalizer_high_shelf_title"
@@ -79,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/timbre_detail_component_margin"
-                android:max="30" />
+                android:max="36" />
         </LinearLayout>
 
     </LinearLayout>

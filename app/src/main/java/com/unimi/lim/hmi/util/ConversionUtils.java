@@ -25,4 +25,8 @@ public class ConversionUtils {
         return (int) (10 * Math.log10(abs));
     }
 
+    public static float percentaceToDecimal(int percentage) {
+        return (float) percentage / 100;
+    }
+
 }
