@@ -42,7 +42,7 @@ public class ConversionUtils {
      * @return milliseconds value
      */
     public static long secondsToMillis(float seconds) {
-        return (long) seconds * 1000;
+        return (long) (seconds * 1000);
     }
 
 }
