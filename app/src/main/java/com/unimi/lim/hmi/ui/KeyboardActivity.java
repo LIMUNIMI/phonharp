@@ -112,11 +112,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Log.d(getClass().getName(), "Clicked menu item " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.menu_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.menu_about:
-                // TODO
+                startActivity(new Intent(this, AboutActivity.class));
                 return true;
             case R.id.menu_quit:
                 finish();
@@ -146,12 +145,16 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             playableKeyIds.forEach(kid -> flipRight(constraint, kid));
             flipLeft(constraint, R.id.menu_button);
             flipLeft(constraint, R.id.key_modifier);
+            flipRight(constraint, R.id.toolbar_title);
             constraint.connect(R.id.key_modifier, ConstraintSet.END, R.id.key_scnd, ConstraintSet.START);
+            constraint.connect(R.id.toolbar_title, ConstraintSet.START, R.id.menu_button, ConstraintSet.END);
         } else {
             playableKeyIds.forEach(kid -> flipLeft(constraint, kid));
             flipRight(constraint, R.id.menu_button);
             flipRight(constraint, R.id.key_modifier);
+            flipLeft(constraint, R.id.toolbar_title);
             constraint.connect(R.id.key_modifier, ConstraintSet.START, R.id.key_scnd, ConstraintSet.END);
+            constraint.connect(R.id.toolbar_title, ConstraintSet.END, R.id.menu_button, ConstraintSet.START);
         }
         constraint.applyTo(layout);
         Log.d(getClass().getName(), "Right-handed: " + showHalfTone);
