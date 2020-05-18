@@ -34,9 +34,9 @@
         <item>6</item>
     </string-array>
 
-    <string-array name="scale_type">
-        <item>Major</item>
-        <item>Minor</item>
+    <string-array name="scale_type_key">
+        <item>major</item>
+        <item>minor</item>
     </string-array>
 
     <string-array name="handedness">
@@ -44,7 +44,7 @@
         <item>right-handed</item>
     </string-array>
 
-    <string-array name="notes_names">
+    <string-array name="note_names">
         <item>C</item>
         <item>C#/Db</item>
         <item>D</item>
@@ -79,7 +79,7 @@
         <item>6</item>
     </string-array>
 
-    <string-array name="scale_types_names">
+    <string-array name="scale_type_names">
         <item>Major</item>
         <item>Minor</item>
     </string-array>

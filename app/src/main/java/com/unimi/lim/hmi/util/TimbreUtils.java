@@ -134,7 +134,7 @@ public class TimbreUtils {
     }
 
     private static void addControllerDescription(StringBuilder builder, String ctrlName, Timbre.Controller ctrl) {
-        if (ctrl == null) {
+        if (ctrl == null || Timbre.Controller.NONE == ctrl) {
             return;
         }
         builder.append(ctrlName).append(SEPARATOR);

@@ -38,15 +38,15 @@
     <PreferenceCategory android:title="@string/tuning_header">
         <ListPreference
             android:defaultValue="Major"
-            android:entries="@array/scale_types_names"
-            android:entryValues="@array/scale_type"
+            android:entries="@array/scale_type_names"
+            android:entryValues="@array/scale_type_key"
             android:key="scaleType"
             android:summary="%s"
             android:title="@string/scale_title" />
 
         <ListPreference
             android:defaultValue="C"
-            android:entries="@array/notes_names"
+            android:entries="@array/note_names"
             android:entryValues="@array/notes"
             android:key="note"
             android:summary="%s"

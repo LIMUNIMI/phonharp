@@ -10,13 +10,15 @@
     <string name="menu_quit">Quit</string>
 
     <!-- Keyboard activity -->
-    <!-- TODO title -->
     <string name="key_frst"></string>
     <string name="key_scnd"></string>
     <string name="key_thrd"></string>
     <string name="key_frth"></string>
     <string name="key_half_tone"></string>
     <string name="key_hold"></string>
+    <string name="scale_desc">scale</string>
+    <string name="timbre_desc">timbre</string>
+    <string name="offset_desc">note offset</string>
 
     <!-- About -->
     <string name="title_activity_about">About</string>

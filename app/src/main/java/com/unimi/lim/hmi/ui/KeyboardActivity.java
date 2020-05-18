@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -16,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.music.Note;
@@ -24,10 +26,14 @@ import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.TimbreUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -47,6 +53,12 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private KeyHandler keyHandler;
 
     private final static List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
+
+    // Mapping between scale enum and scale array description idx
+    private final ImmutableBiMap<Scale.Type, Integer> SCALE_BIMAP = new ImmutableBiMap.Builder<Scale.Type, Integer>()
+            .put(Scale.Type.MAJOR, 0)
+            .put(Scale.Type.MINOR, 1)
+            .build();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +82,14 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         Note note = Note.valueOf(selectedNote.replace('#', 'd').concat(selectedOctave));
         Scale scale = new Scale(scaleType, note);
 
+        // Setup tuning and timbre descriptions
+        String tuningDesc = String.format(Locale.getDefault(), "%s %s %s, %s %s", note.name(), getResources().getStringArray(R.array.scale_type_names)[SCALE_BIMAP.get(scaleType)], getResources().getString(R.string.scale_desc), getResources().getString(R.string.offset_desc), selectedOffset);
+        String timbreNameDesc = String.format(Locale.getDefault(), "%s %s", StringUtils.defaultIfEmpty(timbre.getName(), ""), getResources().getString(R.string.timbre_desc));
+        ((TextView) findViewById(R.id.tuning_key)).setText(tuningDesc);
+        ((TextView) findViewById(R.id.timbre_name_key)).setText(timbreNameDesc);
+        ((TextView) findViewById(R.id.timbre_desc_key)).setText(TimbreUtils.buildDescription(timbre));
+
+        // Initialize synthesizer and key handler
         synth = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
@@ -77,7 +97,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         KeyListener keyListener = new KeyListener();
         playableKeyIds.forEach(kid -> findViewById(kid).setOnTouchListener(keyListener));
 
-        // Note modifier listener
+        // Setup half tone key listener
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
     }
