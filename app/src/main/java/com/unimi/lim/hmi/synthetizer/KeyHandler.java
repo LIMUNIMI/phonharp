@@ -46,7 +46,7 @@ public class KeyHandler {
     /**
      * Handle key press
      *
-     * @param keyNum number of pressed key, from 1 to 4
+     * @param keyNum number of pressed key, from 0 to 3
      */
     public void keyPressed(int keyNum) {
         // Reset controller values
@@ -60,7 +60,7 @@ public class KeyHandler {
     /**
      * Handle key release
      *
-     * @param keyNum number of released key, from 1 to 4
+     * @param keyNum number of released key, from 0 to 3
      */
     public void keyReleased(int keyNum) {
         noteNum -= keyNumToWeight(keyNum);
@@ -167,7 +167,7 @@ public class KeyHandler {
     /**
      * Calculate key weight
      *
-     * @param keyNum key number, from 1 to 4
+     * @param keyNum key number, from 0 to 3
      * @return 2^kn
      */
     private int keyNumToWeight(int keyNum) {

@@ -199,8 +199,6 @@ public class TimbreDao {
             Log.i(getClass().getName(), "Timbre list file not found on local storage, copy from asset");
             InputStream initialTimbreList = applicationContext.getAssets().open(TIMBRE_FILE_NAME);
 
-            System.out.println("----> " + initialTimbreList);
-
             timbres = gson.fromJson(new InputStreamReader(initialTimbreList), TIMBRE_LIST_TYPE);
             // Store timbre list to internal storage directory
             store();

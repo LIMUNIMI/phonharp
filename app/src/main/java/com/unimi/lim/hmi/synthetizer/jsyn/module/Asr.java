@@ -113,7 +113,7 @@ public class Asr extends Circuit {
         // Release frame, reaches final value after releaseTime
         pairs[4] = releaseTime;
         pairs[5] = finalValue;
-        // Shortcut to sustain value, reaches sustain value portamento time or immediately if portamento time was not specified
+        // Shortcut to sustain value, reaches sustain value after portamento time or immediately if portamento time was not specified
         pairs[6] = portamentoTime;
         pairs[7] = sustainValue;
         // Setup SegmentedEnvelope
