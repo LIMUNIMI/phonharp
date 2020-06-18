@@ -22,7 +22,7 @@ public class Tremolo extends Lfo {
      * @param depth     between 0% and 100%
      */
     public Tremolo(double frequency, int depth) {
-        super(frequency, WaveForm.TRIANGLE);
+        super(frequency, WaveForm.SINE);
 
         // Setup modulating wave amplitude (oscillator + dcoffset)
         add(modulator = new Add());

@@ -24,7 +24,7 @@ public class Vibrato extends Lfo {
      * @param depth     between 0% and 100%
      */
     public Vibrato(double frequency, int depth) {
-        super(frequency, WaveForm.TRIANGLE);
+        super(frequency, WaveForm.SINE);
 
         // Setup modulating wave amplitude
         setDepth(depth);

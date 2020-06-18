@@ -20,7 +20,7 @@ public class Pwm extends Lfo {
      * @param depth     between 0% and 100%
      */
     public Pwm(double frequency, int depth) {
-        super(frequency, WaveForm.TRIANGLE);
+        super(frequency, WaveForm.SINE);
 
         setDepth(depth);
 
