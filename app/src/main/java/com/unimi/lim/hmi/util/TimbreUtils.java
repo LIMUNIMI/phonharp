@@ -1,6 +1,14 @@
 package com.unimi.lim.hmi.util;
 
+import android.util.Base64;
+import android.util.Log;
+
+import com.google.gson.Gson;
 import com.unimi.lim.hmi.entity.Timbre;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("WeakerAccess")
 public class TimbreUtils {
@@ -22,6 +30,30 @@ public class TimbreUtils {
 
 
     private TimbreUtils() {
+    }
+
+    public static String toBase64UrlEncoded(Timbre timbre) {
+        Gson gson = new Gson();
+        String json = gson.toJson(timbre, Timbre.class);
+        String b64 = Base64.encodeToString(json.getBytes(), Base64.NO_PADDING);
+        try {
+            return URLEncoder.encode(b64, StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            Log.e(TimbreUtils.class.getName(), "An error occurred while encoding timbre to b64url " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Timbre fromBase64UrlEncoded(String b64urlEnc) {
+        try {
+            String b64 = URLDecoder.decode(b64urlEnc, StandardCharsets.UTF_8.name());
+            String json = new String(Base64.decode(b64, Base64.NO_PADDING), StandardCharsets.UTF_8.name());
+            Gson gson = new Gson();
+            return gson.fromJson(json, Timbre.class);
+        } catch (Exception e) {
+            Log.e(TimbreUtils.class.getName(), "An error occurred while decoding timbre from b64url " + e.getMessage());
+            return null;
+        }
     }
 
     public static int safeEqLowShelfGain(Timbre.Equalizer eq) {
@@ -97,7 +129,7 @@ public class TimbreUtils {
     public static String buildDescription(Timbre timbre) {
         StringBuilder builder = new StringBuilder();
         builder.append(VOLUME).append(timbre.getVolume()).append(SEPARATOR)
-                .append(HARMONICS).append(timbre.getHarmonics()/2).append(SEPARATOR);
+                .append(HARMONICS).append(timbre.getHarmonics() / 2).append(SEPARATOR);
         addHysteresisDescription(builder, timbre);
         addPortamentoDescription(builder, timbre);
         addControllerDescription(builder, SWIPE_HORIZONTAL, timbre.getController1());

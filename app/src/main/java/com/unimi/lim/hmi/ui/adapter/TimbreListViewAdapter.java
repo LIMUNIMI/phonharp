@@ -87,6 +87,17 @@ public class TimbreListViewAdapter extends RecyclerView.Adapter<TimbreListViewAd
                 timbreClickListener.onEdit(holder.timbre);
             }
         });
+
+        holder.textLayout.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                // Invoke listener
+                Log.d(getClass().getName(), "Sharing item with id " + holder.timbre.getId());
+                timbreClickListener.onShare(holder.timbre);
+                return true;
+            }
+        });
     }
 
     @Override

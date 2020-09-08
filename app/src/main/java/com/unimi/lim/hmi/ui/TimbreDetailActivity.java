@@ -1,6 +1,7 @@
 package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,11 +15,13 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.unimi.lim.hmi.R;
+import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.TimbreUtils;
 
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
@@ -36,11 +39,25 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timbre_detail);
 
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+
         // Setup working timbre on the view model, used by TimbreDetailFragment
-        detailTimbreId = getIntent().getStringExtra(TIMBRE_ID);
+        boolean isSharedItem = data != null;
         boolean isNewItem = getIntent().getBooleanExtra(IS_NEW_ITEM, true);
+        detailTimbreId = intent.getStringExtra(TIMBRE_ID);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-        if (isNewItem) {
+
+        // TODO review this if jungle, isNewItem can be removed by testing detailTimbreId!=null
+        if (isSharedItem) {
+            Timbre timbre = TimbreUtils.fromBase64UrlEncoded(data.getLastPathSegment());
+            if (timbre == null) {
+                showImportAlert();
+                viewModel.createWorking();
+            } else {
+                viewModel.createWorkingFrom(timbre);
+            }
+        } else if (isNewItem) {
             viewModel.createWorking();
         } else {
             viewModel.createWorkingFrom(detailTimbreId);
@@ -100,7 +117,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     /**
      * Handle play button touch to reproduce timbre audio sample
      *
-     * @param view view
+     * @param view  view
      * @param event event
      * @return true
      */
@@ -171,6 +188,17 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         alert.setNeutralButton(getResources().getString(R.string.cannot_delete_alert_cancel), (dialog, which) -> dialog.dismiss());
         alert.show();
     }
+
+    /**
+     * Show import error message
+     */
+    private void showImportAlert() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(getResources().getString(R.string.cannot_import_alert_message));
+        alert.setNeutralButton(getResources().getString(R.string.cannot_import_alert_ok), (dialog, which) -> dialog.dismiss());
+        alert.show();
+    }
+
 
     /**
      * Back to parent activity, also notify if timbre list must be reloaded

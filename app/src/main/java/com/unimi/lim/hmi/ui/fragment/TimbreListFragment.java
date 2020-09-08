@@ -103,5 +103,7 @@ public class TimbreListFragment extends Fragment {
         void onSelect(Timbre item);
 
         void onEdit(Timbre item);
+
+        void onShare(Timbre item);
     }
 }

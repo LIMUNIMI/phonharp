@@ -44,7 +44,6 @@ public class TimbreViewModel extends AndroidViewModel {
 
     /**
      * Reload timbre, selectAll must be invoked fist
-     *
      */
     public void reloadAll() {
         Log.d(getClass().getName(), "Reloading timbre list");
@@ -77,7 +76,6 @@ public class TimbreViewModel extends AndroidViewModel {
 
     /**
      * Create working timbre from scratch, note that timbre is created once per activity lifecycle
-     *
      */
     public void createWorking() {
         if (working == null) {
@@ -97,6 +95,20 @@ public class TimbreViewModel extends AndroidViewModel {
             Log.d(getClass().getName(), "Create new timbre from selected");
             working = new MutableLiveData<>();
             Timbre copy = SerializationUtils.clone(select(timbreId).getValue());
+            working.setValue(copy);
+        }
+    }
+
+    /**
+     * Create working timbre from specified timbre
+     *
+     * @param timbre
+     */
+    public void createWorkingFrom(Timbre timbre) {
+        if (working == null) {
+            Log.d(getClass().getName(), "Create new timbre from selected");
+            working = new MutableLiveData<>();
+            Timbre copy = SerializationUtils.clone(timbre);
             working.setValue(copy);
         }
     }
@@ -128,7 +140,6 @@ public class TimbreViewModel extends AndroidViewModel {
 
     /**
      * Save working timbre, timbre dao is invoked
-     *
      */
     public void saveWorking() {
         if (working == null) {
@@ -140,7 +151,6 @@ public class TimbreViewModel extends AndroidViewModel {
 
     /**
      * Delete working timbre, timbre dao is invoked
-     *
      */
     public void deleteWorking() {
         if (working == null) {

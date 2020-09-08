@@ -10,6 +10,8 @@ public class Constant {
         private System() {
         }
 
+        public static final String APP_HOST = "http://phoneharp.unimi.it";
+        public static final String APP_SHARE_URL = APP_HOST + "/share";
         public static final String TIMBRE_FILE_NAME = "timbre-list.json";
     }
 

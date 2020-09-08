@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
@@ -23,10 +24,14 @@ import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
+import static com.unimi.lim.hmi.util.Constant.System.APP_SHARE_URL;
 import static com.unimi.lim.hmi.util.ConversionUtils.secondsToMillis;
 
 public class TimbreListActivity extends AppCompatActivity implements TimbreListFragment.OnTimbreListListener, View.OnClickListener {
@@ -147,6 +152,34 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     }
 
     /**
+     * Share timbre configuration
+     *
+     * @param item
+     */
+    @Override
+    public void onShare(Timbre item) {
+        // Clone current item to remove ID
+        item = SerializationUtils.clone(item);
+        item.setId(null);
+
+        // Setup timbre URL
+        String enc = TimbreUtils.toBase64UrlEncoded(item);
+        if(StringUtils.isEmpty(enc)) {
+
+        }
+        String url = APP_SHARE_URL + "/" + enc;
+
+        // Share timbre URL
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+    }
+
+    /**
      * Handles "add" timbre button click
      *
      * @param view view
@@ -187,6 +220,16 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         intent.putExtra(TIMBRE_ID, timbreId);
         intent.putExtra(IS_NEW_ITEM, isNewItem);
         startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    /**
+     * Show import error message
+     */
+    private void showShareAlert() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setMessage(getResources().getString(R.string.cannot_share_alert_message));
+        alert.setNeutralButton(getResources().getString(R.string.cannot_share_alert_ok), (dialog, which) -> dialog.dismiss());
+        alert.show();
     }
 
 }
