@@ -34,6 +34,9 @@ public class TimbreDao {
     // Singleton instance
     private static TimbreDao timbreDao;
 
+    // The time when timbre list was updated
+    private long lastUpdateTime;
+
     private final Gson gson;
     private final Context applicationContext;
     private final static Type TIMBRE_LIST_TYPE = new TypeToken<ArrayList<Timbre>>() {
@@ -50,6 +53,15 @@ public class TimbreDao {
     private TimbreDao(Context applicationContext) {
         this.applicationContext = applicationContext;
         this.gson = new Gson();
+    }
+
+    /**
+     * Last time timbre list was updated
+     *
+     * @return last time timbre list was updated
+     */
+    public synchronized long getLastUpdateTime() {
+        return lastUpdateTime;
     }
 
     /**
@@ -101,8 +113,10 @@ public class TimbreDao {
             return false;
         }
         if (StringUtils.isEmpty(timbre.getId())) {
+            // Creating a new timbre, calculate ID
             timbre.setId(UUID.randomUUID().toString());
         } else {
+            // Updating existing timbre, remove the old one from the list
             timbres.removeIf(t -> t.getId().equalsIgnoreCase(timbre.getId()));
         }
         Log.d(getClass().getName(), "Saving timbre " + timbre);
@@ -164,6 +178,7 @@ public class TimbreDao {
         Log.d(getClass().getName(), "Saving timbres to local storage");
         try (FileWriter writer = getFileWriter()) {
             gson.toJson(timbres, TIMBRE_LIST_TYPE, writer);
+            lastUpdateTime = System.currentTimeMillis();
             return true;
         } catch (IOException e) {
             Log.e(getClass().getName(), "Unable to save timbre file to disk", e);

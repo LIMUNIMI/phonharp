@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +26,6 @@ import com.unimi.lim.hmi.util.TimbreUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.System.APP_SHARE_URL;
@@ -69,12 +67,15 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     }
 
     /**
-     * Startup the synth
+     * Startup the synth and reload timbre list
      */
     @Override
     public void onResume() {
         super.onResume();
         synthesizer.start();
+
+        TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
+        viewModel.reloadAll();
     }
 
     /**
@@ -187,25 +188,6 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     public void onClick(View view) {
         if (view.getId() == R.id.add_timbre) {
             startTimbreDetailActivity(null);
-        }
-    }
-
-    /**
-     * Handles return code from timbre detail activity: if the timbre has been saved then timbre list must be refreshed
-     *
-     * @param requestCode request code
-     * @param resultCode  result code
-     * @param data        data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Reload timbre list in order to to refresh timbre fragment list values
-        if (data != null && data.getBooleanExtra(RELOAD_TIMBRE_LIST, false)) {
-            Log.d(getClass().getName(), "Reload timbre list");
-            TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
-            viewModel.reloadAll();
         }
     }
 

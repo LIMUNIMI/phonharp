@@ -41,7 +41,6 @@ public class Constant {
         }
 
         public static final String TIMBRE_ID = "timbreId";
-        public static final String RELOAD_TIMBRE_LIST = "reloadTimbreList";
     }
 
 }

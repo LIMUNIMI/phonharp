@@ -23,7 +23,6 @@ import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
-import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
@@ -134,10 +133,10 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         switch (view.getId()) {
             case R.id.timbre_save:
                 viewModel.saveWorking();
-                toParentActivity(true);
+                finish();
                 break;
             case R.id.timbre_cancel:
-                toParentActivity(false);
+                finish();
                 break;
             case R.id.timbre_delete:
                 // Check if timbre is deletable: selected timbre cannot be delete
@@ -165,7 +164,7 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         alert.setPositiveButton(getResources().getString(R.string.delete_alert_yes), (dialog, which) -> {
             viewModel.deleteWorking();
             dialog.dismiss();
-            toParentActivity(true);
+            finish();
         });
         alert.setNegativeButton(getResources().getString(R.string.delete_alert_no), (dialog, which) -> dialog.dismiss());
         alert.show();
@@ -189,19 +188,6 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         alert.setMessage(getResources().getString(R.string.cannot_import_alert_message));
         alert.setNeutralButton(getResources().getString(R.string.cannot_import_alert_ok), (dialog, which) -> dialog.dismiss());
         alert.show();
-    }
-
-
-    /**
-     * Back to parent activity, also notify if timbre list must be reloaded
-     *
-     * @param reloadTimbreList true to tell parent activity to reload timbre list, false otherwise
-     */
-    private void toParentActivity(boolean reloadTimbreList) {
-        Intent intent = new Intent();
-        intent.putExtra(RELOAD_TIMBRE_LIST, reloadTimbreList);
-        setResult(RESULT_CANCELED, intent);
-        finish();
     }
 
 }

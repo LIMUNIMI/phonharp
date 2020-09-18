@@ -22,6 +22,8 @@ public class TimbreViewModel extends AndroidViewModel {
     private MutableLiveData<Timbre> selected;
     private MutableLiveData<Timbre> working;
 
+    private long lastSelectTime;
+
     public TimbreViewModel(@NonNull Application application) {
         super(application);
     }
@@ -35,22 +37,27 @@ public class TimbreViewModel extends AndroidViewModel {
         Log.d(getClass().getName(), "Selecting all timbre");
         if (all == null) {
             all = new MutableLiveData<>();
-            // If needed perform the asynchronously
+            // If needed perform asynchronously
             List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
             all.setValue(timbres);
+            lastSelectTime = System.currentTimeMillis();
         }
         return all;
     }
 
     /**
-     * Reload timbre, selectAll must be invoked fist
+     * Reload timbre, selectAll must be invoked first.
+     * DAO is invoked only if timbre last update time is newer than timbre last select time.
+     * This method works even if a timbre is created via sharing timbre functionality. In fact both activity instances share the same DAO instance.
      */
     public void reloadAll() {
-        Log.d(getClass().getName(), "Reloading timbre list");
         if (all != null) {
-            // If needed perform select asynchronously
-            List<Timbre> timbres = TimbreDao.getInstance(getApplication().getApplicationContext()).selectAll();
-            all.setValue(timbres);
+            TimbreDao timbreDao = TimbreDao.getInstance(getApplication().getApplicationContext());
+            if (timbreDao.getLastUpdateTime() >= lastSelectTime) {
+                Log.d(getClass().getName(), "Reloading timbre list...");
+                lastSelectTime = System.currentTimeMillis();
+                all.setValue(timbreDao.selectAll());
+            }
         }
     }
 
