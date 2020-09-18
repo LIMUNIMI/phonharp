@@ -23,7 +23,6 @@ import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
-import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
@@ -38,28 +37,21 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timbre_detail);
-
         Intent intent = getIntent();
-        Uri data = intent.getData();
 
         // Setup working timbre on the view model, used by TimbreDetailFragment
-        boolean isSharedItem = data != null;
-        boolean isNewItem = getIntent().getBooleanExtra(IS_NEW_ITEM, true);
+        Uri sharedTimbre = intent.getData();
         detailTimbreId = intent.getStringExtra(TIMBRE_ID);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
 
-        // TODO review this if jungle, isNewItem can be removed by testing detailTimbreId!=null
-        if (isSharedItem) {
-            Timbre timbre = TimbreUtils.fromBase64UrlEncoded(data.getLastPathSegment());
+        if (sharedTimbre != null) {
+            Timbre timbre = TimbreUtils.fromBase64UrlEncoded(sharedTimbre.getLastPathSegment());
             if (timbre == null) {
                 showImportAlert();
-                viewModel.createWorking();
-            } else {
-                viewModel.createWorkingFrom(timbre);
             }
-        } else if (isNewItem) {
-            viewModel.createWorking();
+            viewModel.createWorkingFrom(timbre);
         } else {
+            // detailTimbreId can be null (Add new timbre button), in this case a new timbre is created
             viewModel.createWorkingFrom(detailTimbreId);
         }
 
@@ -87,8 +79,8 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         View deleteButton = findViewById(R.id.timbre_delete);
         deleteButton.setOnClickListener(this);
 
-        // Delete button hide for new timbre, nothing to delete
-        deleteButton.setVisibility(isNewItem ? View.GONE : View.VISIBLE);
+        // Show delete button only for existing timbre
+        deleteButton.setVisibility(detailTimbreId != null ? View.VISIBLE : View.GONE);
 
         // Play button touch listener
         FloatingActionButton play = findViewById(R.id.timbre_play_floating);

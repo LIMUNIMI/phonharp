@@ -75,17 +75,6 @@ public class TimbreViewModel extends AndroidViewModel {
     }
 
     /**
-     * Create working timbre from scratch, note that timbre is created once per activity lifecycle
-     */
-    public void createWorking() {
-        if (working == null) {
-            Log.d(getClass().getName(), "Create new timbre");
-            working = new MutableLiveData<>();
-            working.setValue(new Timbre());
-        }
-    }
-
-    /**
      * Create working timbre from existing timbre, note that timbre is created once per activity lifecycle
      *
      * @param timbreId timbre id
@@ -94,7 +83,7 @@ public class TimbreViewModel extends AndroidViewModel {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre from selected");
             working = new MutableLiveData<>();
-            Timbre copy = SerializationUtils.clone(select(timbreId).getValue());
+            Timbre copy = timbreId != null ? SerializationUtils.clone(select(timbreId).getValue()) : new Timbre();
             working.setValue(copy);
         }
     }
@@ -108,7 +97,7 @@ public class TimbreViewModel extends AndroidViewModel {
         if (working == null) {
             Log.d(getClass().getName(), "Create new timbre from selected");
             working = new MutableLiveData<>();
-            Timbre copy = SerializationUtils.clone(timbre);
+            Timbre copy = timbre != null ? SerializationUtils.clone(timbre) : new Timbre();
             working.setValue(copy);
         }
     }

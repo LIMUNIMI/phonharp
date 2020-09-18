@@ -27,7 +27,6 @@ import com.unimi.lim.hmi.util.TimbreUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import static com.unimi.lim.hmi.util.Constant.Context.IS_NEW_ITEM;
 import static com.unimi.lim.hmi.util.Constant.Context.RELOAD_TIMBRE_LIST;
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
@@ -148,7 +147,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     @Override
     public void onEdit(Timbre item) {
         Log.d(getClass().getName(), "Edit timbre " + item.getId());
-        startTimbreDetailActivity(item.getId(), false);
+        startTimbreDetailActivity(item.getId());
     }
 
     /**
@@ -164,8 +163,8 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
 
         // Setup timbre URL
         String enc = TimbreUtils.toBase64UrlEncoded(item);
-        if(StringUtils.isEmpty(enc)) {
-
+        if (StringUtils.isEmpty(enc)) {
+            showShareAlert();
         }
         String url = APP_SHARE_URL + "/" + enc;
 
@@ -187,7 +186,7 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.add_timbre) {
-            startTimbreDetailActivity(null, true);
+            startTimbreDetailActivity(null);
         }
     }
 
@@ -215,10 +214,9 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
      *
      * @param timbreId selected timbre id
      */
-    private void startTimbreDetailActivity(String timbreId, boolean isNewItem) {
+    private void startTimbreDetailActivity(String timbreId) {
         Intent intent = new Intent(this, TimbreDetailActivity.class);
         intent.putExtra(TIMBRE_ID, timbreId);
-        intent.putExtra(IS_NEW_ITEM, isNewItem);
         startActivityForResult(intent, REQUEST_CODE);
     }
 
