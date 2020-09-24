@@ -22,6 +22,8 @@ import com.unimi.lim.hmi.util.ConversionUtils;
 import com.unimi.lim.hmi.util.NoteUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
+import static com.unimi.lim.hmi.util.Constant.System.DEFAULT_FRAMES_PER_BUFFER;
+import static com.unimi.lim.hmi.util.Constant.System.DEFAULT_SAMPLE_RATE;
 import static com.unimi.lim.hmi.util.ConversionUtils.percentageToDecimal;
 
 public class JsynSynthesizer implements Synthesizer {
@@ -33,6 +35,7 @@ public class JsynSynthesizer implements Synthesizer {
 
         private Timbre timbre;
         private AudioDeviceManager audioDeviceManager;
+        private int outputSampleRate = DEFAULT_SAMPLE_RATE;
 
         /**
          * Setup specified timbre configuration, if not used then default timbre wille be used
@@ -51,7 +54,22 @@ public class JsynSynthesizer implements Synthesizer {
          * @return Builder instance
          */
         public Builder androidAudioDeviceManager() {
-            this.audioDeviceManager = new JSynAndroidAudioDevice();
+            this.audioDeviceManager = new JSynAndroidAudioDevice(DEFAULT_FRAMES_PER_BUFFER);
+            return this;
+        }
+
+        /**
+         * Setup android audio device manager, if not used then default audio device will be used
+         *
+         * @return Builder instance
+         */
+        public Builder androidAudioDeviceManager(int framesPerBuffer) {
+            this.audioDeviceManager = new JSynAndroidAudioDevice(framesPerBuffer);
+            return this;
+        }
+
+        public Builder outputSampleRate(int outputSampleRate) {
+            this.outputSampleRate = outputSampleRate;
             return this;
         }
 
@@ -61,11 +79,13 @@ public class JsynSynthesizer implements Synthesizer {
          * @return synth instance
          */
         public JsynSynthesizer build() {
-            return new JsynSynthesizer(audioDeviceManager, timbre);
+            return new JsynSynthesizer(outputSampleRate, audioDeviceManager, timbre);
         }
     }
 
     private final static double MAX_HARMONICS = 0.95;
+
+    private final int outputSampleRate;
 
     // Jsyn modules and synth properties
     private final com.jsyn.Synthesizer synth;
@@ -97,7 +117,8 @@ public class JsynSynthesizer implements Synthesizer {
     // True if keys are pressed
     private boolean pressing = false;
 
-    private JsynSynthesizer(AudioDeviceManager audioDeviceManager, Timbre timbre) {
+    private JsynSynthesizer(int outputSampleRate, AudioDeviceManager audioDeviceManager, Timbre timbre) {
+        this.outputSampleRate = outputSampleRate;
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
         timbre = timbre != null ? timbre : new Timbre();
 
@@ -177,7 +198,7 @@ public class JsynSynthesizer implements Synthesizer {
      */
     @Override
     public void start() {
-        synth.start();
+        synth.start(outputSampleRate);
         lineOut.start();
         volumeEnvelop.start();
         pitchEnvelop.start();

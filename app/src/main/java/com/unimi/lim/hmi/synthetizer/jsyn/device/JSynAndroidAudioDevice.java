@@ -19,6 +19,7 @@ package com.unimi.lim.hmi.synthetizer.jsyn.device;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -37,8 +38,9 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
     private final ArrayList<DeviceInfo> deviceRecords;
     private final int defaultInputDeviceID;
     private final int defaultOutputDeviceID;
+    private final int framesPerBuffer;
 
-    public JSynAndroidAudioDevice() {
+    public JSynAndroidAudioDevice(int framesPerBuffer) {
         deviceRecords = new ArrayList<>();
         DeviceInfo deviceInfo = new DeviceInfo();
 
@@ -48,6 +50,8 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
         defaultInputDeviceID = 0;
         defaultOutputDeviceID = 0;
         deviceRecords.add(deviceInfo);
+
+        this.framesPerBuffer = framesPerBuffer;
     }
 
     @Override
@@ -103,11 +107,18 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
                     AudioFormat.CHANNEL_OUT_STEREO,
                     AudioFormat.ENCODING_PCM_16BIT);
             bufferSize = (3 * (minBufferSize / 2)) & ~3;
+
+            // To minimize latency buffers size must be a multiple of frames per buffer system property
+            bufferSize = (bufferSize / framesPerBuffer) * framesPerBuffer;
+
             audioTrack = new AudioTrack(
                     AudioManager.STREAM_MUSIC, frameRate,
                     AudioFormat.CHANNEL_OUT_STEREO,
                     AudioFormat.ENCODING_PCM_16BIT, bufferSize,
-                    AudioTrack.MODE_STREAM);
+                    AudioTrack.PERFORMANCE_MODE_LOW_LATENCY);
+
+            Log.d("JSynAndroidAudioDevice", " >> MIN_BUFFER: " + minBufferSize + ", BUFFER: " + bufferSize);
+
             audioTrack.play();
         }
 
@@ -131,6 +142,7 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
             // Allocate buffer if needed.
             if ((shortBuffer == null) || (shortBuffer.length < count)) {
                 shortBuffer = new short[count];
+                Log.d("JSynAndroidAudioDevice", " >> Allocating buffer of size " + count);
             }
 
             // Convert float samples to shorts.
@@ -207,6 +219,7 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
     @Override
     public AudioDeviceOutputStream createOutputStream(int deviceID, int frameRate,
                                                       int samplesPerFrame) {
+        Log.d(this.getClass().getName(), "Create output stream, frameRate: " + frameRate + ", samplesPerFrame: " + samplesPerFrame);
         return new AndroidAudioOutputStream(deviceID, frameRate, samplesPerFrame);
     }
 
@@ -215,6 +228,8 @@ public class JSynAndroidAudioDevice implements AudioDeviceManager {
                                                     int samplesPerFrame) {
         if (frameRate > 0)
             throw new RuntimeException("JSyn audio input not implemented on Android.");
+
+        Log.d(this.getClass().getName(), "Create input stream, frameRate: " + frameRate + ", samplesPerFrame: " + samplesPerFrame);
         return new AndroidAudioInputStream(deviceID, frameRate, samplesPerFrame);
     }
 

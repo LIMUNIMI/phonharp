@@ -21,6 +21,7 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreListFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.AndroidPropertyUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -46,7 +47,10 @@ public class TimbreListActivity extends AppCompatActivity implements TimbreListF
         setContentView(R.layout.activity_timbre_list);
 
         // Setup synthesizer, timbre configuration is update when a timbre is selected
-        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().build();
+        synthesizer = new JsynSynthesizer.Builder()
+                .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
+                .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
+                .build();
 
         // When activity is created for the first time setup fragment data
         if (savedInstanceState == null) {

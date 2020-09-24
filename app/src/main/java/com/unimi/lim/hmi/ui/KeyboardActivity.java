@@ -2,6 +2,7 @@ package com.unimi.lim.hmi.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.AndroidPropertyUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +92,11 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         ((TextView) findViewById(R.id.timbre_desc_key)).setText(TimbreUtils.buildDescription(timbre));
 
         // Initialize synthesizer and key handler
-        synth = new JsynSynthesizer.Builder().androidAudioDeviceManager().timbreCfg(timbre).build();
+        synth = new JsynSynthesizer.Builder()
+                .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
+                .timbreCfg(timbre)
+                .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
+                .build();
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
         // Setup keyboard listener
@@ -100,6 +106,11 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // Setup half tone key listener
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
+
+        // TODO Remove code below, used just for debug system property values
+        boolean hasLowLatencyFeature = getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY);
+        boolean hasProFeature = getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_PRO);
+        Log.d(this.getClass().getName(), " >> LOW_LATENCY: " + hasLowLatencyFeature + ", PRO: " + hasProFeature);
     }
 
     // *********************************************************************************************

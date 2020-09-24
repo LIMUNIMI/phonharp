@@ -21,6 +21,7 @@ import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.fragment.TimbreDetailFragment;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
+import com.unimi.lim.hmi.util.AndroidPropertyUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 import static com.unimi.lim.hmi.util.Constant.Context.TIMBRE_ID;
@@ -55,7 +56,10 @@ public class TimbreDetailActivity extends AppCompatActivity implements View.OnCl
         }
 
         // Setup synthesizer and update its configuration each time the timbre is modified
-        synthesizer = new JsynSynthesizer.Builder().androidAudioDeviceManager().build();
+        synthesizer = new JsynSynthesizer.Builder()
+                .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
+                .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
+                .build();
         viewModel.getWorking().observe(this, timbre -> {
             Log.d(getClass().getName(), "Updating timbre configuration");
             synthesizer.updateSynthesizerCfg(timbre);
