@@ -10,6 +10,7 @@ import com.jsyn.unitgen.LineOut;
 import com.jsyn.unitgen.Multiply;
 import com.jsyn.unitgen.PulseOscillator;
 import com.unimi.lim.hmi.entity.Timbre;
+import com.unimi.lim.hmi.music.PanMode;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.device.JSynAndroidAudioDevice;
 import com.unimi.lim.hmi.synthetizer.jsyn.module.Asr;
@@ -36,6 +37,7 @@ public class JsynSynthesizer implements Synthesizer {
         private Timbre timbre;
         private AudioDeviceManager audioDeviceManager;
         private int outputSampleRate = DEFAULT_SAMPLE_RATE;
+        private PanMode panMode;
 
         /**
          * Setup specified timbre configuration, if not used then default timbre wille be used
@@ -73,13 +75,18 @@ public class JsynSynthesizer implements Synthesizer {
             return this;
         }
 
+        public Builder panMode(PanMode panMode) {
+            this.panMode = panMode;
+            return this;
+        }
+
         /**
          * Return synth instance
          *
          * @return synth instance
          */
         public JsynSynthesizer build() {
-            return new JsynSynthesizer(outputSampleRate, audioDeviceManager, timbre);
+            return new JsynSynthesizer(outputSampleRate, panMode, audioDeviceManager, timbre);
         }
     }
 
@@ -117,10 +124,12 @@ public class JsynSynthesizer implements Synthesizer {
     // True if keys are pressed
     private boolean pressing = false;
 
-    private JsynSynthesizer(int outputSampleRate, AudioDeviceManager audioDeviceManager, Timbre timbre) {
+    private JsynSynthesizer(int outputSampleRate, PanMode panMode, AudioDeviceManager audioDeviceManager, Timbre timbre) {
         this.outputSampleRate = outputSampleRate;
+        panMode = panMode != null ? panMode : PanMode.CENTER;
         this.synth = audioDeviceManager != null ? JSyn.createSynthesizer(audioDeviceManager) : JSyn.createSynthesizer();
         timbre = timbre != null ? timbre : new Timbre();
+
 
         // Main oscillator
         PulseOscillator osc;
@@ -187,8 +196,14 @@ public class JsynSynthesizer implements Synthesizer {
         osc.output.connect(equalizer.input);
 
         // Line out
-        equalizer.output.connect(0, lineOut.input, 0);
-        equalizer.output.connect(0, lineOut.input, 1);
+        if(panMode != PanMode.RIGHT) {
+            // Activate LEFT channel
+            equalizer.output.connect(0, lineOut.input, 0);
+        }
+        if(panMode != PanMode.LEFT) {
+            // Activate RIGHT channel
+            equalizer.output.connect(0, lineOut.input, 1);
+        }
 
         updateSynthesizerCfg(timbre);
     }

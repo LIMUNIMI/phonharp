@@ -37,7 +37,7 @@
 
     <PreferenceCategory android:title="@string/tuning_header">
         <ListPreference
-            android:defaultValue="Major"
+            android:defaultValue="major"
             android:entries="@array/scale_type_names"
             android:entryValues="@array/scale_type_key"
             android:key="scaleType"
@@ -70,6 +70,14 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/timbre_header">
+        <ListPreference
+            android:defaultValue="CENTER"
+            android:entries="@array/pan_names"
+            android:entryValues="@array/pan"
+            android:key="pan"
+            android:summary="%s"
+            android:title="@string/pan_mode" />
+
         <Preference
             app:key="timbre_list"
             app:title="@string/timbre_title">

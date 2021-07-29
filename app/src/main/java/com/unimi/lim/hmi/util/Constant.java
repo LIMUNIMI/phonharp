@@ -37,6 +37,8 @@ public class Constant {
         public static final String NOTE = "note";
         public static final String OCTAVE = "octave";
         public static final String OFFSET = "offset";
+
+        public static final String PAN = "pan";
     }
 
     public static class Context {

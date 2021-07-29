@@ -87,6 +87,8 @@
     <string name="octave_title">Octave</string>
     <string name="note_offset">Played note offset</string>
 
+    <string name="pan_mode">Pan</string>
+
     <!-- Keyboard Preferences -->
     <string name="keyboard_header">Keyboard</string>
     <string name="handedness_title">Handedness</string>
@@ -97,7 +99,7 @@
     <string name="halftone_summary_off">Hide</string>
 
     <!-- Timbre Preferences -->
-    <string name="timbre_header">Timbre</string>
+    <string name="timbre_header">Sound</string>
     <string name="timbre_title">Open timbre preferences</string>
     <string name="timbre_save">Save</string>
     <string name="timbre_cancel">Cancel</string>

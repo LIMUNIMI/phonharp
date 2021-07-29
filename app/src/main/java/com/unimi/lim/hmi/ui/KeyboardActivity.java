@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.unimi.lim.hmi.R;
 import com.unimi.lim.hmi.entity.Timbre;
 import com.unimi.lim.hmi.music.Note;
+import com.unimi.lim.hmi.music.PanMode;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
@@ -45,6 +46,7 @@ import static com.unimi.lim.hmi.util.Constant.Settings.HANDEDNESS;
 import static com.unimi.lim.hmi.util.Constant.Settings.NOTE;
 import static com.unimi.lim.hmi.util.Constant.Settings.OCTAVE;
 import static com.unimi.lim.hmi.util.Constant.Settings.OFFSET;
+import static com.unimi.lim.hmi.util.Constant.Settings.PAN;
 import static com.unimi.lim.hmi.util.Constant.Settings.RIGHT_HANDED;
 import static com.unimi.lim.hmi.util.Constant.Settings.SCALE_TYPE;
 import static com.unimi.lim.hmi.util.Constant.Settings.SELECTED_TIMBRE_ID;
@@ -74,6 +76,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         String selectedNote = sharedPreferences.getString(NOTE, "C");
         String selectedOctave = sharedPreferences.getString(OCTAVE, "3");
         String selectedOffset = sharedPreferences.getString(OFFSET, "0");
+        String selectedPanMode = sharedPreferences.getString(PAN, PanMode.CENTER.name());
 
         String timbreId = sharedPreferences.getString(SELECTED_TIMBRE_ID, DEFAULT_TIMBRE_ID);
         TimbreViewModel viewModel = ViewModelProviders.of(this).get(TimbreViewModel.class);
@@ -94,6 +97,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // Initialize synthesizer and key handler
         synth = new JsynSynthesizer.Builder()
                 .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
+                .panMode(PanMode.valueOf(selectedPanMode))
                 .timbreCfg(timbre)
                 .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
                 .build();

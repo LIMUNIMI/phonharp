@@ -79,6 +79,18 @@
         <item>6</item>
     </string-array>
 
+    <string-array name="pan_names">
+        <item>Left</item>
+        <item>Center</item>
+        <item>Right</item>
+    </string-array>
+
+    <string-array name="pan">
+        <item>LEFT</item>
+        <item>CENTER</item>
+        <item>RIGHT</item>
+    </string-array>
+
     <string-array name="scale_type_names">
         <item>Major</item>
         <item>Minor</item>
