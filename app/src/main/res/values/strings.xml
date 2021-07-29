@@ -1,7 +1,7 @@
 <!--suppress CheckTagEmptyBody -->
 <resources>
-    <string name="app_name_short">Phoneharp</string>
-    <string name="app_name_long">Phoneharp</string>
+    <string name="app_name_short">PhonHarp</string>
+    <string name="app_name_long">PhonHarp</string>
 
     <!-- Menu -->
     <string name="menu_description">Menu</string>
