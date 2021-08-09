@@ -6,7 +6,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_phoneharp"
         android:label="@string/app_name_short"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_phoneharp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="http"
-                    android:host="phoneharp.unimi.it"
+                    android:host="phonharp.unimi.it"
                     android:pathPrefix="/share"
                     />
             </intent-filter>
