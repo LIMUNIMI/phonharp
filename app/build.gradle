@@ -1,12 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\kyoku\\dev\\encrypt\\upload-ph-keystore.jks')
+            storePassword 'Lim2021!'
+            keyAlias 'upload'
+            keyPassword 'Lim2021!'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.unimi.lim.hmi"
-        minSdkVersion var
-        targetSdkVersion 29
+        minSdkVersion 30
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
