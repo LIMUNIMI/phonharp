@@ -4,10 +4,10 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\kyoku\\dev\\encrypt\\upload-ph-keystore.jks')
-            storePassword 'Lim2021!'
-            keyAlias 'upload'
-            keyPassword 'Lim2021!'
+            storeFile file('C:\\Users\\lulze\\dev\\keys\\key1.jks')
+            storePassword 'password'
+            keyAlias 'key0'
+            keyPassword 'password'
         }
     }
     compileSdkVersion 30
