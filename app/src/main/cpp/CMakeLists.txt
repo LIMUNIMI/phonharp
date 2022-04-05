@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.4.1)
 include_directories(./shared)
 
 # Build our own native library
-add_library (native-lib SHARED native-lib.cpp MegaDroneEngine.cpp)
+add_library (native-lib SHARED native-lib.cpp SoundBoardEngine.cpp)
 
 # Find the Oboe package
 find_package (oboe REQUIRED CONFIG)

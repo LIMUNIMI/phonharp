@@ -16,42 +16,49 @@
 
 
 #include <memory>
-#include "MegaDroneEngine.h"
+#include "SoundBoardEngine.h"
 
 /**
- * Main audio engine for the MegaDrone sample. It is responsible for:
+ * Main audio engine for the SoundBoard sample. It is responsible for:
  *
  * - Creating the callback object which will be supplied when constructing the audio stream
- * - Setting the CPU core IDs to which the callback thread should bind to
  * - Creating the playback stream, including setting the callback object
  * - Creating `Synth` which will render the audio inside the callback
  * - Starting the playback stream
  * - Restarting the playback stream when `restart()` is called by the callback object
  *
- * @param cpuIds
+ * @param numSignals
  */
-MegaDroneEngine::MegaDroneEngine(std::vector<int> cpuIds) {
-    createCallback(cpuIds);
+SoundBoardEngine::SoundBoardEngine(int32_t numSignals) {
+    createCallback(numSignals);
 }
 
-MegaDroneEngine::~MegaDroneEngine() {
+SoundBoardEngine::~SoundBoardEngine() {
     if (mStream) {
-        LOGE("MegaDroneEngine destructor was called without calling stop()."
+        LOGE("SoundBoardEngine destructor was called without calling stop()."
              "Please call stop() to ensure stream resources are not leaked.");
         stop();
     }
 }
 
-void MegaDroneEngine::tap(bool isDown) {
-    mAudioSource->tap(isDown);
+void SoundBoardEngine::noteOff(int32_t noteIndex) {
+    mSynth->noteOff(noteIndex);
 }
 
-void MegaDroneEngine::restart() {
+void SoundBoardEngine::noteOn(int32_t noteIndex) {
+    mSynth->noteOn(noteIndex);
+}
+
+void SoundBoardEngine::tap(bool isDown) {
+    mSynth->tap(isDown);
+}
+
+void SoundBoardEngine::restart() {
     stop();
     start();
 }
 // Create the playback stream
-oboe::Result MegaDroneEngine::createPlaybackStream() {
+oboe::Result SoundBoardEngine::createPlaybackStream() {
     oboe::AudioStreamBuilder builder;
     return builder.setSharingMode(oboe::SharingMode::Exclusive)
             ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
@@ -62,7 +69,7 @@ oboe::Result MegaDroneEngine::createPlaybackStream() {
 }
 
 // Create the callback and set its thread affinity to the supplied CPU core IDs
-void MegaDroneEngine::createCallback(std::vector<int> cpuIds){
+void SoundBoardEngine::createCallback(int32_t numSignals){
 
     mDataCallback = std::make_unique<DefaultDataCallback>();
 
@@ -70,19 +77,17 @@ void MegaDroneEngine::createCallback(std::vector<int> cpuIds){
     // when it's disconnected
     mErrorCallback = std::make_unique<DefaultErrorCallback>(*this);
 
-    // Bind the audio callback to specific CPU cores as this can help avoid underruns caused by
-    // core migrations
-    mDataCallback->setCpuIds(cpuIds);
-    mDataCallback->setThreadAffinityEnabled(true);
+    mNumSignals = numSignals;
 }
 
-bool MegaDroneEngine::start(){
+bool SoundBoardEngine::start(){
     auto result = createPlaybackStream();
+
     if (result == Result::OK){
         // Create our synthesizer audio source using the properties of the stream
-        mAudioSource = std::make_shared<Synth>(mStream->getSampleRate(), mStream->getChannelCount());
+        mSynth = Synth::create(mStream->getSampleRate(), mStream->getChannelCount(), mNumSignals);
         mDataCallback->reset();
-        mDataCallback->setSource(std::dynamic_pointer_cast<IRenderableAudio>(mAudioSource));
+        mDataCallback->setSource(std::dynamic_pointer_cast<IRenderableAudio>(mSynth));
         mStream->start();
         return true;
     } else {
@@ -91,7 +96,7 @@ bool MegaDroneEngine::start(){
     }
 }
 
-bool MegaDroneEngine::stop() {
+bool SoundBoardEngine::stop() {
     if(mStream && mStream->getState() != oboe::StreamState::Closed) {
         mStream->stop();
         mStream->close();

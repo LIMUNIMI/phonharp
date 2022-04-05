@@ -4,9 +4,9 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\lulze\\dev\\keys\\key1.jks')
+            storeFile file('C:\\Users\\lulze\\androidKey1.jks')
             storePassword 'password'
-            keyAlias 'key0'
+            keyAlias 'key1'
             keyPassword 'password'
         }
     }

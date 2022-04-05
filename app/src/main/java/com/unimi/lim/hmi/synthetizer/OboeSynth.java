@@ -15,7 +15,8 @@ public class OboeSynth implements Synthesizer{
 
     private native long startEngine(int[] cpuIds);
     private native void stopEngine(long engineHandle);
-    private native void tap(long engineHandle, boolean isDown);
+    private native void noteOn(long engineHandle, int noteIndex);
+    private native void noteOff(long engineHandle, int noteIndex);
 
     private static native void native_setDefaultStreamValues(int sampleRate, int framesPerBurst);
 
@@ -26,17 +27,6 @@ public class OboeSynth implements Synthesizer{
 
     public OboeSynth(Context context){
         setDefaultStreamValues(context);
-    }
-
-    public boolean onTouchEvent(MotionEvent event) {
-
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-            tap(mEngineHandle, true);
-        } else if (event.getAction() == MotionEvent.ACTION_UP){
-            tap(mEngineHandle, false);
-        }
-        //return super.onTouchEvent(event);
-        return true;
     }
 
     // Obtain CPU cores which are reserved for the foreground app. The audio thread can be
@@ -92,12 +82,12 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void press(double frequency) {
-        tap(mEngineHandle, true);
+        noteOn(mEngineHandle, (int) frequency);
     }
 
     @Override
     public void release() {
-        tap(mEngineHandle, false);
+        noteOff(mEngineHandle, 0);
     }
 
     @Override

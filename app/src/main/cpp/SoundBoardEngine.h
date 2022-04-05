@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef MEGADRONE_ENGINE_H
-#define MEGADRONE_ENGINE_H
+#ifndef SOUNDBOARD_ENGINE_H
+#define SOUNDBOARD_ENGINE_H
 
 
 #include <oboe/Oboe.h>
@@ -29,12 +29,16 @@
 
 using namespace oboe;
 
-class MegaDroneEngine : public IRestartable {
+class SoundBoardEngine : public IRestartable {
 
 public:
-    MegaDroneEngine(std::vector<int> cpuIds);
+    SoundBoardEngine(int32_t numSignals);
 
-    virtual ~MegaDroneEngine();
+    virtual ~SoundBoardEngine();
+
+    void noteOff(int32_t noteIndex);
+
+    void noteOn(int32_t noteIndex);
 
     void tap(bool isDown);
 
@@ -45,14 +49,16 @@ public:
     bool stop();
 
 private:
+    int32_t mNumSignals;
+
     std::shared_ptr<AudioStream> mStream;
-    std::shared_ptr<TappableAudioSource> mAudioSource;
+    std::shared_ptr<Synth> mSynth;
     std::unique_ptr<DefaultDataCallback> mDataCallback;
     std::unique_ptr<DefaultErrorCallback> mErrorCallback;
 
     oboe::Result createPlaybackStream();
-    void createCallback(std::vector<int> cpuIds);
+    void createCallback(int32_t numSignals);
 };
 
 
-#endif //MEGADRONE_ENGINE_H
+#endif //SOUNDBOARD_ENGINE_H

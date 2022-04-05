@@ -18,20 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "MegaDroneEngine.h"
-
-
-std::vector<int> convertJavaArrayToVector(JNIEnv *env, jintArray intArray) {
-    std::vector<int> v;
-    jsize length = env->GetArrayLength(intArray);
-    if (length > 0) {
-        jint *elements = env->GetIntArrayElements(intArray, nullptr);
-        v.insert(v.end(), &elements[0], &elements[length]);
-        // Unpin the memory for the array, or free the copy.
-        env->ReleaseIntArrayElements(intArray, elements, 0);
-    }
-    return v;
-}
+#include "SoundBoardEngine.h"
 
 extern "C" {
 /**
@@ -44,13 +31,12 @@ extern "C" {
  */
 JNIEXPORT jlong JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*unused*/,
-                                                         jintArray jCpuIds) {
-    std::vector<int> cpuIds = convertJavaArrayToVector(env, jCpuIds);
-    LOGD("cpu ids size: %d", static_cast<int>(cpuIds.size()));
-    MegaDroneEngine  *engine = new MegaDroneEngine(std::move(cpuIds));
+         jint jNumSignals) {
+    LOGD("numSignals : %d", static_cast<int>(jNumSignals));
+    SoundBoardEngine  *engine = new SoundBoardEngine(jNumSignals);
 
     if (!engine->start()) {
-        LOGE("Failed to start MegaDrone Engine");
+        LOGE("Failed to start SoundBoard Engine");
         delete engine;
         engine = nullptr;
     } else  {
@@ -62,25 +48,12 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*
 JNIEXPORT void JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_stopEngine(JNIEnv *env, jobject instance,
         jlong jEngineHandle) {
-    auto engine = reinterpret_cast<MegaDroneEngine*>(jEngineHandle);
+    auto engine = reinterpret_cast<SoundBoardEngine*>(jEngineHandle);
     if (engine) {
         engine->stop();
         delete engine;
     } else {
         LOGD("Engine invalid, call startEngine() to create");
-    }
-}
-
-
-JNIEXPORT void JNICALL
-Java_com_unimi_lim_hmi_synthetizer_OboeSynth_tap(JNIEnv *env, jobject instance,
-        jlong jEngineHandle, jboolean isDown) {
-
-    auto *engine = reinterpret_cast<MegaDroneEngine*>(jEngineHandle);
-    if (engine) {
-        engine->tap(isDown);
-    } else {
-        LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }
 }
 
@@ -91,6 +64,28 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_native_1setDefaultStreamValues(JNIE
                                                                             jint framesPerBurst) {
     oboe::DefaultStreamValues::SampleRate = (int32_t) sampleRate;
     oboe::DefaultStreamValues::FramesPerBurst = (int32_t) framesPerBurst;
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOff(JNIEnv *env, jobject thiz,
+                                                         jlong engine_handle, jint noteIndex) {
+    auto *engine = reinterpret_cast<SoundBoardEngine*>(engine_handle);
+    if (engine) {
+        engine->noteOff(noteIndex);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOn(JNIEnv *env, jobject thiz,
+                                                         jlong engine_handle, jint noteIndex) {
+    auto *engine = reinterpret_cast<SoundBoardEngine*>(engine_handle);
+    if (engine) {
+        engine->noteOn(noteIndex);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
 }
 
 } // extern "C"

@@ -14,42 +14,62 @@
  * limitations under the License.
  */
 
-#ifndef MEGADRONE_SYNTH_H
-#define MEGADRONE_SYNTH_H
+#ifndef SOUNDBOARD_SYNTH_H
+#define SOUNDBOARD_SYNTH_H
 
 #include <array>
 #include <TappableAudioSource.h>
 
-#include <Oscillator.h>
+#include <SynthSound.h>
 #include <Mixer.h>
 #include <MonoToStereo.h>
 
-constexpr int kNumOscillators = 100;
-constexpr float kOscBaseFrequency = 116.0;
-constexpr float kOscDivisor = 33;
-constexpr float kOscAmplitude = 0.009;
+constexpr float kOscBaseFrequency = 196.00; // Start at G3
+constexpr float kOscFrequencyMultiplier = 1.05946309436;
+constexpr float kOscBaseAmplitude = 0.20;
+constexpr float kOscAmplitudeMultiplier = 0.96;
 
-
-class Synth : public TappableAudioSource {
+class Synth : public IRenderableAudio, public ITappable {
 public:
+    static ::std::shared_ptr<Synth> create(const int32_t sampleRate, const int32_t channelCount, const int32_t numSignals) {
+        return ::std::make_shared<Synth>(sampleRate, channelCount, numSignals);
+    }
 
-    Synth(int32_t sampleRate, int32_t channelCount) :
-    TappableAudioSource(sampleRate, channelCount) {
-        for (int i = 0; i < kNumOscillators; ++i) {
-            mOscs[i].setSampleRate(mSampleRate);
-            mOscs[i].setFrequency(kOscBaseFrequency + (static_cast<float>(i) / kOscDivisor));
-            mOscs[i].setAmplitude(kOscAmplitude);
+    Synth(const int32_t sampleRate, const int32_t channelCount, const int32_t numSignals) {
+        float curFrequency = kOscBaseFrequency;
+        float curAmplitude = kOscBaseAmplitude;
+        for (int i = 0; i < numSignals; ++i) {
+            mOscs[i].setSampleRate(sampleRate);
+            mOscs[i].setFrequency(curFrequency);
+            curFrequency *= kOscFrequencyMultiplier;
+            mOscs[i].setAmplitude(curAmplitude);
+            curAmplitude *= kOscAmplitudeMultiplier;
             mMixer.addTrack(&mOscs[i]);
         }
-        if (mChannelCount == oboe::ChannelCount::Stereo) {
+
+        if (channelCount == oboe::ChannelCount::Stereo) {
             mOutputStage =  &mConverter;
         } else {
             mOutputStage = &mMixer;
         }
     }
 
+    void noteOff(int32_t noteIndex) {
+        mOscs[noteIndex].noteOff();
+    }
+
+    void noteOn(int32_t noteIndex) {
+        mOscs[noteIndex].noteOn();
+    }
+
     void tap(bool isOn) override {
-        for (auto &osc : mOscs) osc.setWaveOn(isOn);
+        for (int i = 0; i < mNumSignals; i++) {
+            if (isOn) {
+                mOscs[i].noteOn();
+            } else {
+                mOscs[i].noteOff();
+            }
+        }
     };
 
     // From IRenderableAudio
@@ -61,11 +81,12 @@ public:
     }
 private:
     // Rendering objects
-    std::array<Oscillator, kNumOscillators> mOscs;
+    int32_t mNumSignals;
+    std::array<SynthSound, kMaxTracks> mOscs;
     Mixer mMixer;
     MonoToStereo mConverter = MonoToStereo(&mMixer);
     IRenderableAudio *mOutputStage; // This will point to either the mixer or converter, so it needs to be raw
 };
 
 
-#endif //MEGADRONE_SYNTH_H
+#endif //SOUNDBOARD_SYNTH_H
