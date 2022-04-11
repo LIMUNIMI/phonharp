@@ -9,6 +9,8 @@ import android.view.MotionEvent;
 
 import com.unimi.lim.hmi.entity.Timbre;
 
+import static java.lang.Math.min;
+
 public class OboeSynth implements Synthesizer{
     private final String TAG = OboeSynth.class.toString();
     private static long mEngineHandle = 0;
@@ -22,7 +24,7 @@ public class OboeSynth implements Synthesizer{
 
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("megadrone");
+        System.loadLibrary("soundboard");
     }
 
     public OboeSynth(Context context){
@@ -82,12 +84,14 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void press(double frequency) {
-        noteOn(mEngineHandle, (int) frequency);
+
+        //(int) Math.floor(frequency/440)
+        noteOn(mEngineHandle, 1);
     }
 
     @Override
     public void release() {
-        noteOff(mEngineHandle, 0);
+        noteOff(mEngineHandle, 1);
     }
 
     @Override

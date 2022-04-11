@@ -25,6 +25,7 @@ import com.unimi.lim.hmi.music.Note;
 import com.unimi.lim.hmi.music.PanMode;
 import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.KeyHandler;
+import com.unimi.lim.hmi.synthetizer.OboeSynth;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
 import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
@@ -95,12 +96,19 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         ((TextView) findViewById(R.id.timbre_desc_key)).setText(TimbreUtils.buildDescription(timbre));
 
         // Initialize synthesizer and key handler
+        /*
         synth = new JsynSynthesizer.Builder()
                 .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
                 .panMode(PanMode.valueOf(selectedPanMode))
                 .timbreCfg(timbre)
                 .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
                 .build();
+
+         */
+
+        synth = new OboeSynth(this);
+        synth.start();
+
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
         // Setup keyboard listener
