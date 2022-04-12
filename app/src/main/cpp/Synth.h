@@ -24,6 +24,7 @@
 #include <Mixer.h>
 #include <MonoToStereo.h>
 
+//TODO: attacca questi parametri ai metodi espandendo la jni
 constexpr float kOscBaseFrequency = 196.00; // Start at G3
 constexpr float kOscFrequencyMultiplier = 1.05946309436;
 constexpr float kOscBaseAmplitude = 0.20;
