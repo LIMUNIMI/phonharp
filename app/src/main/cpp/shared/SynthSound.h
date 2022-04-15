@@ -52,7 +52,7 @@ public:
 
     void setSampleRate(int32_t sampleRate) {
         mSampleRate = sampleRate;
-        oneOverSampleRate = 1/sampleRate;
+        oneOverSampleRate = 1.0f/mSampleRate;
         updatePhaseIncrement();
     };
     void setFrequency(float frequency) {
@@ -100,7 +100,7 @@ private:
     std::atomic<float> mPhaseIncrement;
     std::atomic<float> mFrequency { kDefaultFrequency };
     std::atomic<int32_t> mSampleRate { kDefaultSampleRate };
-    std::atomic<float> oneOverSampleRate { 1/kDefaultSampleRate };
+    std::atomic<float> oneOverSampleRate { 1.0f/kDefaultSampleRate };
     void updatePhaseIncrement(){
         // Note how there is a division here. If this file is changed so that updatePhaseIncrement
         // is called more frequently, please cache 1/mSampleRate. This allows this operation to not
