@@ -3,6 +3,7 @@ package com.unimi.lim.hmi.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -255,10 +256,12 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    view.setAlpha(0.5f);
                     setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
                     break;
                 case MotionEvent.ACTION_UP:
+                    view.setAlpha(1.0f);
                     resetCoords(keyNum);
                     keyHandler.keyReleased(keyNum);
                     break;
