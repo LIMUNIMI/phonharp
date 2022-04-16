@@ -12,12 +12,13 @@ include_directories(./shared ./)
 # Specify the libraries which our native library is dependent on, including Oboe
 #target_link_libraries(native-lib log oboe::oboe)
 
-add_library( soundboard SHARED
+add_library( soundboard SHARED OboeSinePlayer
         native-lib.cpp
         SoundBoardEngine.cpp
+        OboeSinePlayer.cpp
         )
 
-target_link_libraries( soundboard log oboe::oboe )
+target_link_libraries(soundboard log oboe::oboe )
 
 # Enable optimization flags: if having problems with source level debugging,
 # disable -Ofast ( and debug ), re-enable it after done debugging.

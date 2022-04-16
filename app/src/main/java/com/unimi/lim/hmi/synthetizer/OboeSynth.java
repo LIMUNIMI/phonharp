@@ -69,12 +69,12 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void start() {
-        mEngineHandle = startEngine(getExclusiveCores());
+        //mEngineHandle = startEngine(getExclusiveCores());
     }
 
     @Override
     public void stop() {
-        stopEngine(mEngineHandle);
+        //stopEngine(mEngineHandle);
     }
 
     @Override
@@ -84,14 +84,15 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void press(double frequency) {
-
+        mEngineHandle = startEngine(getExclusiveCores());
         //(int) Math.floor(frequency/440)
-        noteOn(mEngineHandle, 10);
+        //noteOn(mEngineHandle, 10);
     }
 
     @Override
     public void release() {
-        noteOff(mEngineHandle, 10);
+        stopEngine(mEngineHandle);
+        //noteOff(mEngineHandle, 10);
     }
 
     @Override

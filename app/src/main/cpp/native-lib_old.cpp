@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 
-#include "OboeSinePlayer.h"
 #include "SoundBoardEngine.h"
 
 extern "C" {
@@ -34,9 +33,9 @@ JNIEXPORT jlong JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*unused*/,
          jint jNumSignals) {
     LOGD("numSignals : %d", static_cast<int>(jNumSignals));
-    auto  *engine = new OboeSinePlayer();
+    auto  *engine = new SoundBoardEngine(jNumSignals);
 
-    if (!engine->startAudio()) {
+    if (!engine->start()) {
         LOGE("Failed to start SoundBoard Engine");
         delete engine;
         engine = nullptr;
@@ -49,9 +48,9 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*
 JNIEXPORT void JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_stopEngine(JNIEnv *env, jobject instance,
         jlong jEngineHandle) {
-    auto engine = reinterpret_cast<OboeSinePlayer*>(jEngineHandle);
+    auto engine = reinterpret_cast<SoundBoardEngine*>(jEngineHandle);
     if (engine) {
-        engine->stopAudio();
+        engine->stop();
         delete engine;
     } else {
         LOGD("Engine invalid, call startEngine() to create");
