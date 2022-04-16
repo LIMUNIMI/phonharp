@@ -327,8 +327,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 keyHandler.halfToneKeyPressed();
+                v.setAlpha(0.5f);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 keyHandler.halfToneKeyReleased();
+                v.setAlpha(1.0f);
             }
             return true;
         }
