@@ -33,7 +33,7 @@ JNIEXPORT jlong JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*unused*/,
          jint jNumSignals) {
     LOGD("numSignals : %d", static_cast<int>(jNumSignals));
-    SoundBoardEngine  *engine = new SoundBoardEngine(jNumSignals);
+    auto  *engine = new SoundBoardEngine(jNumSignals);
 
     if (!engine->start()) {
         LOGE("Failed to start SoundBoard Engine");

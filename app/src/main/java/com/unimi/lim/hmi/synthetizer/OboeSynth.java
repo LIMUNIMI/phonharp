@@ -64,7 +64,7 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public String getTimbreId() {
-        return null;
+        return "Default";
     }
 
     @Override
@@ -86,12 +86,12 @@ public class OboeSynth implements Synthesizer{
     public void press(double frequency) {
 
         //(int) Math.floor(frequency/440)
-        noteOn(mEngineHandle, 1);
+        noteOn(mEngineHandle, 10);
     }
 
     @Override
     public void release() {
-        noteOff(mEngineHandle, 1);
+        noteOff(mEngineHandle, 10);
     }
 
     @Override

@@ -97,6 +97,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         ((TextView) findViewById(R.id.timbre_desc_key)).setText(TimbreUtils.buildDescription(timbre));
 
         // Initialize synthesizer and key handler
+
         /*
         synth = new JsynSynthesizer.Builder()
                 .androidAudioDeviceManager(AndroidPropertyUtils.framesPerBuffer(getBaseContext()))
@@ -104,11 +105,11 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                 .timbreCfg(timbre)
                 .outputSampleRate(AndroidPropertyUtils.outputSampleRate(getBaseContext()))
                 .build();
+        */
 
-         */
 
         synth = new OboeSynth(this);
-        synth.start();
+        //synth.start();
 
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
@@ -131,14 +132,14 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
     @Override
     public void onResume() {
-        super.onResume();
         synth.start();
+        super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         synth.stop();
+        super.onPause();
     }
 
     // *********************************************************************************************

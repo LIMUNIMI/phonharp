@@ -18,3 +18,7 @@ add_library( soundboard SHARED
         )
 
 target_link_libraries( soundboard log oboe::oboe )
+
+# Enable optimization flags: if having problems with source level debugging,
+# disable -Ofast ( and debug ), re-enable it after done debugging.
+target_compile_options(soundboard PRIVATE -Wall -Werror -Ofast)

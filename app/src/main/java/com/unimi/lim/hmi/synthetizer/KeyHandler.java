@@ -138,9 +138,10 @@ public class KeyHandler {
      * Provides to invoke synthesizer press or release functions. Note that synth is invoked after hysteresis time, or immediately if hysteresis time is 0
      */
     private void play() {
-        if (timbre.getTapHysteresis() == 0) {
+        //TODO: sistemare qui
+        //if (timbre.getTapHysteresis() == 0) {
             invokeSynth();
-        } else if (!delayedPlayInvoked) {
+        /*} else if (!delayedPlayInvoked) {
             long delay = secondsToMillis(timbre.getTapHysteresis());
             Log.d(getClass().getName(), "Delay millis " + delay + ", original " + timbre.getTapHysteresis());
             delayedPlayer.postDelayed(() -> {
@@ -148,7 +149,7 @@ public class KeyHandler {
                 delayedPlayInvoked = false;
             }, delay);
             delayedPlayInvoked = true;
-        }
+        }*/
     }
 
     /**
