@@ -1,6 +1,6 @@
 #include "OboeSinePlayer.h"
 
-int32_t OboeSinePlayer::startAudio() {
+int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -12,26 +12,20 @@ int32_t OboeSinePlayer::startAudio() {
             ->setFormat(oboe::AudioFormat::Float)
             ->setDataCallback(this)
             ->openStream(mStream);
-    if (result != Result::OK) return (int32_t) result;
-
-    // Typically, start the stream after querying some stream information, as well as some input from the user
-    result = mStream->requestStart();
+    //if (result != Result::OK) return (int32_t) result;
     return (int32_t) result;
 }
 
 void OboeSinePlayer::stopAudio() {
-    // Stop, close and delete in case not already closed.
     std::lock_guard <std::mutex> lock(mLock);
     if (mStream) {
         mStream->stop();
-        mStream->close();
-        mStream.reset();
     }
 }
 
 oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
-    float *floatData = (float *) audioData;
+    auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
         float sampleValue = kAmplitude * sinf(mPhase);
         for (int j = 0; j < kChannelCount; j++) {
@@ -41,4 +35,30 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
         if (mPhase >= kTwoPi) mPhase -= kTwoPi;
     }
     return oboe::DataCallbackResult::Continue;
+}
+
+int32_t OboeSinePlayer::startAudio(float freq) {
+    std::lock_guard <std::mutex> lock(mLock);
+    Result result = Result::ErrorInternal;
+    // Typically, start the stream after querying some stream information, as well as some input from the user
+    kFrequency = freq;
+    updatePhaseInc();
+    if (mStream) {
+        result = mStream->requestStart();
+    }
+    return (int32_t) result;
+}
+
+void OboeSinePlayer::closeEngine() {
+    // Stop, close and delete in case not already closed.
+    std::lock_guard <std::mutex> lock(mLock);
+    if (mStream) {
+        mStream->stop();
+        mStream->close();
+        mStream.reset();
+    }
+}
+
+void OboeSinePlayer::updatePhaseInc() {
+    mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
 }

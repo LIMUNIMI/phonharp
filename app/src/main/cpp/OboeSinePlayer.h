@@ -10,8 +10,11 @@ class OboeSinePlayer : public AudioStreamDataCallback {
 public:
     virtual ~OboeSinePlayer() = default;
 
-    int32_t startAudio();
+    int32_t initEngine();
+    int32_t startAudio(float freq);
+    void closeEngine();
     void stopAudio();
+    void updatePhaseInc();
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
 
 private:
@@ -22,10 +25,13 @@ private:
     static int constexpr kSampleRate = 48000;
 
     static float constexpr kAmplitude = 0.5f;
-    static float constexpr kFrequency = 200;
+    static float constexpr kBaseFrequency = 200;
     static float constexpr kPI = M_PI;
     static float constexpr kTwoPi = kPI * 2;
-    static double constexpr mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
+
+    float kFrequency = kBaseFrequency;
+
+    double mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
 
     float mPhase = 0.0;
 };

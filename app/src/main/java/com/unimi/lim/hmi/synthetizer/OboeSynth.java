@@ -17,8 +17,10 @@ public class OboeSynth implements Synthesizer{
 
     private native long startEngine(int[] cpuIds);
     private native void stopEngine(long engineHandle);
-    private native void noteOn(long engineHandle, int noteIndex);
-    private native void noteOff(long engineHandle, int noteIndex);
+    //private native void noteOn(long engineHandle, int noteIndex);
+    //private native void noteOff(long engineHandle, int noteIndex);
+    private native void noteOn(long engineHandle, float freq);
+    private native void noteOff(long engineHandle);
 
     private static native void native_setDefaultStreamValues(int sampleRate, int framesPerBurst);
 
@@ -69,12 +71,12 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void start() {
-        //mEngineHandle = startEngine(getExclusiveCores());
+        mEngineHandle = startEngine(getExclusiveCores());
     }
 
     @Override
     public void stop() {
-        //stopEngine(mEngineHandle);
+        stopEngine(mEngineHandle);
     }
 
     @Override
@@ -84,15 +86,14 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void press(double frequency) {
-        mEngineHandle = startEngine(getExclusiveCores());
         //(int) Math.floor(frequency/440)
-        //noteOn(mEngineHandle, 10);
+        noteOn(mEngineHandle, (float) frequency);
     }
 
     @Override
     public void release() {
-        stopEngine(mEngineHandle);
-        //noteOff(mEngineHandle, 10);
+        //stopEngine(mEngineHandle);
+        noteOff(mEngineHandle);
     }
 
     @Override

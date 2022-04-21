@@ -36,8 +36,8 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_startEngine(JNIEnv *env, jobject /*
     LOGD("numSignals : %d", static_cast<int>(jNumSignals));
     auto  *engine = new OboeSinePlayer();
 
-    if (!engine->startAudio()) {
-        LOGE("Failed to start SoundBoard Engine");
+    if (engine->initEngine() != 0) {
+        LOGE("Failed to start OboeSinePlayer Engine");
         delete engine;
         engine = nullptr;
     } else  {
@@ -51,7 +51,7 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_stopEngine(JNIEnv *env, jobject ins
         jlong jEngineHandle) {
     auto engine = reinterpret_cast<OboeSinePlayer*>(jEngineHandle);
     if (engine) {
-        engine->stopAudio();
+        engine->closeEngine();
         delete engine;
     } else {
         LOGD("Engine invalid, call startEngine() to create");
@@ -69,10 +69,11 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_native_1setDefaultStreamValues(JNIE
 
 JNIEXPORT void JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOff(JNIEnv *env, jobject thiz,
-                                                         jlong engine_handle, jint noteIndex) {
-    auto *engine = reinterpret_cast<SoundBoardEngine*>(engine_handle);
+                                                         jlong engine_handle/*, jint noteIndex */) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        engine->noteOff(noteIndex);
+        //engine->noteOff(noteIndex);
+        engine->stopAudio();
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }
@@ -80,10 +81,12 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOff(JNIEnv *env, jobject thiz,
 
 JNIEXPORT void JNICALL
 Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOn(JNIEnv *env, jobject thiz,
-                                                         jlong engine_handle, jint noteIndex) {
-    auto *engine = reinterpret_cast<SoundBoardEngine*>(engine_handle);
+                                                         jlong engine_handle,
+                                                    jfloat freq/*jint noteIndex */) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        engine->noteOn(noteIndex);
+        //engine->noteOn(noteIndex);
+        engine->startAudio(freq);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }

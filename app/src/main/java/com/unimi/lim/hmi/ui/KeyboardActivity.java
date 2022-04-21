@@ -109,7 +109,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
 
         synth = new OboeSynth(this);
-        //synth.start();
+        synth.start();
 
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
