@@ -1,8 +1,8 @@
+#include <logging_macros.h>
 #include "OboeSinePlayer.h"
 
 int32_t OboeSinePlayer::initEngine(){
     initSensorEventQueue();
-    enableSensor();
 
     std::lock_guard <std::mutex> lock(mLock);
     oboe::AudioStreamBuilder builder;
@@ -30,6 +30,8 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
+        //getSensorEvent();
+        //float sampleValue = kAmplitude * sinf(mPhase) * prev_val;
         float sampleValue = kAmplitude * sinf(mPhase);
         for (int j = 0; j < kChannelCount; j++) {
             floatData[i * kChannelCount + j] = sampleValue;
@@ -41,6 +43,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
 }
 
 int32_t OboeSinePlayer::startAudio(float freq) {
+    //enableSensor();
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
     // Typically, start the stream after querying some stream information, as well as some input from the user
@@ -53,6 +56,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 }
 
 void OboeSinePlayer::closeEngine() {
+    //pauseSensor();
     // Stop, close and delete in case not already closed.
     std::lock_guard <std::mutex> lock(mLock);
     if (mStream) {
@@ -82,7 +86,7 @@ void OboeSinePlayer::initSensorEventQueue() {
     looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
     assert(looper != nullptr);
     rotationSensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper,
-                                                              LOOPER_ID_USER, NULL, NULL);
+                                                              LOOPER_ID_USER, nullptr, nullptr);
     assert(rotationSensorEventQueue != nullptr);
 }
 
@@ -98,4 +102,17 @@ void OboeSinePlayer::enableSensor() {
 
 void OboeSinePlayer::pauseSensor() {
     ASensorEventQueue_disableSensor(rotationSensorEventQueue, rotationSensor);
+}
+
+void OboeSinePlayer::getSensorEvent(){
+    ALooper_pollOnce(0, nullptr, nullptr, nullptr);
+    ASensorEvent event;
+    float a = SENSOR_FILTER_ALPHA;
+    float val = 0.0f;
+    while (ASensorEventQueue_getEvents(rotationSensorEventQueue, &event, 1) > 0) {
+        val = prev_act_val + a * (event.vector.x - prev_val);
+        prev_val = val;
+        prev_act_val = event.vector.x;
+        //LOGE("x: %f", event.vector.x);
+    }
 }

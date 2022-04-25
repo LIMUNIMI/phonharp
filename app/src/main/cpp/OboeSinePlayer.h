@@ -22,6 +22,7 @@ public:
     void initSensorEventQueue();
     void enableSensor();
     void pauseSensor();
+    void getSensorEvent();
 
 private:
     std::mutex mLock;
@@ -48,6 +49,8 @@ private:
     const int LOOPER_ID_USER = 3;
     static const int SENSOR_REFRESH_RATE_HZ = 100;
     static constexpr int32_t SENSOR_REFRESH_PERIOD_US = int32_t(1000000 / SENSOR_REFRESH_RATE_HZ);
-    //const float SENSOR_FILTER_ALPHA = 0.1f;
+    const float SENSOR_FILTER_ALPHA = 0.1f;
+    float prev_val = 0.0f;
+    float prev_act_val = 0.0f;
 };
 #endif //HMI_OBOESINEPLAYER_H
