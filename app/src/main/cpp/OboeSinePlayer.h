@@ -3,6 +3,7 @@
 
 #include <oboe/Oboe.h>
 #include <math.h>
+#include <android/sensor.h>
 
 using namespace oboe;
 
@@ -16,6 +17,11 @@ public:
     void stopAudio();
     void updatePhaseInc();
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
+
+    static ASensorManager* getSensorManager();
+    void initSensorEventQueue();
+    void enableSensor();
+    void pauseSensor();
 
 private:
     std::mutex mLock;
@@ -34,5 +40,14 @@ private:
     double mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
 
     float mPhase = 0.0;
+
+    //Sensor vars
+    const ASensor *rotationSensor;
+    ASensorEventQueue *rotationSensorEventQueue;
+    ALooper *looper;
+    const int LOOPER_ID_USER = 3;
+    static const int SENSOR_REFRESH_RATE_HZ = 100;
+    static constexpr int32_t SENSOR_REFRESH_PERIOD_US = int32_t(1000000 / SENSOR_REFRESH_RATE_HZ);
+    //const float SENSOR_FILTER_ALPHA = 0.1f;
 };
 #endif //HMI_OBOESINEPLAYER_H

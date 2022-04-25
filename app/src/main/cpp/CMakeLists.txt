@@ -18,7 +18,7 @@ add_library( soundboard SHARED OboeSinePlayer
         OboeSinePlayer.cpp
         )
 
-target_link_libraries(soundboard log oboe::oboe )
+target_link_libraries(soundboard log oboe::oboe android )
 
 # Enable optimization flags: if having problems with source level debugging,
 # disable -Ofast ( and debug ), re-enable it after done debugging.

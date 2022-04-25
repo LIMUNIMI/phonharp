@@ -1,6 +1,9 @@
 #include "OboeSinePlayer.h"
 
 int32_t OboeSinePlayer::initEngine(){
+    initSensorEventQueue();
+    enableSensor();
+
     std::lock_guard <std::mutex> lock(mLock);
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -61,4 +64,38 @@ void OboeSinePlayer::closeEngine() {
 
 void OboeSinePlayer::updatePhaseInc() {
     mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
+}
+
+ASensorManager* OboeSinePlayer::getSensorManager() {
+    ASensorManager* sensor_manager =
+            ASensorManager_getInstance();
+    if (!sensor_manager) {
+        return nullptr;
+    }
+    return sensor_manager;
+}
+
+void OboeSinePlayer::initSensorEventQueue() {
+    ASensorManager* sensorManager = getSensorManager();
+    assert(sensorManager != nullptr);
+    rotationSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_GAME_ROTATION_VECTOR);
+    looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+    assert(looper != nullptr);
+    rotationSensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper,
+                                                              LOOPER_ID_USER, NULL, NULL);
+    assert(rotationSensorEventQueue != nullptr);
+}
+
+void OboeSinePlayer::enableSensor() {
+    auto status = ASensorEventQueue_enableSensor(rotationSensorEventQueue,
+                                                 rotationSensor);
+    assert(status >= 0);
+    status = ASensorEventQueue_setEventRate(rotationSensorEventQueue,
+                                            rotationSensor,
+                                            SENSOR_REFRESH_PERIOD_US);
+    assert(status >= 0);
+}
+
+void OboeSinePlayer::pauseSensor() {
+    ASensorEventQueue_disableSensor(rotationSensorEventQueue, rotationSensor);
 }
