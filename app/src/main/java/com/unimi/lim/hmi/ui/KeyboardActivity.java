@@ -1,9 +1,13 @@
 package com.unimi.lim.hmi.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,9 +32,7 @@ import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.OboeSynth;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
-import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
-import com.unimi.lim.hmi.util.AndroidPropertyUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +60,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private Synthesizer synth;
     private KeyHandler keyHandler;
 
+    protected SensorManager sensorManager;
+    protected SensorEventListener gameRotationListener;
+
     private final static List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
 
     // Mapping between scale enum and scale array description idx
@@ -70,6 +75,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keyboard);
+
+        // Instance SensorManager
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         // Handle preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -120,6 +128,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // Setup half tone key listener
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
+        // Setup Rotation Listener
+        gameRotationListener = new GameRotationListener();
+
 
         // TODO Remove code below, used just for debug system property values
         boolean hasLowLatencyFeature = getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY);
@@ -133,12 +144,23 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     @Override
     public void onResume() {
         synth.start();
+
+        // register listener for sensor
+        Sensor gameRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        if(gameRotationSensor != null){
+            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
         super.onResume();
     }
 
     @Override
     public void onPause() {
         synth.stop();
+
+        // Unregister sensor to avoid wasting battery
+        sensorManager.unregisterListener(gameRotationListener);
+
         super.onPause();
     }
 
@@ -337,4 +359,21 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         }
     }
 
+    private class GameRotationListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
+                //System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.length);
+                //TODO: modifica amp su synth
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+            // Do something here if sensor accuracy changes.
+            // You must implement this callback in your code.
+
+        }
+    }
 }
