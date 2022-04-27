@@ -372,13 +372,8 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
                 //System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.length);
                 //TODO: modifica amp su synth
-
-                if(sensorEvent.values[0] < 0){
-                    Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
-                    synthesizer.controlVolume(Math.abs(sensorEvent.values[0]));
-                } else {
-                    synthesizer.controlVolume(-2);
-                }
+                //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
+                synthesizer.controlVolume(-sensorEvent.values[0]);
             }
         }
 

@@ -51,7 +51,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 }
 
 void OboeSinePlayer::setAmpMul(float amp){
-    kAmpMul = amp;
+    kAmpMul = kRawPrevAmpMul + kAmpMulAlpha * (amp - kAmpMul);
 }
 
 void OboeSinePlayer::deltaAmpMul(float deltaAmp){

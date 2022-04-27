@@ -38,6 +38,8 @@ private:
 
     float mPhase = 0.0;
 
+    const float kAmpMulAlpha = 0.5f;
+    std::atomic<float> kRawPrevAmpMul;
     std::atomic<float> kAmpMul;
 };
 #endif //HMI_OBOESINEPLAYER_H
