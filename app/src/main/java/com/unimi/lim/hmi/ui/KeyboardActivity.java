@@ -129,7 +129,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
         // Setup Rotation Listener
-        gameRotationListener = new GameRotationListener();
+        gameRotationListener = new GameRotationListener(synth);
 
 
         // TODO Remove code below, used just for debug system property values
@@ -148,7 +148,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // register listener for sensor
         Sensor gameRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
         if(gameRotationSensor != null){
-            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
 
         super.onResume();
@@ -361,11 +361,24 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
     private class GameRotationListener implements SensorEventListener {
 
+        Synthesizer synthesizer;
+
+        GameRotationListener(Synthesizer synthesizer){
+            this.synthesizer = synthesizer;
+        }
+
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
                 //System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.length);
                 //TODO: modifica amp su synth
+
+                if(sensorEvent.values[0] < 0){
+                    Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
+                    synthesizer.controlVolume(Math.abs(sensorEvent.values[0]));
+                } else {
+                    synthesizer.controlVolume(-2);
+                }
             }
         }
 

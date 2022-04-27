@@ -55,7 +55,10 @@ void OboeSinePlayer::setAmpMul(float amp){
 }
 
 void OboeSinePlayer::deltaAmpMul(float deltaAmp){
-    kAmpMul = kAmpMul+deltaAmp;
+    float val = kAmpMul+deltaAmp;
+    if(val >= 1) setAmpMul(1);
+    else if(val <= 0) setAmpMul(0);
+    else setAmpMul(kAmpMul+deltaAmp);
 }
 
 void OboeSinePlayer::closeEngine() {
