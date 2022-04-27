@@ -18,6 +18,7 @@ public:
     void updatePhaseInc();
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
     void setAmpMul(float amp);
+    void deltaAmpMul(float deltaAmp);
 
 private:
     std::mutex mLock;
@@ -37,6 +38,6 @@ private:
 
     float mPhase = 0.0;
 
-    float kAmpMul = 1.0f;
+    std::atomic<float> kAmpMul;
 };
 #endif //HMI_OBOESINEPLAYER_H

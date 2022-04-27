@@ -54,6 +54,10 @@ void OboeSinePlayer::setAmpMul(float amp){
     kAmpMul = amp;
 }
 
+void OboeSinePlayer::deltaAmpMul(float deltaAmp){
+    kAmpMul = kAmpMul+deltaAmp;
+}
+
 void OboeSinePlayer::closeEngine() {
     // Stop, close and delete in case not already closed.
     std::lock_guard <std::mutex> lock(mLock);
