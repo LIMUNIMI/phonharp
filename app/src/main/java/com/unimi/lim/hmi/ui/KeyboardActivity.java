@@ -148,7 +148,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         // register listener for sensor
         Sensor gameRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
         if(gameRotationSensor != null){
-            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }
 
         super.onResume();
@@ -370,8 +370,6 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
-                //System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.length);
-                //TODO: modifica amp su synth
                 //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
                 synthesizer.controlVolume(-sensorEvent.values[0]);
             }
