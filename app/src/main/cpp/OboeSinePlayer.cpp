@@ -72,10 +72,14 @@ void OboeSinePlayer::closeEngine() {
 }
 
 void OboeSinePlayer::updatePhaseInc() {
-    mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
+    mPhaseIncrement = (kFrequency+pitchBendDelta) * kTwoPi / (double) kSampleRate;
 }
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
-    kFrequency = kFrequency + deltaPitch;
+    pitchBendDelta = deltaPitch;
     updatePhaseInc();
+}
+
+void OboeSinePlayer::controlReset() {
+    pitchBendDelta = 0;
 }

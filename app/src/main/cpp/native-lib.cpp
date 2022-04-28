@@ -118,4 +118,16 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_deltaPitch(JNIEnv *env, jobject thi
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlReset(JNIEnv *env, jobject thiz,
+                                                        jlong engine_handle) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->noteOn(noteIndex);
+        engine->controlReset();
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"

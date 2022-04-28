@@ -20,6 +20,7 @@ public:
     void setAmpMul(float amp);
     void deltaAmpMul(float deltaAmp);
     void controlPitch(float deltaPitch);
+    void controlReset();
 
 private:
     std::mutex mLock;
@@ -33,6 +34,7 @@ private:
     static float constexpr kTwoPi = kPI * 2;
 
     std::atomic<float> kFrequency;
+    std::atomic<float> pitchBendDelta;
 
     //set by updatePhaseInc()
     std::atomic<double> mPhaseIncrement;

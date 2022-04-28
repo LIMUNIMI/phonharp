@@ -23,6 +23,7 @@ public class OboeSynth implements Synthesizer{
     private native void noteOff(long engineHandle);
     private native void deltaAmpMul(long engineHandle, float deltaAmpMul);
     private native void deltaPitch(long engineHandle, float deltaPitch);
+    private native void controlReset(long engineHandle);
 
     private static native void native_setDefaultStreamValues(int sampleRate, int framesPerBurst);
 
@@ -83,7 +84,24 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void updateSynthesizerCfg(Timbre timbre) {
-
+        //setHarmonics
+        timbre.getHarmonics(); //ret int, percent
+        //setTremolo
+        Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
+        tremolo.getDepth(); //ret int, percent
+        tremolo.getRate(); //ret float, frequency in Hz
+        //setVibrato
+        Timbre.Lfo vibrato = timbre.getVibrato(); //ret Lfo
+        vibrato.getDepth(); //ret int, percent
+        vibrato.getRate(); //ret float, frequency in Hz
+        //setPwm
+        Timbre.Lfo pwm = timbre.getPwm(); //ret Lfo
+        pwm.getDepth(); //ret int, percent
+        pwm.getRate(); //ret float, frequency in Hz
+        //setEqualizer
+        Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
+        eq.getHighShelfGain(); //ret int, dB
+        eq.getLowShelfGain(); //ret int, dB
     }
 
     @Override
@@ -100,7 +118,7 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void controlReset() {
-
+        controlReset(mEngineHandle);
     }
 
     @Override
@@ -110,6 +128,7 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void controlPitch(float delta) {
+        Log.d(TAG, "controlPitch: " + delta);
         deltaPitch(mEngineHandle, delta);
     }
 
