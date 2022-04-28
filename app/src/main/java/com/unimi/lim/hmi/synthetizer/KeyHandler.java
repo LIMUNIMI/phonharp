@@ -139,9 +139,9 @@ public class KeyHandler {
      */
     private void play() {
         //TODO: sistemare qui
-        //if (timbre.getTapHysteresis() == 0) {
+        if (timbre.getTapHysteresis() == 0) {
             invokeSynth();
-        /*} else if (!delayedPlayInvoked) {
+        } else if (!delayedPlayInvoked) {
             long delay = secondsToMillis(timbre.getTapHysteresis());
             Log.d(getClass().getName(), "Delay millis " + delay + ", original " + timbre.getTapHysteresis());
             delayedPlayer.postDelayed(() -> {
@@ -149,7 +149,7 @@ public class KeyHandler {
                 delayedPlayInvoked = false;
             }, delay);
             delayedPlayInvoked = true;
-        }*/
+        }
     }
 
     /**
