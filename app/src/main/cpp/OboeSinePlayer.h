@@ -19,6 +19,7 @@ public:
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
     void setAmpMul(float amp);
     void deltaAmpMul(float deltaAmp);
+    void controlPitch(float deltaPitch);
 
 private:
     std::mutex mLock;
@@ -28,13 +29,13 @@ private:
     static int constexpr kSampleRate = 48000;
 
     static float constexpr kAmplitude = 0.5f;
-    static float constexpr kBaseFrequency = 200;
     static float constexpr kPI = M_PI;
     static float constexpr kTwoPi = kPI * 2;
 
-    float kFrequency = kBaseFrequency;
+    std::atomic<float> kFrequency;
 
-    double mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
+    //set by updatePhaseInc()
+    std::atomic<double> mPhaseIncrement;
 
     float mPhase = 0.0;
 

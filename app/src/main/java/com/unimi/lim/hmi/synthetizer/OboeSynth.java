@@ -22,6 +22,7 @@ public class OboeSynth implements Synthesizer{
     private native void noteOn(long engineHandle, float freq);
     private native void noteOff(long engineHandle);
     private native void deltaAmpMul(long engineHandle, float deltaAmpMul);
+    private native void deltaPitch(long engineHandle, float deltaPitch);
 
     private static native void native_setDefaultStreamValues(int sampleRate, int framesPerBurst);
 
@@ -109,7 +110,7 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public void controlPitch(float delta) {
-
+        deltaPitch(mEngineHandle, delta);
     }
 
     @Override

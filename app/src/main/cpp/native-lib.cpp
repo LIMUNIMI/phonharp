@@ -105,4 +105,17 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_deltaAmpMul(JNIEnv *env, jobject th
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_deltaPitch(JNIEnv *env, jobject thiz,
+                                                         jlong engine_handle,
+                                                         jfloat deltaPitch) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->noteOn(noteIndex);
+        engine->controlPitch(deltaPitch);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"

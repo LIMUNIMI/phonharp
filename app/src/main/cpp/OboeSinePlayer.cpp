@@ -74,3 +74,8 @@ void OboeSinePlayer::closeEngine() {
 void OboeSinePlayer::updatePhaseInc() {
     mPhaseIncrement = kFrequency * kTwoPi / (double) kSampleRate;
 }
+
+void OboeSinePlayer::controlPitch(float deltaPitch) {
+    kFrequency = kFrequency + deltaPitch;
+    updatePhaseInc();
+}
