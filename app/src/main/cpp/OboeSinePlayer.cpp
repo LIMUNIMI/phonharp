@@ -3,6 +3,7 @@
 
 int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
+
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
     Result result = builder.setSharingMode(oboe::SharingMode::Exclusive)
@@ -32,6 +33,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
         for (int j = 0; j < kChannelCount; j++) {
             floatData[i * kChannelCount + j] = sampleValue;
         }
+        updatePhaseInc();
         mPhase += mPhaseIncrement;
         if (mPhase >= kTwoPi) mPhase -= kTwoPi;
     }
@@ -42,12 +44,32 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
     // Typically, start the stream after querying some stream information, as well as some input from the user
-    kFrequency = freq;
-    updatePhaseInc();
+    setFrequency(freq);
     if (mStream) {
         result = mStream->requestStart();
     }
     return (int32_t) result;
+}
+
+void OboeSinePlayer::setFrequency(float frequency) {
+    kFrequency = frequency;
+    updateRawPhaseInc();
+    updatePhaseInc();
+}
+
+void OboeSinePlayer::updateRawPhaseInc() {
+    mRawPhaseIncrement = (kFrequency+pitchBendDelta) * kTwoPi / kSampleRate;
+}
+
+
+void OboeSinePlayer::updatePhaseInc() {
+    //will skip func and use rawPhaseIncrement if portamento is not enabled
+    if(!portamento){
+        mPhaseIncrement = mRawPhaseIncrement;
+    } else {
+        mPrevPhaseIncrement = mPhaseIncrement;
+        mPhaseIncrement = mPrevPhaseIncrement + portamentoAlpha * (mRawPhaseIncrement - mPhaseIncrement);
+    }
 }
 
 void OboeSinePlayer::setAmpMul(float amp){
@@ -71,15 +93,22 @@ void OboeSinePlayer::closeEngine() {
     }
 }
 
-void OboeSinePlayer::updatePhaseInc() {
-    mPhaseIncrement = (kFrequency+pitchBendDelta) * kTwoPi / (double) kSampleRate;
-}
-
 void OboeSinePlayer::controlPitch(float deltaPitch) {
-    pitchBendDelta = deltaPitch;
-    updatePhaseInc();
+    pitchBendDelta = deltaPitch*4;
+    updateRawPhaseInc();
 }
 
 void OboeSinePlayer::controlReset() {
     pitchBendDelta = 0;
+    mPhaseIncrement = 0.0f;
+}
+
+void OboeSinePlayer::setPortamento(float seconds) {
+    if(seconds > 0.0f){
+        portamentoAlpha = exp(-1.0f/(seconds*kSampleRate));
+        portamento = true;
+    } else {
+        portamento = false;
+    }
+
 }

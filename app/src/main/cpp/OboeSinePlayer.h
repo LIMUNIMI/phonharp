@@ -16,11 +16,14 @@ public:
     void closeEngine();
     void stopAudio();
     void updatePhaseInc();
+    void updateRawPhaseInc();
+    void setFrequency(float frequency);
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
     void setAmpMul(float amp);
     void deltaAmpMul(float deltaAmp);
     void controlPitch(float deltaPitch);
     void controlReset();
+    void setPortamento(float seconds);
 
 private:
     std::mutex mLock;
@@ -37,12 +40,17 @@ private:
     std::atomic<float> pitchBendDelta;
 
     //set by updatePhaseInc()
-    std::atomic<double> mPhaseIncrement;
+    std::atomic<float> mPhaseIncrement;
+    float mRawPhaseIncrement;
+    float mPrevPhaseIncrement;
 
     float mPhase = 0.0;
 
     const float kAmpMulAlpha = 0.5f;
     std::atomic<float> kRawPrevAmpMul;
     std::atomic<float> kAmpMul;
+
+    bool portamento = false;
+    std::atomic<float> portamentoAlpha;
 };
 #endif //HMI_OBOESINEPLAYER_H

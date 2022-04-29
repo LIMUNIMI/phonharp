@@ -3,9 +3,7 @@ package com.unimi.lim.hmi.synthetizer;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import com.unimi.lim.hmi.entity.Timbre;
 
@@ -14,6 +12,7 @@ import static java.lang.Math.min;
 public class OboeSynth implements Synthesizer{
     private final String TAG = OboeSynth.class.toString();
     private static long mEngineHandle = 0;
+    private final Timbre timbre;
 
     private native long startEngine(int[] cpuIds);
     private native void stopEngine(long engineHandle);
@@ -25,6 +24,8 @@ public class OboeSynth implements Synthesizer{
     private native void deltaPitch(long engineHandle, float deltaPitch);
     private native void controlReset(long engineHandle);
 
+    private native void setPortamento(long engineHandle, float seconds);
+
     private static native void native_setDefaultStreamValues(int sampleRate, int framesPerBurst);
 
     // Used to load the 'native-lib' library on application startup.
@@ -32,7 +33,8 @@ public class OboeSynth implements Synthesizer{
         System.loadLibrary("soundboard");
     }
 
-    public OboeSynth(Context context){
+    public OboeSynth(Context context, Timbre timbre){
+        this.timbre = timbre;
         setDefaultStreamValues(context);
     }
 
@@ -69,12 +71,13 @@ public class OboeSynth implements Synthesizer{
 
     @Override
     public String getTimbreId() {
-        return "Default";
+        return timbre.getId();
     }
 
     @Override
     public void start() {
         mEngineHandle = startEngine(getExclusiveCores());
+        updateSynthesizerCfg(timbre);
     }
 
     @Override
@@ -88,20 +91,24 @@ public class OboeSynth implements Synthesizer{
         timbre.getHarmonics(); //ret int, percent
         //setTremolo
         Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
-        tremolo.getDepth(); //ret int, percent
-        tremolo.getRate(); //ret float, frequency in Hz
+        //tremolo.getDepth(); //ret int, percent
+        //tremolo.getRate(); //ret float, frequency in Hz
         //setVibrato
         Timbre.Lfo vibrato = timbre.getVibrato(); //ret Lfo
-        vibrato.getDepth(); //ret int, percent
-        vibrato.getRate(); //ret float, frequency in Hz
+        //vibrato.getDepth(); //ret int, percent
+        //vibrato.getRate(); //ret float, frequency in Hz
         //setPwm
         Timbre.Lfo pwm = timbre.getPwm(); //ret Lfo
-        pwm.getDepth(); //ret int, percent
-        pwm.getRate(); //ret float, frequency in Hz
+        //pwm.getDepth(); //ret int, percent
+        //pwm.getRate(); //ret float, frequency in Hz
         //setEqualizer
         Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
-        eq.getHighShelfGain(); //ret int, dB
-        eq.getLowShelfGain(); //ret int, dB
+        //eq.getHighShelfGain(); //ret int, dB
+        //eq.getLowShelfGain(); //ret int, dB
+        //setPortamento
+        float portamentoSeconds = timbre.getPortamento(); //float set
+        Log.e(TAG, "updateSynthesizerCfg: portamento: "+portamentoSeconds);
+        setPortamento(mEngineHandle, portamentoSeconds);
     }
 
     @Override

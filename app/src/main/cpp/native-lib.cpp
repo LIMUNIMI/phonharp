@@ -130,4 +130,16 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlReset(JNIEnv *env, jobject t
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPortamento(JNIEnv *env, jobject thiz,
+                                                              jlong engine_handle, jfloat seconds) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->noteOn(noteIndex);
+        engine->setPortamento(seconds);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"
