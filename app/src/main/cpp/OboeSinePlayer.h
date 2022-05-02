@@ -4,6 +4,7 @@
 #include <oboe/Oboe.h>
 #include <math.h>
 #include <android/sensor.h>
+#include "SmoothedAmpParameter.h"
 
 using namespace oboe;
 
@@ -46,9 +47,8 @@ private:
 
     float mPhase = 0.0;
 
+    SmoothedAmpParameter *ampMul;
     const float kAmpMulAlpha = 0.5f;
-    std::atomic<float> kRawPrevAmpMul;
-    std::atomic<float> kAmpMul;
 
     bool portamento = false;
     std::atomic<float> portamentoAlpha;

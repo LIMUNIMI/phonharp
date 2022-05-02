@@ -4,6 +4,8 @@
 int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
+    ampMul = new SmoothedAmpParameter(1.0f, kAmpMulAlpha, 1.0f);
+
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
     Result result = builder.setSharingMode(oboe::SharingMode::Exclusive)
@@ -29,7 +31,7 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        float sampleValue = kAmplitude * sinf(mPhase) * kAmpMul;
+        float sampleValue = kAmplitude * sinf(mPhase) * ampMul->smoothed();
         for (int j = 0; j < kChannelCount; j++) {
             floatData[i * kChannelCount + j] = sampleValue;
         }
@@ -73,14 +75,11 @@ void OboeSinePlayer::updatePhaseInc() {
 }
 
 void OboeSinePlayer::setAmpMul(float amp){
-    kAmpMul = kRawPrevAmpMul + kAmpMulAlpha * (amp - kAmpMul);
+    ampMul->setTargetValue(amp);
 }
 
 void OboeSinePlayer::deltaAmpMul(float deltaAmp){
-    float val = kAmpMul+deltaAmp;
-    if(val >= 1) setAmpMul(1);
-    else if(val <= 0) setAmpMul(0);
-    else setAmpMul(kAmpMul+deltaAmp);
+    ampMul->applyDeltaToTarget(deltaAmp);
 }
 
 void OboeSinePlayer::closeEngine() {
