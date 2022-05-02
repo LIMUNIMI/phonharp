@@ -11,7 +11,13 @@ public:
 
     }
 
-    float smoothed(){
+    SmoothedParameter(){
+        alpha = 0.5f;
+        prevRawValue = 0.0f;
+        currentValue = 1.0f;
+    };
+
+    virtual float smoothed(){
         currentValue = prevRawValue + alpha * (targetValue - currentValue);
         return currentValue;
     }
@@ -20,12 +26,24 @@ public:
         return currentValue;
     }
 
-    void setAlpha(float a){
+    void setCurrentValue(float curValue){
+        currentValue = curValue;
+    }
+
+    void setRawPrevValue(float rawPrevVal){
+        prevRawValue = rawPrevVal;
+    }
+
+    virtual void setAlpha(float a){
         alpha = a;
     }
 
-    void setTargetValue(float target){
+    virtual void setTargetValue(float target){
         targetValue = target;
+    }
+
+    float getTargetValue(){
+        return targetValue;
     }
 
     virtual ~SmoothedParameter() {

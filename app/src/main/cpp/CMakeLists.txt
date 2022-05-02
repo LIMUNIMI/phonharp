@@ -18,6 +18,7 @@ add_library( soundboard SHARED OboeSinePlayer
         OboeSinePlayer.cpp
         SmoothedParameter.h
         SmoothedAmpParameter.h
+        SmoothedPhaseParameter.h
         )
 
 target_link_libraries(soundboard log oboe::oboe android)
