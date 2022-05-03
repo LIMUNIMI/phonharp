@@ -73,7 +73,7 @@ void OboeSinePlayer::closeEngine() {
 }
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
-    pitchBendDelta = deltaPitch*4;
+    pitchBendDelta = deltaPitch*5;
     phaseInc->setTargetFrequency(pitchBendDelta + kFrequency);
 }
 

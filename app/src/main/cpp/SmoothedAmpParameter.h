@@ -14,6 +14,15 @@ public:
         else if(val <= 0) setTargetValue(0);
         else setTargetValue(val);
     }
+
+
+    float smoothed() override {
+        /*
+        setCurrentValue(getTargetValue());
+        return getCurrentValue();
+         */
+        return SmoothedParameter::smoothed();
+    }
 };
 
 #endif //HMI_SMOOTHEDAMPPARAMETER_H

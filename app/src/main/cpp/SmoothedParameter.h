@@ -1,6 +1,7 @@
 #ifndef HMI_SMOOTHEDPARAMETER_H
 #define HMI_SMOOTHEDPARAMETER_H
 
+#include "logging_macros.h"
 
 class SmoothedParameter {
 
@@ -18,7 +19,9 @@ public:
     };
 
     virtual float smoothed(){
+        //LOGD("Smoothing\n currentValue: %f\n prevRawValue: %f\n alpha: %f\n targetValue: %f\n", currentValue, prevRawValue, alpha, targetValue);
         currentValue = prevRawValue + alpha * (targetValue - currentValue);
+        //LOGD("Smoothed value: %f\n", currentValue);
         return currentValue;
     }
 
@@ -39,6 +42,7 @@ public:
     }
 
     virtual void setTargetValue(float target){
+        prevRawValue = targetValue;
         targetValue = target;
     }
 
@@ -50,11 +54,11 @@ public:
 
     }
 
-private:
-    std::atomic<float> currentValue;
-    std::atomic<float> prevRawValue;
-    std::atomic<float> targetValue;
-    std::atomic<float> alpha;
+protected:
+    float currentValue;
+    float prevRawValue;
+    float targetValue;
+    float alpha;
 };
 
 
