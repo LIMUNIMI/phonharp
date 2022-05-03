@@ -8,7 +8,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -17,6 +20,7 @@ import android.view.ViewConfiguration;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -59,6 +63,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
     private Synthesizer synth;
     private KeyHandler keyHandler;
+    private Vibrator vibrator;
 
     protected SensorManager sensorManager;
     protected SensorEventListener gameRotationListener;
@@ -118,6 +123,8 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         synth = new OboeSynth(this, timbre);
         synth.start();
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
@@ -282,6 +289,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     view.setAlpha(0.5f);
                     setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
+                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                     break;
                 case MotionEvent.ACTION_UP:
                     view.setAlpha(1.0f);
