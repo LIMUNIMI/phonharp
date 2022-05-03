@@ -13,23 +13,33 @@ public:
 
         sampleRate = sampleFreq;
 
-        setCurrentValue(startFreq);
-        setRawPrevValue(startFreq);
+        setCurrentValue(getSampleInc(startFreq));
+        setRawPrevValue(getSampleInc(startFreq));
         setTargetFrequency(startFreq);
     }
+    float getSampleInc(float frequency){
+        return (frequency * kTwoPi) / sampleRate;
+    }
+
     void setTargetFrequency(const float targetFreq){
-        setTargetValue((targetFreq * kTwoPi) / sampleRate);
+        setRawPrevValue(getTargetValue());
+        setTargetValue(getSampleInc(targetFreq));
     }
     void setPortamento(const float seconds){
         portamento = seconds;
         setAlpha(exp(-1.0f/(seconds*sampleRate)));
+        //setAlpha(0.1f);
     }
 
     float smoothed() override{
+        //LOGD("SMOO: targetValue: %f", targetValue);
         if(portamento == 0.0f){
             return getTargetValue();
         } else {
-            return SmoothedParameter::smoothed();
+
+            float smoothed = SmoothedParameter::smoothed();
+            //LOGD("\n    SMOO:  smoothedValue: %f", smoothed);
+            return smoothed;
         }
     }
 

@@ -21,6 +21,7 @@ public:
     virtual float smoothed(){
         //LOGD("Smoothing\n currentValue: %f\n prevRawValue: %f\n alpha: %f\n targetValue: %f\n", currentValue, prevRawValue, alpha, targetValue);
         currentValue = prevRawValue + alpha * (targetValue - currentValue);
+        prevRawValue = targetValue;
         //LOGD("Smoothed value: %f\n", currentValue);
         return currentValue;
     }
