@@ -5,7 +5,9 @@ int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
     ampMul = new SmoothedAmpParameter(1.0f, kAmpMulAlpha, 1.0f);
-    phaseInc = new SmoothedPhaseParameter(400.0f, 0.0f, kSampleRate);
+    smoothedFrequency = std::make_unique<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
+
+    oscillator = std::make_unique<Oscillator>(kSampleRate, 400.0f);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -32,12 +34,10 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        float sampleValue = kAmplitude * sinf(mPhase) * ampMul->smoothed();
+        float sampleValue = kAmplitude * oscillator->getNextSample() * ampMul->smoothed();
         for (int j = 0; j < kChannelCount; j++) {
             floatData[i * kChannelCount + j] = sampleValue;
         }
-        mPhase += phaseInc->smoothed();
-        if (mPhase >= kTwoPi) mPhase -= kTwoPi;
     }
     return oboe::DataCallbackResult::Continue;
 }
@@ -55,7 +55,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 
 void OboeSinePlayer::setFrequency(float frequency) {
     kFrequency = frequency;
-    phaseInc->setTargetFrequency(frequency);
+    smoothedFrequency->setTargetFrequency(frequency);
 }
 
 void OboeSinePlayer::deltaAmpMul(float deltaAmp){
@@ -73,15 +73,16 @@ void OboeSinePlayer::closeEngine() {
 }
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
+    //TODO: log2lin
     pitchBendDelta = deltaPitch*4;
-    phaseInc->setTargetFrequency(pitchBendDelta + kFrequency);
 }
 
 void OboeSinePlayer::controlReset() {
     pitchBendDelta = 0;
-    phaseInc->setTargetFrequency(kFrequency);
+    smoothedFrequency->setTargetFrequency(kFrequency);
+    smoothedFrequency->setRawPrevValue(kFrequency);
 }
 
 void OboeSinePlayer::setPortamento(float seconds) {
-    phaseInc->setPortamento(seconds);
+    smoothedFrequency->setPortamento(seconds);
 }

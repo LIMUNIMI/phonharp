@@ -5,7 +5,8 @@
 #include <math.h>
 #include <android/sensor.h>
 #include "SmoothedAmpParameter.h"
-#include "SmoothedPhaseParameter.h"
+#include "SmoothedFrequency.h"
+#include "Oscillator.h"
 
 using namespace oboe;
 
@@ -38,7 +39,9 @@ private:
     std::atomic<float> kFrequency;
     std::atomic<float> pitchBendDelta;
 
-    SmoothedPhaseParameter *phaseInc;
+    std::unique_ptr<SmoothedFrequency> smoothedFrequency;
+
+    std::unique_ptr<Oscillator> oscillator;
 
     float mPhase = 0.0;
 
