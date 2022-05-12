@@ -18,6 +18,7 @@ public:
         setTargetFrequency(startFreq);
     }
     void setTargetFrequency(const float targetFreq){
+        setRawPrevValue(getTargetValue());
         setTargetValue(targetFreq);
     }
     void setPortamento(const float seconds){

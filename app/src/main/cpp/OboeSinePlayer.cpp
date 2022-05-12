@@ -86,3 +86,10 @@ void OboeSinePlayer::controlReset() {
 void OboeSinePlayer::setPortamento(float seconds) {
     smoothedFrequency->setPortamento(seconds);
 }
+
+OboeSinePlayer::~OboeSinePlayer() {
+    if (mStream) {
+        LOGE("OboeSynth destructed without closing stream. Resource leak.");
+        closeEngine();
+    }
+}
