@@ -12,7 +12,7 @@ using namespace oboe;
 
 class OboeSinePlayer : public AudioStreamDataCallback {
 public:
-    virtual ~OboeSinePlayer() = default;
+    virtual ~OboeSinePlayer();
 
     int32_t initEngine();
     int32_t startAudio(float freq);
