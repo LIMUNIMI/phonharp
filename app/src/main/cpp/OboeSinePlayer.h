@@ -46,6 +46,6 @@ private:
     float mPhase = 0.0;
 
     SmoothedAmpParameter *ampMul;
-    const float kAmpMulAlpha = 0.5f;
+    const float kAmpMulAlpha = 0.9f;
 };
 #endif //HMI_OBOESINEPLAYER_H

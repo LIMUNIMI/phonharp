@@ -5,8 +5,8 @@
 
 class Oscillator{
 public:
-    Oscillator(const float sampleRate, const float frequency = 200.0f) : oSampleRate(sampleRate), setFrequency(frequency){
-
+    Oscillator(const float sampleRate, const float frequency = 200.0f) : oSampleRate(sampleRate){
+        oFrequency = frequency;
     }
 
     void setFrequency(const float frequency){
@@ -18,7 +18,7 @@ public:
         oPrevAmplitude = oAmplitude;
 
         oPhase += oPhaseInc;
-        if (oPhase >= kTwoPi) mPhase -= oTwoPi;
+        if (oPhase >= oTwoPi) oPhase -= oTwoPi;
         oAmplitude = sinf(oPhase);
 
         return oPrevAmplitude
@@ -27,15 +27,15 @@ public:
 private:
 
     float getPhaseInc(){
-        return (oFrequency * oTwoPi) / oSampleRate
+        return (oFrequency * oTwoPi) / oSampleRate;
     }
 
     float oSampleRate;
     std::atomic<float> oFrequency;
     std::atomic<float> oPhaseInc;
-    std::atomic<float> oPhase = 0;
-    std::atomic<float> oAmplitude = 0;
-    std::atomic<float> oPrevAmplitude;
+    float oPhase = 0;
+    float oAmplitude = 0;
+    float oPrevAmplitude;
 
     static float constexpr oPI = M_PI;
     static float constexpr oTwoPi = oPI * 2;
