@@ -61,14 +61,16 @@ public:
             for (int i = 0; i < numFrames; ++i) {
 
                 // Sine wave (sinf)
-                //audioData[i] = sinf(mPhase) * mAmplitude;
+                audioData[i] = sinf(mPhase) * mAmplitude;
 
                 // Square wave
+                /*
                 if (mPhase <= kPi){
                     audioData[i] = -mAmplitude;
                 } else {
                     audioData[i] = mAmplitude;
                 }
+                */
 
                 mPhase += mPhaseIncrement;
                 if (mPhase > kTwoPi) mPhase -= kTwoPi;

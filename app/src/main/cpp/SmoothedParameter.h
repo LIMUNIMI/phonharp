@@ -2,6 +2,7 @@
 #define HMI_SMOOTHEDPARAMETER_H
 
 #include "logging_macros.h"
+#include <math.h>
 
 class SmoothedParameter {
 
@@ -13,15 +14,12 @@ public:
     }
 
     SmoothedParameter(){
-        alpha = 0.5f;
-        prevRawValue = 0.0f;
-        currentValue = 1.0f;
     };
 
     virtual float smoothed(){
         //LOGD("Smoothing\n currentValue: %f\n prevRawValue: %f\n alpha: %f\n targetValue: %f\n", currentValue, prevRawValue, alpha, targetValue);
         currentValue = prevRawValue + alpha * (targetValue - currentValue);
-        prevRawValue = targetValue;
+        prevRawValue.store(targetValue);
         //LOGD("Smoothed value: %f\n", currentValue);
         return currentValue;
     }
@@ -35,16 +33,20 @@ public:
     }
 
     void setRawPrevValue(float rawPrevVal){
-        prevRawValue = rawPrevVal;
+        prevRawValue.store(rawPrevVal);
     }
 
-    virtual void setAlpha(float a){
+    void setAlpha(float a){
         alpha = a;
     }
 
+    void setAlphaFromSeconds(float s, float sampleRate){
+        setAlpha(exp(-1.0f/(s*sampleRate)));
+    }
+
     virtual void setTargetValue(float target){
-        prevRawValue = targetValue;
-        targetValue = target;
+        prevRawValue.store(targetValue);
+        targetValue.store(target);
     }
 
     float getTargetValue(){
@@ -56,10 +58,10 @@ public:
     }
 
 protected:
-    float currentValue;
-    float prevRawValue;
-    float targetValue;
-    float alpha;
+    float currentValue = 0.0f;
+    std::atomic<float> prevRawValue {0.0f};
+    std::atomic<float> targetValue {0.0f};
+    float alpha = 0.5f;
 };
 
 

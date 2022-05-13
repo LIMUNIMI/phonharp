@@ -1,12 +1,12 @@
-#ifndef HMI_OSCILLATOR_H
-#define HMI_OSCILLATOR_H
+#ifndef HMI_OSCILLATORWRAPPER_H
+#define HMI_OSCILLATORWRAPPER_H
 
 #include <math.h>
+#include <Oscillator.h>
 
-class Oscillator{
+class OscillatorWrapper : public Oscillator{
 public:
-    Oscillator(const float sampleRate, const float frequency = 200.0f) : oSampleRate(sampleRate){
-        oFrequency = frequency;
+    OscillatorWrapper(const float sampleRate, SmoothedParameter *frequency, Oscillator *vibratoLFO) : oSampleRate(sampleRate){
     }
 
     void setFrequency(const float frequency){
@@ -21,7 +21,7 @@ public:
         if (oPhase >= oTwoPi) oPhase -= oTwoPi;
         oAmplitude = sinf(oPhase);
 
-        return oPrevAmplitude
+        return oPrevAmplitude;
     }
 
 private:
@@ -42,4 +42,4 @@ private:
 };
 
 
-#endif //HMI_OSCILLATOR_H
+#endif //HMI_OSCILLATORWRAPPER_H

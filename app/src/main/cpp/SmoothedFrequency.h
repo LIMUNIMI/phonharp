@@ -7,23 +7,30 @@
 class SmoothedFrequency: public SmoothedParameter{
 public:
     SmoothedFrequency(const float startFreq, const float portamento,
-                           const int sampleFreq = 48000) :
-                           SmoothedParameter(){
-        setPortamento(portamento);
+                           const int sampleFreq = 48000) : SmoothedParameter(){
 
         sampleRate = sampleFreq;
 
-        setCurrentValue(startFreq);
-        setRawPrevValue(startFreq);
-        setTargetFrequency(startFreq);
+        setPortamento(portamento);
+
+        reset(startFreq);
     }
+
+    void reset(const float freq){
+        // Set starting values
+        setCurrentValue(freq);
+        setRawPrevValue(freq);
+        setTargetFrequency(freq);
+    }
+
     void setTargetFrequency(const float targetFreq){
         setRawPrevValue(getTargetValue());
         setTargetValue(targetFreq);
     }
+
     void setPortamento(const float seconds){
         portamento = seconds;
-        setAlpha(exp(-1.0f/(seconds*sampleRate)));
+        setAlphaFromSeconds(seconds, sampleRate);
     }
 
     float smoothed() override{

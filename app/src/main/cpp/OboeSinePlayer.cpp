@@ -7,7 +7,7 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul = new SmoothedAmpParameter(1.0f, kAmpMulAlpha, 1.0f);
     smoothedFrequency = std::make_unique<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
 
-    oscillator = std::make_unique<Oscillator>(kSampleRate, 400.0f);
+    oscillator = std::make_unique<OscillatorWrapper>(kSampleRate, 400.0f);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.

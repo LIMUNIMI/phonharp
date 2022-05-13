@@ -6,7 +6,7 @@
 #include <android/sensor.h>
 #include "SmoothedAmpParameter.h"
 #include "SmoothedFrequency.h"
-#include "Oscillator.h"
+#include "OscillatorWrapper.h"
 
 using namespace oboe;
 
@@ -41,7 +41,7 @@ private:
 
     std::unique_ptr<SmoothedFrequency> smoothedFrequency;
 
-    std::unique_ptr<Oscillator> oscillator;
+    std::unique_ptr<OscillatorWrapper> oscillator;
 
     float mPhase = 0.0;
 
