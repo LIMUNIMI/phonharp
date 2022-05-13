@@ -2,43 +2,110 @@
 #define HMI_OSCILLATORWRAPPER_H
 
 #include <math.h>
-#include <Oscillator.h>
+#include "SmoothedFrequency.h"
 
-class OscillatorWrapper : public Oscillator{
+constexpr double kDefaultFrequency = 440.0;
+constexpr int32_t kDefaultSampleRate = 48000;
+constexpr double kPi = M_PI;
+constexpr double kTwoPi = kPi * 2;
+
+class NaiveOscillator {
 public:
-    OscillatorWrapper(const float sampleRate, SmoothedParameter *frequency, Oscillator *vibratoLFO) : oSampleRate(sampleRate){
+    NaiveOscillator() = default;
+    ~NaiveOscillator() = default;
+
+    void setSampleRate(int32_t sampleRate) {
+        mSampleRate = sampleRate;
+        updatePhaseIncrement();
+    };
+
+    void setFrequency(const double frequency) {
+        mFrequency = frequency;
+        updatePhaseIncrement();
+    };
+
+
+    inline void setAmplitude(const float amplitude) {
+        mAmplitude = amplitude;
+    };
+
+    virtual float getNextSample() {
+        auto ret = sinf(mPhase) * mAmplitude;
+        // Square wave
+        /*
+        if (mPhase <= kPi){
+        audioData[i] = -mAmplitude;
+        } else {
+        audioData[i] = mAmplitude;
+        }
+        */
+        mPhase += mPhaseIncrement;
+        if (mPhase > kTwoPi) mPhase -= kTwoPi;
+        return ret;
+    };
+
+private:
+    float mPhase = 0.0;
+    std::atomic<float> mAmplitude{0};
+    std::atomic<double> mPhaseIncrement{0.0};
+    double mFrequency = kDefaultFrequency;
+    int32_t mSampleRate = kDefaultSampleRate;
+
+    void updatePhaseIncrement() {
+        mPhaseIncrement.store((kTwoPi * mFrequency) / static_cast<double>(mSampleRate));
+    };
+};
+
+// simple wrapper with easy initialization for LFO
+class LFO : public NaiveOscillator {
+public:
+    LFO(){
+        setFrequency(2.0f);
+        setDepth(1.0f);
+    };
+    ~LFO() = default;
+
+    void setDepth(const float depth){
+        setAmplitude(depth);
+    }
+};
+
+// Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift
+class DynamicOscillator : public NaiveOscillator{
+public:
+    DynamicOscillator() = default;
+    DynamicOscillator(SmoothedFrequency *smoothedFrequency, LFO *oscillator){
+        setSmoothedFreq(smoothedFrequency);
+        setLFO(oscillator);
+    }
+    ~DynamicOscillator() = default;
+
+    void setSmoothedFreq(SmoothedFrequency *smoothedFrequency){
+        mSmoothedFrequency = smoothedFrequency;
     }
 
-    void setFrequency(const float frequency){
-        oFrequency = frequency;
-        oPhaseInc = getPhaseInc();
+    void setPitchShift(const float shift){
+        pitchShift.store(shift);
     }
 
-    float getNextSample(){
-        oPrevAmplitude = oAmplitude;
+    void setLFO(LFO *oscillator){
+        mLFO = oscillator;
+    }
 
-        oPhase += oPhaseInc;
-        if (oPhase >= oTwoPi) oPhase -= oTwoPi;
-        oAmplitude = sinf(oPhase);
+    void updateFreq(){
+        setFrequency(mSmoothedFrequency->smoothed() + mLFO->getNextSample() + pitchShift);
+    }
 
-        return oPrevAmplitude;
+    float getNextSample() {
+        updateFreq();
+
+        return NaiveOscillator::getNextSample();
     }
 
 private:
-
-    float getPhaseInc(){
-        return (oFrequency * oTwoPi) / oSampleRate;
-    }
-
-    float oSampleRate;
-    std::atomic<float> oFrequency;
-    std::atomic<float> oPhaseInc;
-    float oPhase = 0;
-    float oAmplitude = 0;
-    float oPrevAmplitude;
-
-    static float constexpr oPI = M_PI;
-    static float constexpr oTwoPi = oPI * 2;
+    SmoothedFrequency *mSmoothedFrequency;
+    LFO *mLFO;
+    std::atomic<float> pitchShift {0.0f};
 };
 
 
