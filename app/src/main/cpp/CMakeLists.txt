@@ -14,15 +14,19 @@ include_directories(./shared ./)
 
 add_library( soundboard SHARED OboeSinePlayer
         native-lib.cpp
-        SoundBoardEngine.cpp
+#        SoundBoardEngine.cpp
         OboeSinePlayer.cpp
         SmoothedParameter.h
         SmoothedAmpParameter.h
         SmoothedFrequency.h
         )
 
-target_link_libraries(soundboard log oboe::oboe android)
+target_link_libraries(
+        soundboard
+        log oboe::oboe android)
 
 # Enable optimization flags: if having problems with source level debugging,
 # disable -Ofast ( and debug ), re-enable it after done debugging.
-target_compile_options(soundboard PRIVATE -Wall -Werror -Ofast)
+target_compile_options(
+        soundboard
+        PRIVATE -Wall -Werror -Ofast)

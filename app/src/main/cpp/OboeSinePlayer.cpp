@@ -4,10 +4,14 @@
 int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
-    ampMul = new SmoothedAmpParameter(1.0f, kAmpMulAlpha, 1.0f);
-    smoothedFrequency = std::make_unique<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
+    ampMul = std::make_shared<SmoothedAmpParameter>();
+    smoothedFrequency = std::make_shared<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
+    vibratoLFO = std::make_shared<LFO>();
+    oscillator = std::make_unique<DynamicOscillator>();
 
-    oscillator = std::make_unique<OscillatorWrapper>(kSampleRate, 400.0f);
+    oscillator->setLFO(vibratoLFO);
+    oscillator->setSmoothedFreq(smoothedFrequency);
+    oscillator->setSampleRate(kSampleRate);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -54,8 +58,8 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 }
 
 void OboeSinePlayer::setFrequency(float frequency) {
-    kFrequency = frequency;
     smoothedFrequency->setTargetFrequency(frequency);
+    kFrequency.store(frequency);
 }
 
 void OboeSinePlayer::deltaAmpMul(float deltaAmp){
@@ -74,13 +78,13 @@ void OboeSinePlayer::closeEngine() {
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
     //TODO: log2lin
-    pitchBendDelta = deltaPitch*4;
+    //pitchBendDelta = deltaPitch*4;
+    oscillator->setPitchShift(deltaPitch * 4);
 }
 
 void OboeSinePlayer::controlReset() {
-    pitchBendDelta = 0;
-    smoothedFrequency->setTargetFrequency(kFrequency);
-    smoothedFrequency->setRawPrevValue(kFrequency);
+    oscillator->setPitchShift(0);
+    smoothedFrequency->reset(kFrequency);
 }
 
 void OboeSinePlayer::setPortamento(float seconds) {

@@ -6,7 +6,7 @@
 #include <android/sensor.h>
 #include "SmoothedAmpParameter.h"
 #include "SmoothedFrequency.h"
-#include "OscillatorWrapper.h"
+#include "Oscillators.h"
 
 using namespace oboe;
 
@@ -32,20 +32,13 @@ private:
     static int constexpr kChannelCount = 2;
     static int constexpr kSampleRate = 48000;
 
-    static float constexpr kAmplitude = 0.5f;
-    static float constexpr kPI = M_PI;
-    static float constexpr kTwoPi = kPI * 2;
+    static float constexpr kAmplitude = 1.0f;
 
     std::atomic<float> kFrequency;
-    std::atomic<float> pitchBendDelta;
 
-    std::unique_ptr<SmoothedFrequency> smoothedFrequency;
-
-    std::unique_ptr<OscillatorWrapper> oscillator;
-
-    float mPhase = 0.0;
-
-    SmoothedAmpParameter *ampMul;
-    const float kAmpMulAlpha = 0.9f;
+    std::shared_ptr<SmoothedFrequency> smoothedFrequency;
+    std::shared_ptr<LFO> vibratoLFO;
+    std::unique_ptr<DynamicOscillator> oscillator;
+    std::shared_ptr<SmoothedAmpParameter> ampMul;
 };
 #endif //HMI_OBOESINEPLAYER_H

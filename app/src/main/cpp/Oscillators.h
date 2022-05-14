@@ -1,18 +1,13 @@
-#ifndef HMI_OSCILLATORWRAPPER_H
-#define HMI_OSCILLATORWRAPPER_H
+#ifndef HMI_OSCILLATORS_H
+#define HMI_OSCILLATORS_H
 
 #include <math.h>
 #include "SmoothedFrequency.h"
 
-constexpr double kDefaultFrequency = 440.0;
-constexpr int32_t kDefaultSampleRate = 48000;
-constexpr double kPi = M_PI;
-constexpr double kTwoPi = kPi * 2;
-
 class NaiveOscillator {
 public:
     NaiveOscillator() = default;
-    ~NaiveOscillator() = default;
+    virtual ~NaiveOscillator() = default;
 
     void setSampleRate(int32_t sampleRate) {
         mSampleRate = sampleRate;
@@ -45,6 +40,12 @@ public:
     };
 
 private:
+
+    static double constexpr kDefaultFrequency = 440.0;
+    static int32_t constexpr kDefaultSampleRate = 48000;
+    static double constexpr kPi = M_PI;
+    static double constexpr kTwoPi = kPi * 2;
+
     float mPhase = 0.0;
     std::atomic<float> mAmplitude{0};
     std::atomic<double> mPhaseIncrement{0.0};
@@ -74,13 +75,13 @@ public:
 class DynamicOscillator : public NaiveOscillator{
 public:
     DynamicOscillator() = default;
-    DynamicOscillator(SmoothedFrequency *smoothedFrequency, LFO *oscillator){
+    DynamicOscillator(std::shared_ptr<SmoothedFrequency> & smoothedFrequency, std::shared_ptr<LFO> & oscillator){
         setSmoothedFreq(smoothedFrequency);
         setLFO(oscillator);
     }
     ~DynamicOscillator() = default;
 
-    void setSmoothedFreq(SmoothedFrequency *smoothedFrequency){
+    void setSmoothedFreq(std::shared_ptr<SmoothedFrequency> & smoothedFrequency){
         mSmoothedFrequency = smoothedFrequency;
     }
 
@@ -88,7 +89,7 @@ public:
         pitchShift.store(shift);
     }
 
-    void setLFO(LFO *oscillator){
+    void setLFO(std::shared_ptr<LFO> & oscillator){
         mLFO = oscillator;
     }
 
@@ -103,10 +104,10 @@ public:
     }
 
 private:
-    SmoothedFrequency *mSmoothedFrequency;
-    LFO *mLFO;
+    std::shared_ptr<SmoothedFrequency> mSmoothedFrequency;
+    std::shared_ptr<LFO> mLFO;
     std::atomic<float> pitchShift {0.0f};
 };
 
 
-#endif //HMI_OSCILLATORWRAPPER_H
+#endif //HMI_OSCILLATORS_H
