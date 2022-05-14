@@ -38,7 +38,8 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        float sampleValue = kAmplitude * oscillator->getNextSample() * ampMul->smoothed();
+        auto osc = oscillator->getNextSample();
+        float sampleValue = kAmplitude * osc * ampMul->smoothed();
         for (int j = 0; j < kChannelCount; j++) {
             floatData[i * kChannelCount + j] = sampleValue;
         }

@@ -97,10 +97,11 @@ public:
         setFrequency(mSmoothedFrequency->smoothed() + mLFO->getNextSample() + pitchShift);
     }
 
-    float getNextSample() {
+    float getNextSample() override{
         updateFreq();
 
-        return NaiveOscillator::getNextSample();
+
+        return NaiveOscillator::getNextSample();;
     }
 
 private:
