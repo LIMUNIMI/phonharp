@@ -101,7 +101,7 @@ public:
         updateFreq();
 
 
-        return NaiveOscillator::getNextSample();;
+        return NaiveOscillator::getNextSample();
     }
 
 private:
