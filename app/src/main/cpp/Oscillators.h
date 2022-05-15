@@ -39,7 +39,7 @@ public:
         return ret;
     };
 
-private:
+protected:
 
     static double constexpr kDefaultFrequency = 440.0;
     static int32_t constexpr kDefaultSampleRate = 48000;
@@ -68,6 +68,10 @@ public:
 
     void setDepth(const float depth){
         setAmplitude(depth);
+    }
+
+    void deltaDepth(const float delta){
+        setAmplitude(mAmplitude + delta);
     }
 };
 

@@ -103,3 +103,13 @@ float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
     //TODO: optimize
     return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
 }
+
+void OboeSinePlayer::setVibrato(float frequency, float depth) {
+    LOGD("Vibratofreq: %f", frequency);
+    vibratoLFO->setFrequency(frequency);
+    vibratoLFO->setDepth(depth);
+}
+
+void OboeSinePlayer::controlVibrato(float deltaDepth) {
+    vibratoLFO->deltaDepth(deltaDepth);
+}

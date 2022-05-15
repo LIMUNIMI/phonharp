@@ -14,17 +14,25 @@ class OboeSinePlayer : public AudioStreamDataCallback {
 public:
     virtual ~OboeSinePlayer();
 
+    // internal
     int32_t initEngine();
-    int32_t startAudio(float freq);
     void closeEngine();
-    void stopAudio();
     void setFrequency(float frequency);
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
+    float log2lin(float semitonesDelta, float baseFreq);
+
+    // settings
+    void setPortamento(float seconds);
+    void setVibrato(float frequency, float depth);
+
+    // real time controls
+    int32_t startAudio(float freq);
+    void stopAudio();
     void deltaAmpMul(float deltaAmp);
     void controlPitch(float deltaPitch);
+    void controlVibrato(float deltaDepth);
     void controlReset();
-    void setPortamento(float seconds);
-    float log2lin(float semitonesDelta, float baseFreq);
+
 
 private:
     std::mutex mLock;
