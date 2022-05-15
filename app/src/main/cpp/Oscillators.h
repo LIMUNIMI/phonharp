@@ -47,7 +47,7 @@ private:
     static double constexpr kTwoPi = kPi * 2;
 
     float mPhase = 0.0;
-    std::atomic<float> mAmplitude{0};
+    std::atomic<float> mAmplitude{1.0f};
     std::atomic<double> mPhaseIncrement{0.0};
     double mFrequency = kDefaultFrequency;
     int32_t mSampleRate = kDefaultSampleRate;
@@ -61,7 +61,7 @@ private:
 class LFO : public NaiveOscillator {
 public:
     LFO(){
-        setFrequency(2.0f);
+        setFrequency(5.0f);
         setDepth(1.0f);
     };
     ~LFO() = default;
@@ -99,8 +99,6 @@ public:
 
     float getNextSample() override{
         updateFreq();
-
-
         return NaiveOscillator::getNextSample();
     }
 

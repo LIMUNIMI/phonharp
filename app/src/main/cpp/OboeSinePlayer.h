@@ -24,6 +24,7 @@ public:
     void controlPitch(float deltaPitch);
     void controlReset();
     void setPortamento(float seconds);
+    float log2lin(float semitonesDelta, float baseFreq);
 
 private:
     std::mutex mLock;

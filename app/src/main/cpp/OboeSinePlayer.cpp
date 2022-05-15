@@ -7,6 +7,7 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul = std::make_shared<SmoothedAmpParameter>();
     smoothedFrequency = std::make_shared<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
     vibratoLFO = std::make_shared<LFO>();
+    vibratoLFO->setDepth(20.0f);
     oscillator = std::make_unique<DynamicOscillator>();
 
     oscillator->setLFO(vibratoLFO);
@@ -78,9 +79,8 @@ void OboeSinePlayer::closeEngine() {
 }
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
-    //TODO: log2lin
     //pitchBendDelta = deltaPitch*4;
-    oscillator->setPitchShift(deltaPitch * 6);
+    oscillator->setPitchShift(log2lin(deltaPitch, kFrequency));
 }
 
 void OboeSinePlayer::controlReset() {
@@ -97,4 +97,9 @@ OboeSinePlayer::~OboeSinePlayer() {
         LOGE("OboeSynth destructed without closing stream. Resource leak.");
         closeEngine();
     }
+}
+
+float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
+    //TODO: optimize
+    return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
 }
