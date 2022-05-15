@@ -80,7 +80,7 @@ void OboeSinePlayer::closeEngine() {
 void OboeSinePlayer::controlPitch(float deltaPitch) {
     //TODO: log2lin
     //pitchBendDelta = deltaPitch*4;
-    oscillator->setPitchShift(deltaPitch * 4);
+    oscillator->setPitchShift(deltaPitch * 6);
 }
 
 void OboeSinePlayer::controlReset() {
