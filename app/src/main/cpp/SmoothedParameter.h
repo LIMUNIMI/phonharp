@@ -60,7 +60,7 @@ public:
         return targetValue;
     }
 
-    float getNextSample() override {
+    virtual float getNextSample() override {
         return smoothed();
     }
 
