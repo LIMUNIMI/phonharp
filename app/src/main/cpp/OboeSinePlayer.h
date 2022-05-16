@@ -7,6 +7,7 @@
 #include "SmoothedAmpParameter.h"
 #include "SmoothedFrequency.h"
 #include "Oscillators.h"
+#include "PitchEnvelope.h"
 
 using namespace oboe;
 
@@ -24,6 +25,7 @@ public:
     // settings
     void setPortamento(float seconds);
     void setVibrato(float frequency, float depth);
+    void setPitchAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
 
     // real time controls
     int32_t startAudio(float freq);
@@ -45,9 +47,10 @@ private:
 
     std::atomic<float> kFrequency;
 
+    std::unique_ptr<DynamicOscillator> oscillator;
     std::shared_ptr<SmoothedFrequency> smoothedFrequency;
     std::shared_ptr<LFO> vibratoLFO;
-    std::unique_ptr<DynamicOscillator> oscillator;
+    std::shared_ptr<PitchEnvelope> pitchEnvelope;
     std::shared_ptr<SmoothedAmpParameter> ampMul;
 };
 #endif //HMI_OBOESINEPLAYER_H

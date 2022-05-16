@@ -8,11 +8,13 @@ int32_t OboeSinePlayer::initEngine(){
     smoothedFrequency = std::make_shared<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);
+    pitchEnvelope = std::make_shared<PitchEnvelope>();
     oscillator = std::make_unique<DynamicOscillator>();
 
+    oscillator->setSampleRate(kSampleRate);
     oscillator->setLFO(vibratoLFO);
     oscillator->setSmoothedFreq(smoothedFrequency);
-    oscillator->setSampleRate(kSampleRate);
+    oscillator->setPitchEnvelope(pitchEnvelope);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -30,6 +32,7 @@ int32_t OboeSinePlayer::initEngine(){
 
 void OboeSinePlayer::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
+    pitchEnvelope->off();
     if (mStream) {
         mStream->stop();
     }
@@ -53,6 +56,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     Result result = Result::ErrorInternal;
     // Typically, start the stream after querying some stream information, as well as some input from the user
     setFrequency(freq);
+    pitchEnvelope->onWithBaseFreq(freq);
     if (mStream) {
         result = mStream->requestStart();
     }
@@ -112,4 +116,11 @@ void OboeSinePlayer::setVibrato(float frequency, float depth) {
 
 void OboeSinePlayer::controlVibrato(float deltaDepth) {
     vibratoLFO->deltaDepth(deltaDepth);
+}
+
+void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float releaseTime,
+                                  float releaseDelta) {
+    pitchEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
+    pitchEnvelope->setAttackDelta(attackDelta);
+    pitchEnvelope->setReleaseDelta(releaseDelta);
 }

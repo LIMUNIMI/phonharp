@@ -165,4 +165,20 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlVibrato(JNIEnv *env, jobject
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPitchAdsr(JNIEnv *env, jobject thiz,
+                                                            jlong engine_handle,
+                                                            jfloat attackTime,
+                                                            jfloat attackDelta,
+                                                            jfloat releaseTime,
+                                                            jfloat releaseDelta) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->noteOn(noteIndex);
+        engine->setPitchAdsr(attackTime, attackDelta, releaseTime, releaseDelta);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"

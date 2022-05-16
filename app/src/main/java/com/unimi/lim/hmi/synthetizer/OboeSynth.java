@@ -102,11 +102,13 @@ public class OboeSynth implements Synthesizer {
         this.timbre = timbre;
 
         //setHarmonics
-        timbre.getHarmonics(); //ret int, percent
+        //timbre.getHarmonics(); //ret int, percent
+
         //setTremolo
         Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
         //tremolo.getDepth(); //ret int, percent
         //tremolo.getRate(); //ret float, frequency in Hz
+
         //setVibrato
         Timbre.Lfo vibrato = timbre.getVibrato(); //ret Lfo
         float vibratoDepth = vibrato != null ? (float) vibrato.getDepth() : 0; //ret int, percent
@@ -118,14 +120,19 @@ public class OboeSynth implements Synthesizer {
         Timbre.Lfo pwm = timbre.getPwm(); //ret Lfo
         //pwm.getDepth(); //ret int, percent
         //pwm.getRate(); //ret float, frequency in Hz
+
         //setEqualizer
         Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
         //eq.getHighShelfGain(); //ret int, dB
         //eq.getLowShelfGain(); //ret int, dB
+
         //setPortamento
         float portamentoSeconds = timbre.getPortamento(); //float set
         Log.d(TAG, "updateSynthesizerCfg: portamento: " + portamentoSeconds);
         setPortamento(mEngineHandle, portamentoSeconds);
+
+        //setPitchEnvelope
+        Timbre.Asr pitchEnvelope = timbre.getPitchAsr();
     }
 
     @Override

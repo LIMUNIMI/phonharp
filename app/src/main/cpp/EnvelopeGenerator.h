@@ -20,11 +20,11 @@ public:
 
     virtual ~EnvelopeGenerator() {}
 
-    virtual float on(){
+    virtual void on(){
         active.store(true);
     }
 
-    virtual float off(){
+    virtual void off(){
         active.store(false);
     }
 
@@ -36,12 +36,16 @@ public:
                 }
                 break;
             case ENVELOPE_STAGE_ATTACK:
-                if(getCurrentValue() >= stageLevels[0]){
+                if( ((stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[0]) ) ||
+                ( (stageLevels[0] <= stageLevels[1]) && (getCurrentValue() <= stageLevels[0])) )
+                {
                     enterStage(ENVELOPE_STAGE_DECAY);
                 }
                 break;
             case ENVELOPE_STAGE_DECAY:
-                if(getCurrentValue() <= stageLevels[1]){
+                if( ((stageLevels[1] <= stageLevels[0]) && (getCurrentValue() <= stageLevels[1]) ) ||
+                    ( (stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[1])) )
+                {
                     enterStage(ENVELOPE_STAGE_SUSTAIN);
                 }
                 break;
@@ -51,7 +55,9 @@ public:
                 }
                 break;
             case ENVELOPE_STAGE_RELEASE:
-                if(getCurrentValue() <= stageLevels[2]){
+                if( ((stageLevels[2] < stageLevels[1]) && (getCurrentValue() <= stageLevels[2]) ) ||
+                    ( (stageLevels[2] > stageLevels[1]) && (getCurrentValue() >= stageLevels[0])) )
+                {
                     enterStage(ENVELOPE_STAGE_OFF);
                 }
                 break;
