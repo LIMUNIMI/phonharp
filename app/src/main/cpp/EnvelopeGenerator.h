@@ -13,7 +13,10 @@ public:
         ENVELOPE_STAGE_RELEASE
     };
 
-    EnvelopeGenerator() {}
+    EnvelopeGenerator() {
+        setStageTimes(0.2f, 0.1f, 0.2f);
+        setStageLevels(1.0f, 0.9f, 0.0f);
+    }
 
     virtual ~EnvelopeGenerator() {}
 
@@ -66,11 +69,11 @@ public:
                 setRawPrevValue(stageLevels[2]);
                 break;
             case ENVELOPE_STAGE_ATTACK:
-                setTargetValue(stageLevel[0]);
+                setTargetValue(stageLevels[0]);
                 setAlphaFromSeconds(stageTimes[0]);
                 break;
             case ENVELOPE_STAGE_DECAY:
-                setTargetValue(stageLevel[1]);
+                setTargetValue(stageLevels[1]);
                 setAlphaFromSeconds(stageTimes[1]);
                 break;
             case ENVELOPE_STAGE_SUSTAIN:
@@ -79,19 +82,19 @@ public:
                 setRawPrevValue(stageLevels[1]);
                 break;
             case ENVELOPE_STAGE_RELEASE:
-                setTargetValue(stageLevel[2]);
+                setTargetValue(stageLevels[2]);
                 setAlphaFromSeconds(stageTimes[2]);
                 break;
         }
     }
 
-    virtual void setStageTimes(const float attack, const float decay, const float release){
+    void setStageTimes(const float attack, const float decay, const float release){
         stageTimes[0] = attack;
         stageTimes[1] = decay;
         stageTimes[2] = release;
     }
 
-    virtual void setStageLevels(const float attack, const float sustain, const float release){
+    void setStageLevels(const float attack, const float sustain, const float release){
         stageLevels[0] = attack;
         stageLevels[1] = sustain;
         stageLevels[2] = release;
@@ -102,8 +105,8 @@ protected:
     std::atomic<bool> active {false};
 
     // Attack, decay, release
-    float stageTimes[] = {0.2f, 0.1f, 0.2f}
-    float stageLevels[] = {1.0f, 0.9f, 0.0f};
+    float stageTimes[3];// = {0.2f, 0.1f, 0.2f}
+    float stageLevels[3];// = {1.0f, 0.9f, 0.0f};
 };
 
 
