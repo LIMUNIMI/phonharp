@@ -3,16 +3,12 @@
 
 #include <math.h>
 #include "SmoothedFrequency.h"
+#include "SampleGenerator.h"
 
-class NaiveOscillator {
+class NaiveOscillator : public SampleGenerator{
 public:
     NaiveOscillator() = default;
     virtual ~NaiveOscillator() = default;
-
-    void setSampleRate(int32_t sampleRate) {
-        mSampleRate = sampleRate;
-        updatePhaseIncrement();
-    };
 
     void setFrequency(const double frequency) {
         mFrequency = frequency;
@@ -42,7 +38,6 @@ public:
 protected:
 
     static double constexpr kDefaultFrequency = 440.0;
-    static int32_t constexpr kDefaultSampleRate = 48000;
     static double constexpr kPi = M_PI;
     static double constexpr kTwoPi = kPi * 2;
 
@@ -50,7 +45,6 @@ protected:
     std::atomic<float> mAmplitude{1.0f};
     std::atomic<double> mPhaseIncrement{0.0};
     double mFrequency = kDefaultFrequency;
-    int32_t mSampleRate = kDefaultSampleRate;
 
     void updatePhaseIncrement() {
         mPhaseIncrement.store((kTwoPi * mFrequency) / static_cast<double>(mSampleRate));

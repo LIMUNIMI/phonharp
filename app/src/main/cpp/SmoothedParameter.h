@@ -2,9 +2,10 @@
 #define HMI_SMOOTHEDPARAMETER_H
 
 #include "logging_macros.h"
+#include "SampleGenerator.h"
 #include <math.h>
 
-class SmoothedParameter {
+class SmoothedParameter : public SampleGenerator{
 
 public:
 
@@ -15,6 +16,8 @@ public:
 
     SmoothedParameter(){
     };
+
+    virtual ~SmoothedParameter() {}
 
     virtual float smoothed(){
         //LOGD("Smoothing\n currentValue: %f\n prevRawValue: %f\n alpha: %f\n targetValue: %f\n", currentValue, prevRawValue, alpha, targetValue);
@@ -44,6 +47,10 @@ public:
         setAlpha(exp(-1.0f/(s*sampleRate)));
     }
 
+    void setAlphaFromSeconds(float s){
+        setAlpha(exp(-1.0f/(s*mSampleRate)));
+    }
+
     virtual void setTargetValue(float target){
         prevRawValue.store(targetValue);
         targetValue.store(target);
@@ -53,8 +60,8 @@ public:
         return targetValue;
     }
 
-    virtual ~SmoothedParameter() {
-
+    float getNextSample() override {
+        return smoothed();
     }
 
 protected:
