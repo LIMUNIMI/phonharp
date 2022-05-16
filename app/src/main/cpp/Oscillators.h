@@ -4,6 +4,7 @@
 #include <math.h>
 #include "SmoothedFrequency.h"
 #include "SampleGenerator.h"
+#include "EnvelopeGenerator.h"
 
 class NaiveOscillator : public SampleGenerator{
 public:
@@ -91,8 +92,17 @@ public:
         mLFO = oscillator;
     }
 
+    void setPitchEnvelope(std::shared_ptr<EnvelopeGenerator> & pitchEnvelope){
+        mPitchEnvelope = pitchEnvelope;
+    }
+
     void updateFreq(){
-        setFrequency(mSmoothedFrequency->smoothed() + mLFO->getNextSample() + pitchShift);
+        setFrequency(
+                mSmoothedFrequency->smoothed()
+              + mLFO->getNextSample()
+              + pitchShift
+       //       + mPitchEnvelope->getNextSample()
+        );
     }
 
     float getNextSample() override{
@@ -103,6 +113,7 @@ public:
 private:
     std::shared_ptr<SmoothedFrequency> mSmoothedFrequency;
     std::shared_ptr<LFO> mLFO;
+    std::shared_ptr<EnvelopeGenerator> mPitchEnvelope;
     std::atomic<float> pitchShift {0.0f};
 };
 
