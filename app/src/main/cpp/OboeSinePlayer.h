@@ -39,6 +39,7 @@ public:
 private:
     std::mutex mLock;
     std::shared_ptr<oboe::AudioStream> mStream;
+    std::atomic<bool> isPlaying{false};
 
     static int constexpr kChannelCount = 2;
     static int constexpr kSampleRate = 48000;

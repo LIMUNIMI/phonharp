@@ -5,7 +5,8 @@ int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
     ampMul = std::make_shared<SmoothedAmpParameter>();
-    smoothedFrequency = std::make_shared<SmoothedFrequency>(400.0f, 0.0f, kSampleRate);
+    smoothedFrequency = std::make_shared<SmoothedFrequency>(0.0f);
+    smoothedFrequency->setSampleRate(kSampleRate);
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);
     pitchEnvelope = std::make_shared<PitchEnvelope>();
@@ -33,6 +34,7 @@ int32_t OboeSinePlayer::initEngine(){
 void OboeSinePlayer::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
     pitchEnvelope->off();
+    isPlaying.store(false);
     if (mStream) {
         mStream->stop();
     }
@@ -54,6 +56,12 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
 int32_t OboeSinePlayer::startAudio(float freq) {
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
+
+    if(!isPlaying){
+        smoothedFrequency->reset(freq);
+    } else {
+        isPlaying.store(true);
+    }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     setFrequency(freq);
     pitchEnvelope->onWithBaseFreq(freq);

@@ -70,28 +70,28 @@ public:
         currentStage = stage;
         switch (stage) {
             case ENVELOPE_STAGE_OFF:
-                setTargetValue(stageLevels[2]);
-                setCurrentValue(stageLevels[2]);
-                setRawPrevValue(stageLevels[2]);
+                setStaticLevel(stageLevels[2]);
                 break;
             case ENVELOPE_STAGE_ATTACK:
-                setTargetValue(stageLevels[0]);
-                setAlphaFromSeconds(stageTimes[0]);
+                setTargetWithSeconds(stageLevels[0], stageTimes[0]);
                 break;
             case ENVELOPE_STAGE_DECAY:
-                setTargetValue(stageLevels[1]);
-                setAlphaFromSeconds(stageTimes[1]);
+                setTargetWithSeconds(stageLevels[1], stageTimes[1]);
                 break;
             case ENVELOPE_STAGE_SUSTAIN:
-                setTargetValue(stageLevels[1]);
-                setCurrentValue(stageLevels[1]);
-                setRawPrevValue(stageLevels[1]);
+                setStaticLevel(stageLevels[1]);
                 break;
             case ENVELOPE_STAGE_RELEASE:
-                setTargetValue(stageLevels[2]);
-                setAlphaFromSeconds(stageTimes[2]);
+                setTargetWithSeconds(stageLevels[2], stageTimes[2]);
                 break;
         }
+    }
+
+    void setStaticLevel(const float level){
+        setTargetValue(level);
+        setCurrentValue(level);
+        setRawPrevValue(level);
+        kCountDown = 0;
     }
 
     void setStageTimes(const float attack, const float decay, const float release){

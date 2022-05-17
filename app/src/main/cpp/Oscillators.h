@@ -99,9 +99,9 @@ public:
     void updateFreq(){
         setFrequency(
                 mSmoothedFrequency->smoothed()
-              + mLFO->getNextSample()
-              + pitchShift
-              + mPitchEnvelope->getNextSample() // goes from a delta to freq to a delta
+              //+ mLFO->getNextSample()
+              //+ pitchShift
+              //+ mPitchEnvelope->getNextSample() // goes from a delta to freq to a delta
         );
     }
 

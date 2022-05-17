@@ -8,24 +8,35 @@
 class SmoothedParameter : public SampleGenerator{
 
 public:
-
-    SmoothedParameter(const float targetValue, const float alpha = 0.5f, const float startValue = 0.0f) :
-    currentValue(startValue), prevRawValue(startValue), targetValue(targetValue), alpha(alpha){
-
-    }
-
     SmoothedParameter(){
     };
 
     virtual ~SmoothedParameter() {}
 
     virtual float smoothed(){
-        //LOGD("Smoothing\n currentValue: %f\n prevRawValue: %f\n alpha: %f\n targetValue: %f\n", currentValue, prevRawValue, alpha, targetValue);
-        currentValue = prevRawValue + alpha * (targetValue - currentValue);
-        prevRawValue.store(targetValue);
-        //LOGD("Smoothed value: %f\n", currentValue);
+        if(!isSmoothing()){
+            return targetValue;
+        }
+
+        --kCountDown;
+        if(isSmoothing()){
+            setNextValue();
+        } else {
+            setTargetValue(currentValue);
+        }
+
         return currentValue;
     }
+
+    void setNextValue(){
+        if(kMultiplicative){
+            currentValue *= step;
+        } else {
+            currentValue += step;
+        }
+    }
+
+    bool isSmoothing() const noexcept { return kCountDown > 0; }
 
     float getCurrentValue(){
         return currentValue;
@@ -39,21 +50,25 @@ public:
         prevRawValue.store(rawPrevVal);
     }
 
-    void setAlpha(float a){
-        alpha = a;
+    // Doesn't update step, call it after setTargetValue or use setTargetWithSeconds
+    void setSecondsToTarget(float seconds){
+        kRampLengthInSeconds = seconds;
+        kStepsToTarget = (int) floorf(kRampLengthInSeconds * mSampleRate);
     }
 
-    void setAlphaFromSeconds(float s, float sampleRate){
-        setAlpha(exp(-1.0f/(s*sampleRate)));
+    // pass true to make it multiplicative, false will make it linear. Linear by default.
+    void setSmoothingType(bool multiplicative){
+        kMultiplicative = multiplicative;
     }
 
-    void setAlphaFromSeconds(float s){
-        setAlpha(exp(-1.0f/(s*mSampleRate)));
+    virtual void setTargetWithSeconds(float target, float seconds){
+        setSecondsToTarget(seconds);
+        setTargetValue(target);
     }
 
     virtual void setTargetValue(float target){
-        prevRawValue.store(targetValue);
         targetValue.store(target);
+        updateStep();
     }
 
     float getTargetValue(){
@@ -64,11 +79,38 @@ public:
         return smoothed();
     }
 
+    void reset(const float base){
+        // Set starting values
+        setCurrentValue(base);
+        setRawPrevValue(base);
+        setTargetValue(base);
+
+        // Reset steps countdown
+        kCountDown = kStepsToTarget;
+    }
+
+    void updateStep(){
+        if(kMultiplicative){
+            step.store(exp ((log (abs (targetValue)) - log (abs (currentValue))) / (float) kCountDown));
+        } else {
+            // Linear
+            step.store((targetValue - currentValue) / (float) kCountDown);
+        }
+    }
+
+
 protected:
     float currentValue = 0.0f;
     std::atomic<float> prevRawValue {0.0f};
     std::atomic<float> targetValue {0.0f};
-    float alpha = 0.5f;
+
+    float kRampLengthInSeconds = 0.0f;
+    int kStepsToTarget = 1;
+    int kCountDown = 0;
+    bool kMultiplicative = false;
+    std::atomic<float> step{0.0f};
+
+    //float alpha = 0.5f;
 };
 
 

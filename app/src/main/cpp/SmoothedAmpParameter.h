@@ -6,7 +6,8 @@
 class SmoothedAmpParameter : public SmoothedParameter {
 public:
     SmoothedAmpParameter(const float seconds = 0.01, const float sampleRate = 48000): SmoothedParameter() {
-        setAlphaFromSeconds(seconds, sampleRate);
+        setSampleRate(sampleRate);
+        setSecondsToTarget(seconds);
     };
 
     void applyDeltaToTarget(float delta){
