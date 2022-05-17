@@ -9,6 +9,7 @@ public:
     SmoothedFrequency(const float portamento) : SmoothedParameter(){
 
         setPortamento(portamento);
+        setSmoothingType(true);
     }
 
     void setTargetFrequency(const float targetFreq){

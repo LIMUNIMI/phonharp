@@ -90,7 +90,6 @@ public:
     void setStaticLevel(const float level){
         setTargetValue(level);
         setCurrentValue(level);
-        setRawPrevValue(level);
         kCountDown = 0;
     }
 

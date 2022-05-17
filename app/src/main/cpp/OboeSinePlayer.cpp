@@ -7,7 +7,6 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul = std::make_shared<SmoothedAmpParameter>();
     smoothedFrequency = std::make_shared<SmoothedFrequency>(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
-    smoothedFrequency->setSmoothingType(false);
 
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);
@@ -60,15 +59,16 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     Result result = Result::ErrorInternal;
 
     LOGD("Pressed note: %f", freq);
+    kFrequency.store(freq);
+
 
     if(!isPlaying){
         LOGD("Start playing...");
         smoothedFrequency->reset(freq);
-        kFrequency.store(freq);
         isPlaying.store(true);
     } else {
         LOGD("...Smoothing...");
-        setFrequency(freq);
+        smoothedFrequency->setTargetFrequency(freq);
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     pitchEnvelope->onWithBaseFreq(freq);

@@ -30,9 +30,9 @@ public:
 
     void setNextValue(){
         if(kMultiplicative){
-            currentValue *= step;
+            currentValue.store(currentValue * step);
         } else {
-            currentValue += step;
+            currentValue.store(currentValue + step);
         }
     }
 
@@ -43,11 +43,7 @@ public:
     }
 
     void setCurrentValue(float curValue){
-        currentValue = curValue;
-    }
-
-    void setRawPrevValue(float rawPrevVal){
-        prevRawValue.store(rawPrevVal);
+        currentValue.store(curValue);
     }
 
     // Doesn't update step, call it after setTargetValue or use setTargetWithSeconds
@@ -85,7 +81,6 @@ public:
     void reset(const float base){
         // Set starting values
         setCurrentValue(base);
-        setRawPrevValue(base);
         setTargetValue(base);
 
         // Reset steps countdown
@@ -103,13 +98,12 @@ public:
 
 
 protected:
-    float currentValue = 0.0f;
-    std::atomic<float> prevRawValue {0.0f};
+    std::atomic<float> currentValue {0.0f};
     std::atomic<float> targetValue {0.0f};
 
     float kRampLengthInSeconds = 0.0f;
     int kStepsToTarget = 1;
-    int kCountDown = 0;
+    int kCountDown = 1;
     bool kMultiplicative = false;
     std::atomic<float> step{0.0f};
 
