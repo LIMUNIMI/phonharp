@@ -62,12 +62,20 @@ public:
     ~LFO() = default;
 
     void setDepth(const float depth){
+        kBaseDepth = depth;
         setAmplitude(depth);
+    }
+
+    void resetDepth(){
+        setAmplitude(kBaseDepth);
     }
 
     void deltaDepth(const float delta){
         setAmplitude(mAmplitude + delta);
     }
+
+protected:
+    float kBaseDepth = 1.0f;
 };
 
 // Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift

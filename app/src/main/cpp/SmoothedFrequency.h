@@ -24,7 +24,7 @@ public:
     }
 
     float smoothed() override{
-        LOGD("Smoothing %f to %f, leftover steps %d, increment %f", currentValue, getTargetValue(), kCountDown, getStep());
+        //LOGD("Smoothing %f to %f, leftover steps %d, increment %f", currentValue, getTargetValue(), kCountDown, getStep());
         return SmoothedParameter::smoothed();
     }
 };

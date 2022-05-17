@@ -7,6 +7,8 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul = std::make_shared<SmoothedAmpParameter>();
     smoothedFrequency = std::make_shared<SmoothedFrequency>(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
+    smoothedFrequency->setSmoothingType(false);
+
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);
     pitchEnvelope = std::make_shared<PitchEnvelope>();
@@ -57,13 +59,18 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
 
+    LOGD("Pressed note: %f", freq);
+
     if(!isPlaying){
+        LOGD("Start playing...");
         smoothedFrequency->reset(freq);
-    } else {
+        kFrequency.store(freq);
         isPlaying.store(true);
+    } else {
+        LOGD("...Smoothing...");
+        setFrequency(freq);
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
-    setFrequency(freq);
     pitchEnvelope->onWithBaseFreq(freq);
     if (mStream) {
         result = mStream->requestStart();
@@ -96,7 +103,9 @@ void OboeSinePlayer::controlPitch(float deltaPitch) {
 }
 
 void OboeSinePlayer::controlReset() {
+    LOGD("=============CONTROL RESET=============");
     oscillator->setPitchShift(0);
+    vibratoLFO->resetDepth();
     smoothedFrequency->reset(kFrequency);
 }
 
@@ -117,7 +126,7 @@ float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
 }
 
 void OboeSinePlayer::setVibrato(float frequency, float depth) {
-    LOGD("Vibratofreq: %f", frequency);
+    //LOGD("Vibratofreq: %f", frequency);
     vibratoLFO->setFrequency(frequency);
     vibratoLFO->setDepth(depth);
 }

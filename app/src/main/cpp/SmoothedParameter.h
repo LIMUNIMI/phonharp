@@ -67,6 +67,9 @@ public:
     }
 
     virtual void setTargetValue(float target){
+        if(kMultiplicative && target == 0){
+            target += 0.00001f;
+        }
         targetValue.store(target);
         updateStep();
     }
