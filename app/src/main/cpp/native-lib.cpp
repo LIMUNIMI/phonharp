@@ -181,4 +181,32 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPitchAdsr(JNIEnv *env, jobject t
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlHarmonics(JNIEnv *env, jobject thiz,
+                                                          jlong engine_handle,
+                                                          jfloat delta) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //harmonics goes from -1 to +1
+        //engine->noteOn(noteIndex);
+        //engine->controlHarmonics(delta);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setHarmonics(JNIEnv *env, jobject thiz,
+                                                              jlong engine_handle,
+                                                              jfloat percentage) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //harmonics goes from -1 to +1
+        //engine->noteOn(noteIndex);
+        //engine->setHarmonics(percentage);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"

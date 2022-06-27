@@ -34,10 +34,14 @@ public class OboeSynth implements Synthesizer {
 
     private native void controlReset(long engineHandle);
 
+    private native void controlHarmonics(long engineHandle, float delta);
+
     // Settings
     private native void setPortamento(long engineHandle, float seconds);
 
     private native void setVibrato(long engineHandle, float frequency, float depth);
+
+    private native void setHarmonics(long engineHandle, float harmonics);
 
 
     // Used to load the 'native-lib' library on application startup.
@@ -102,7 +106,7 @@ public class OboeSynth implements Synthesizer {
         this.timbre = timbre;
 
         //setHarmonics
-        //timbre.getHarmonics(); //ret int, percent
+        setHarmonics(mEngineHandle, timbre.getHarmonics()); //ret int, percent
 
         //setTremolo
         Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
@@ -165,7 +169,7 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlHarmonics(float delta) {
-
+        controlHarmonics(mEngineHandle, delta);
     }
 
     @Override
