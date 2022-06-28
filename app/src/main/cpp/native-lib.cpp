@@ -209,4 +209,26 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setHarmonics(JNIEnv *env, jobject t
     }
 }
 
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setTremolo(JNIEnv *env, jobject thiz,
+                                                        jlong engine_handle, jfloat frequency, jfloat depth) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->setVibrato(frequency, depth);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPWM(JNIEnv *env, jobject thiz,
+                                                        jlong engine_handle, jfloat frequency, jfloat depth) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->setVibrato(frequency, depth);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
 } // extern "C"

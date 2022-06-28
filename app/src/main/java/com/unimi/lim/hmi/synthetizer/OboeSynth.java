@@ -43,6 +43,10 @@ public class OboeSynth implements Synthesizer {
 
     private native void setHarmonics(long engineHandle, float harmonics);
 
+    private native void setTremolo(long engineHandle, float frequency, float depth);
+
+    private native void setPWM(long engineHandle, float frequency, float depth);
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -110,8 +114,10 @@ public class OboeSynth implements Synthesizer {
 
         //setTremolo
         Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
-        //tremolo.getDepth(); //ret int, percent
-        //tremolo.getRate(); //ret float, frequency in Hz
+        float tremoloDepth = tremolo != null ? (float) tremolo.getDepth() : 0; //ret int, percent
+        float tremoloFreq =  tremolo != null ? tremolo.getRate() : 0; //ret float, frequency in Hz
+        Log.d(TAG, "updateSynthesizerCfg: tremoloDepth: " + tremoloDepth + " tremoloFreq: " + tremoloFreq);
+        setTremolo(mEngineHandle, tremoloFreq, tremoloDepth);
 
         //setVibrato
         Timbre.Lfo vibrato = timbre.getVibrato(); //ret Lfo
@@ -122,8 +128,10 @@ public class OboeSynth implements Synthesizer {
 
         //setPwm
         Timbre.Lfo pwm = timbre.getPwm(); //ret Lfo
-        //pwm.getDepth(); //ret int, percent
-        //pwm.getRate(); //ret float, frequency in Hz
+        float pwmDepth = pwm != null ? (float) pwm.getDepth() : 0; //ret int, percent
+        float pwmFreq =  pwm != null ? pwm.getRate() : 0; //ret float, frequency in Hz
+        Log.d(TAG, "updateSynthesizerCfg: pwmDepth: " + pwmDepth + " pwmFreq: " + pwmFreq);
+        setPWM(mEngineHandle, pwmFreq, pwmDepth);
 
         //setEqualizer
         Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
