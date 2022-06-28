@@ -36,6 +36,10 @@ public class OboeSynth implements Synthesizer {
 
     private native void controlHarmonics(long engineHandle, float delta);
 
+    private native void controlTremolo(long engineHandle, float delta);
+
+    private native void controlPWM(long engineHandle, float delta);
+
     // Settings
     private native void setPortamento(long engineHandle, float seconds);
 
@@ -182,7 +186,7 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlTremoloDepth(float delta) {
-
+        controlTremolo(mEngineHandle, delta);
     }
 
     @Override
@@ -192,6 +196,6 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlPwmDepth(float delta) {
-
+        controlPWM(mEngineHandle, delta);
     }
 }
