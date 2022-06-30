@@ -26,13 +26,19 @@ public:
     void setPortamento(float seconds);
     void setVibrato(float frequency, float depth);
     void setPitchAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
+    void setTremolo(float frequency, float depth);
+    void setPWM(float frequency, float depth);
+    void setHarmonics(float percent);
 
     // real time controls
     int32_t startAudio(float freq);
     void stopAudio();
-    void deltaAmpMul(float deltaAmp);
+    void controlAmpMul(float deltaAmp);
     void controlPitch(float deltaPitch);
     void controlVibrato(float deltaDepth);
+    void controlTremolo(float deltaDepth);
+    void controlPWM(float deltaDepth);
+    void controlHarmonics(float delta);
     void controlReset();
 
 

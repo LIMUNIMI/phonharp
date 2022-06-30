@@ -26,9 +26,9 @@ public class OboeSynth implements Synthesizer {
 
     private native void noteOff(long engineHandle);
 
-    private native void deltaAmpMul(long engineHandle, float deltaAmpMul);
+    private native void controlAmpMul(long engineHandle, float delta);
 
-    private native void deltaPitch(long engineHandle, float deltaPitch);
+    private native void controlPitch(long engineHandle, float delta);
 
     private native void controlVibrato(long engineHandle, float deltaDepth);
 
@@ -170,13 +170,13 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlVolume(float delta) {
-        deltaAmpMul(mEngineHandle, delta);
+        controlAmpMul(mEngineHandle, delta);
     }
 
     @Override
     public void controlPitch(float delta) {
         //Log.d(TAG, "controlPitch: " + delta);
-        deltaPitch(mEngineHandle, delta);
+        controlPitch(mEngineHandle, delta);
     }
 
     @Override

@@ -83,7 +83,7 @@ void OboeSinePlayer::setFrequency(float frequency) {
     kFrequency.store(frequency);
 }
 
-void OboeSinePlayer::deltaAmpMul(float deltaAmp){
+void OboeSinePlayer::controlAmpMul(float deltaAmp){
     ampMul->applyDeltaToTarget(deltaAmp);
 }
 
@@ -140,4 +140,28 @@ void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float rel
     pitchEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
     pitchEnvelope->setAttackDelta(attackDelta);
     pitchEnvelope->setReleaseDelta(releaseDelta);
+}
+
+void OboeSinePlayer::setTremolo(float frequency, float depth) {
+    //TODO
+}
+
+void OboeSinePlayer::setPWM(float frequency, float depth) {
+    //TODO
+}
+
+void OboeSinePlayer::setHarmonics(float percent) {
+    //TODO
+}
+
+void OboeSinePlayer::controlTremolo(float deltaDepth) {
+    //TODO
+}
+
+void OboeSinePlayer::controlPWM(float deltaDepth) {
+    //TODO
+}
+
+void OboeSinePlayer::controlHarmonics(float delta) {
+    //TODO
 }
