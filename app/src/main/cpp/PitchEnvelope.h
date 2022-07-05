@@ -12,7 +12,8 @@ public:
     }
 
     void onWithBaseFreq(float frequency) {
-        setStageLevels(log2lin(attackDelta, frequency)-frequency, 0, log2lin(releaseDelta, frequency)-frequency);
+        LOGD("PitchEnvelope::onWithBaseFreq: (setStageLevels) attackDelta %f, releaseDelta %f, log2lin attack %f", attackDelta, releaseDelta, log2lin(attackDelta, frequency));
+        setStageLevels(frequency-log2lin(attackDelta, frequency), 0, frequency-log2lin(releaseDelta, frequency));
         EnvelopeGenerator::on();
     }
 
@@ -26,7 +27,8 @@ public:
 
     float log2lin(float semitonesDelta, float baseFreq) {
         //TODO: optimize
-        return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
+        //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
+        return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
     }
 
 private:

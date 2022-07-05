@@ -29,6 +29,7 @@ public:
     }
 
     virtual float getNextSample() override {
+        LOGD("EnvelopeGenerator::getNextSample: current value %f", getCurrentValue());
         switch (currentStage) {
             case ENVELOPE_STAGE_OFF:
                 if(active){
@@ -67,6 +68,7 @@ public:
     }
 
     virtual void enterStage(EnvelopeStage stage){
+        LOGD("EnvelopeGenerator::enterStage: Entering stage %d, currentValue %f, leftover steps %d, target %f", stage, getCurrentValue(), kCountDown, getTargetValue());
         currentStage = stage;
         switch (stage) {
             case ENVELOPE_STAGE_OFF:
@@ -85,24 +87,28 @@ public:
                 setTargetWithSeconds(stageLevels[2], stageTimes[2]);
                 break;
         }
+        LOGD("EnvelopeGenerator::enterStage: Entered stage %d, currentValue %f, leftover steps %d, target %f", stage, getCurrentValue(), kCountDown, getTargetValue());
     }
 
     void setStaticLevel(const float level){
-        setTargetValue(level);
-        setCurrentValue(level);
-        kCountDown = 0;
+        //setTargetValue(level);
+        //setCurrentValue(level);
+        //kCountDown = 0;
+        reset(level);
     }
 
     void setStageTimes(const float attack, const float decay, const float release){
         stageTimes[0] = attack;
         stageTimes[1] = decay;
         stageTimes[2] = release;
+        LOGD("EnvelopeGenerator::setStageTimes: attack %f, decay %f, release %f", attack, decay, release);
     }
 
     void setStageLevels(const float attack, const float sustain, const float release){
         stageLevels[0] = attack;
         stageLevels[1] = sustain;
         stageLevels[2] = release;
+        LOGD("EnvelopeGenerator::setStageLevels: attack %f, sustain %f, release %f", attack, sustain, release);
     }
 protected:
     EnvelopeStage currentStage = ENVELOPE_STAGE_OFF;
