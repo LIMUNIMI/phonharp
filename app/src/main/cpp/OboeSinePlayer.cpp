@@ -7,6 +7,7 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul = std::make_shared<SmoothedAmpParameter>();
     smoothedFrequency = std::make_shared<SmoothedFrequency>(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
+    smoothedFrequency->setSmoothingType(false);
 
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);

@@ -105,6 +105,8 @@ public:
     }
 
     void updateFreq(){
+        //CAREFUL, breaks sound
+        //LOGD("Oscillators::updateFreq: current smoothed freq: %f", mSmoothedFrequency->getCurrentValue());
         setFrequency(
                 mSmoothedFrequency->smoothed()
               + mLFO->getNextSample()

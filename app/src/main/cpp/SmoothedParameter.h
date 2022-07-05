@@ -22,7 +22,7 @@ public:
         if(isSmoothing()){
             setNextValue();
         } else {
-            setTargetValue(currentValue);
+            //setTargetValue(currentValue);
         }
 
         return currentValue;
@@ -46,7 +46,7 @@ public:
         currentValue.store(curValue);
     }
 
-    // Doesn't update step, call it after setTargetValue or use setTargetWithSeconds
+    // Doesn't update leftover steps, call it before setTargetValue or use setTargetWithSeconds. Use resetCountDown to set the new steps.
     void setSecondsToTarget(float seconds){
         kRampLengthInSeconds = seconds;
         kStepsToTarget = (int) floorf(kRampLengthInSeconds * mSampleRate);
@@ -66,6 +66,7 @@ public:
         if(kMultiplicative && target == 0){
             target += 0.00001f;
         }
+        resetCountDown();
         targetValue.store(target);
         updateStep();
     }
@@ -83,7 +84,13 @@ public:
         setCurrentValue(base);
         setTargetValue(base);
 
+        //resetCountDown();
         // Reset steps countdown
+        kCountDown = 0;
+    }
+
+    // Sets the countdown to the amount of steps calculated for the time and samplingFrequency. Doesn't recalculate the steps, just resets it.
+    void resetCountDown(){
         kCountDown = kStepsToTarget;
     }
 

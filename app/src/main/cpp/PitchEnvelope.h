@@ -30,8 +30,8 @@ public:
     }
 
 private:
-    float attackDelta = 1.0f;
-    float releaseDelta = -1.0f;
+    float attackDelta = 0.0f;
+    float releaseDelta = 0.0f;
 };
 
 

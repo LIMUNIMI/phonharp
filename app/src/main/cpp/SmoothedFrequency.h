@@ -14,6 +14,7 @@ public:
 
     void setTargetFrequency(const float targetFreq){
         setTargetValue(targetFreq);
+        LOGD("SmoothedFrequency::setTargetFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
     }
 
     void setPortamento(const float seconds){
@@ -25,7 +26,10 @@ public:
     }
 
     float smoothed() override{
-        //LOGD("Smoothing %f to %f, leftover steps %d, increment %f", currentValue, getTargetValue(), kCountDown, getStep());
+        //LOGD("SmoothedFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
+        if(!isSmoothing()){
+            //LOGD("SmoothedFrequency: reached stable frequency %f, leftover steps %d", getTargetValue(), kCountDown);
+        }
         return SmoothedParameter::smoothed();
     }
 };

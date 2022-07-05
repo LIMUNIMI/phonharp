@@ -51,6 +51,8 @@ public class OboeSynth implements Synthesizer {
 
     private native void setPWM(long engineHandle, float frequency, float depth);
 
+    private native void setPitchAdsr(long engineHandle, float attackTime, float attackDelta, float releaseTime, float releaseDelta);
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -149,6 +151,12 @@ public class OboeSynth implements Synthesizer {
 
         //setPitchEnvelope
         Timbre.Asr pitchEnvelope = timbre.getPitchAsr();
+        if(pitchEnvelope != null){
+            setPitchAdsr(mEngineHandle, pitchEnvelope.getAttackTime(), pitchEnvelope.getInitialValue(), pitchEnvelope.getReleaseTime(), pitchEnvelope.getFinalValue());
+        } else {
+            setPitchAdsr(mEngineHandle, 0, 0, 0, 0);
+        }
+        //Log.d(TAG, "updateSynthesizerCfg: pitchEnvelope: finalValue:" + pitchEnvelope.getFinalValue());
     }
 
     @Override
