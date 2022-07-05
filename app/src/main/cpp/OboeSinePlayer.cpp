@@ -60,6 +60,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     Result result = Result::ErrorInternal;
 
     LOGD("Pressed note: %f", freq);
+    bool isNewFreq = kFrequency != freq;
     kFrequency.store(freq);
 
 
@@ -73,6 +74,9 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     pitchEnvelope->onWithBaseFreq(freq);
+    if(isNewFreq){
+        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
+    }
     if (mStream) {
         result = mStream->requestStart();
     }

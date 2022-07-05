@@ -21,6 +21,8 @@ public:
     virtual ~EnvelopeGenerator() {}
 
     virtual void on(){
+        //enterStage(ENVELOPE_STAGE_ATTACK);
+        LOGD("EnvelopeGenerator::on: targetValue %f, currentValue %f", getTargetValue(), getCurrentValue());
         active.store(true);
     }
 
@@ -29,7 +31,7 @@ public:
     }
 
     virtual float getNextSample() override {
-        LOGD("EnvelopeGenerator::getNextSample: current value %f", getCurrentValue());
+        //LOGD("EnvelopeGenerator::getNextSample: current value %f", getCurrentValue());
         switch (currentStage) {
             case ENVELOPE_STAGE_OFF:
                 if(active){
@@ -37,15 +39,17 @@ public:
                 }
                 break;
             case ENVELOPE_STAGE_ATTACK:
-                if( ((stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[0]) ) ||
-                ( (stageLevels[0] <= stageLevels[1]) && (getCurrentValue() <= stageLevels[0])) )
+                //if( ((stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[0]) ) ||
+                //( (stageLevels[0] <= stageLevels[1]) && (getCurrentValue() <= stageLevels[0])) )
+                if(kCountDown <= 0)
                 {
                     enterStage(ENVELOPE_STAGE_DECAY);
                 }
                 break;
             case ENVELOPE_STAGE_DECAY:
-                if( ((stageLevels[1] <= stageLevels[0]) && (getCurrentValue() <= stageLevels[1]) ) ||
-                    ( (stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[1])) )
+                //if( ((stageLevels[1] <= stageLevels[0]) && (getCurrentValue() <= stageLevels[1]) ) ||
+                //    ( (stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[1])) )
+                if(kCountDown <= 0)
                 {
                     enterStage(ENVELOPE_STAGE_SUSTAIN);
                 }
@@ -56,8 +60,9 @@ public:
                 }
                 break;
             case ENVELOPE_STAGE_RELEASE:
-                if( ((stageLevels[2] < stageLevels[1]) && (getCurrentValue() <= stageLevels[2]) ) ||
-                    ( (stageLevels[2] > stageLevels[1]) && (getCurrentValue() >= stageLevels[0])) )
+                //if( ((stageLevels[2] < stageLevels[1]) && (getCurrentValue() <= stageLevels[2]) ) ||
+                //    ( (stageLevels[2] > stageLevels[1]) && (getCurrentValue() >= stageLevels[0])) )
+                if(kCountDown <= 0)
                 {
                     enterStage(ENVELOPE_STAGE_OFF);
                 }
