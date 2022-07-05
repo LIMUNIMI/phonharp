@@ -122,7 +122,7 @@ OboeSinePlayer::~OboeSinePlayer() {
 }
 
 float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
-    //TODO: optimize
+    //TODO: optimize, maybe remove (it's in the PitchEnvelope
     return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
 }
 
