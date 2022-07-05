@@ -63,11 +63,11 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 
 
     if(!isPlaying){
-        LOGD("Start playing...");
+        LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
         isPlaying.store(true);
     } else {
-        LOGD("...Smoothing...");
+        LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
         smoothedFrequency->setTargetFrequency(freq);
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
