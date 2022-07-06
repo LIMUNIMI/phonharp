@@ -40,8 +40,9 @@ void OboeSinePlayer::stopAudio() {
 
     //TODO: fare in modo che le successive istruzioni vengano eseguite solo quando tutti gli inviluppi sono esauriti
 
-    /*
     isPlaying.store(false);
+
+    /*
     if (mStream) {
         mStream->stop();
     }
@@ -53,7 +54,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
         if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
-            isPlaying.store(false);
+
             if (mStream) {
                 //mStream->stop();
                 mStream->requestStop();
