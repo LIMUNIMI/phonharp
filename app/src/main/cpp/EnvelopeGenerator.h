@@ -30,6 +30,10 @@ public:
         active.store(false);
     }
 
+    EnvelopeStage getCurrentStage(){
+        return currentStage;
+    }
+
     virtual float getNextSample() override {
         //LOGD("EnvelopeGenerator::getNextSample: current value %f", getCurrentValue());
         switch (currentStage) {

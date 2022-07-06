@@ -36,20 +36,33 @@ int32_t OboeSinePlayer::initEngine(){
 void OboeSinePlayer::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
     pitchEnvelope->off();
+    //ADSR envelope off
+
+    //TODO: fare in modo che le successive istruzioni vengano eseguite solo quando tutti gli inviluppi sono esauriti
+
+    /*
     isPlaying.store(false);
     if (mStream) {
         mStream->stop();
     }
+     */
 }
 
 oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        auto osc = oscillator->getNextSample();
-        float sampleValue = kAmplitude * osc * ampMul->smoothed();
-        for (int j = 0; j < kChannelCount; j++) {
-            floatData[i * kChannelCount + j] = sampleValue;
+        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
+            isPlaying.store(false);
+            if (mStream) {
+                mStream->stop();
+            }
+        } else {
+            float osc = oscillator->getNextSample();
+            float sampleValue = kAmplitude * osc * ampMul->smoothed();
+            for (int j = 0; j < kChannelCount; j++) {
+                floatData[i * kChannelCount + j] = sampleValue;
+            }
         }
     }
     return oboe::DataCallbackResult::Continue;
