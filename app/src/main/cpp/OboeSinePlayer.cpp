@@ -55,7 +55,8 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
         if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
             isPlaying.store(false);
             if (mStream) {
-                mStream->stop();
+                //mStream->stop();
+                mStream->requestStop();
             }
         } else {
             float osc = oscillator->getNextSample();
