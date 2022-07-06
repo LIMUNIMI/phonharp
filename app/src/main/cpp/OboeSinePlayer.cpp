@@ -54,6 +54,9 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
         if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
+            for (int j = 0; j < kChannelCount; j++) {
+                floatData[i * kChannelCount + j] = 0.0f;
+            }
 
             if (mStream) {
                 //mStream->stop();
