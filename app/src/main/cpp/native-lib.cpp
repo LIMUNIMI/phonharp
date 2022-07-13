@@ -161,8 +161,7 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlTremolo(JNIEnv *env, jobject
                                                             jfloat delta) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->controlTremolo(delta);
-        //TODO: control tremolo function with delta, look for values passed
+        engine->controlTremolo(delta);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }
@@ -218,6 +217,23 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPitchAdsr(JNIEnv *env, jobject t
     if (engine) {
         //engine->noteOn(noteIndex);
         engine->setPitchAdsr(attackTime, attackDelta, releaseTime, releaseDelta);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setVolumeAdsr(JNIEnv *env, jobject thiz,
+                                                          jlong engine_handle,
+                                                          jfloat attackTime,
+                                                          jfloat attackDelta,
+                                                          jfloat releaseTime,
+                                                          jfloat releaseDelta) {
+    auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
+    if (engine) {
+        //engine->noteOn(noteIndex);
+        //engine->setVolumeAdsr(attackTime, attackDelta, releaseTime, releaseDelta);
+        //TODO: set volume ADSR with a function
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }

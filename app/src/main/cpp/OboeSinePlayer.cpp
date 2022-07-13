@@ -11,6 +11,7 @@ int32_t OboeSinePlayer::initEngine(){
 
     vibratoLFO = std::make_shared<LFO>();
     vibratoLFO->setDepth(20.0f);
+    vibratoLFO->setSampleRate(kSampleRate);
     pitchEnvelope = std::make_shared<PitchEnvelope>();
     oscillator = std::make_unique<DynamicOscillator>();
 
@@ -18,6 +19,10 @@ int32_t OboeSinePlayer::initEngine(){
     oscillator->setLFO(vibratoLFO);
     oscillator->setSmoothedFreq(smoothedFrequency);
     oscillator->setPitchEnvelope(pitchEnvelope);
+
+    tremoloLFO = std::make_shared<LFO>();
+    tremoloLFO->setDepth(20.0f);
+    tremoloLFO->setSampleRate(kSampleRate);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -38,15 +43,12 @@ void OboeSinePlayer::stopAudio() {
     pitchEnvelope->off();
     //ADSR envelope off
 
-    //TODO: fare in modo che le successive istruzioni vengano eseguite solo quando tutti gli inviluppi sono esauriti
-
-    isPlaying.store(false);
-
-    /*
-    if (mStream) {
+    if (mStream && !isPlaying) {
+        LOGD("OboeSinePlayer:: STOPPED STREAM");
         mStream->stop();
     }
-     */
+
+    isPlaying.store(false);
 }
 
 oboe::DataCallbackResult
@@ -57,14 +59,9 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = 0.0f;
             }
-
-            if (mStream) {
-                //mStream->stop();
-                mStream->requestStop();
-            }
         } else {
             float osc = oscillator->getNextSample();
-            float sampleValue = kAmplitude * osc * ampMul->smoothed();
+            float sampleValue = kAmplitude * osc * (ampMul->smoothed() + tremoloLFO->getNextSample());
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
             }
@@ -85,6 +82,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     if(!isPlaying){
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
+        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
@@ -92,6 +90,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     pitchEnvelope->onWithBaseFreq(freq);
+    //LOGD("startAudio: new Freq %d", isNewFreq);
     if(isNewFreq){
         pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
     }
@@ -166,7 +165,8 @@ void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float rel
 }
 
 void OboeSinePlayer::setTremolo(float frequency, float depth) {
-    //TODO
+    tremoloLFO->setDepth(depth);
+    tremoloLFO->setFrequency(frequency);
 }
 
 void OboeSinePlayer::setPWM(float frequency, float depth) {
@@ -178,7 +178,8 @@ void OboeSinePlayer::setHarmonics(float percent) {
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {
-    //TODO
+    tremoloLFO->deltaDepth(deltaDepth);
+    //TODO: check for weird behavior
 }
 
 void OboeSinePlayer::controlPWM(float deltaDepth) {

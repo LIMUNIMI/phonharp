@@ -58,6 +58,7 @@ private:
     std::shared_ptr<SmoothedFrequency> smoothedFrequency;
     std::shared_ptr<LFO> vibratoLFO;
     std::shared_ptr<PitchEnvelope> pitchEnvelope;
+    std::shared_ptr<LFO> tremoloLFO;
     std::shared_ptr<SmoothedAmpParameter> ampMul;
 };
 #endif //HMI_OBOESINEPLAYER_H
