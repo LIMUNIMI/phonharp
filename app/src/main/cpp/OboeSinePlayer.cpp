@@ -24,6 +24,8 @@ int32_t OboeSinePlayer::initEngine(){
     tremoloLFO->setDepth(20.0f);
     tremoloLFO->setSampleRate(kSampleRate);
 
+    volumeEnvelope = std::make_shared<EnvelopeGenerator>();
+
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
     Result result = builder.setSharingMode(oboe::SharingMode::Exclusive)
@@ -82,7 +84,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     if(!isPlaying){
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
-        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
+        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK); //Needs to be called here too
         isPlaying.store(true);
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
@@ -188,4 +190,12 @@ void OboeSinePlayer::controlPWM(float deltaDepth) {
 
 void OboeSinePlayer::controlHarmonics(float delta) {
     //TODO
+}
+
+void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
+                                   float releaseDelta) {
+    volumeEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
+    //TODO
+    //volumeEnvelope->setAttackDelta(attackDelta);
+    //volumeEnvelope->setReleaseDelta(releaseDelta);
 }

@@ -29,6 +29,7 @@ public:
     void setTremolo(float frequency, float depth);
     void setPWM(float frequency, float depth);
     void setHarmonics(float percent);
+    void setVolumeAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
 
     // real time controls
     int32_t startAudio(float freq);
@@ -60,5 +61,6 @@ private:
     std::shared_ptr<PitchEnvelope> pitchEnvelope;
     std::shared_ptr<LFO> tremoloLFO;
     std::shared_ptr<SmoothedAmpParameter> ampMul;
+    std::shared_ptr<EnvelopeGenerator> volumeEnvelope;
 };
 #endif //HMI_OBOESINEPLAYER_H
