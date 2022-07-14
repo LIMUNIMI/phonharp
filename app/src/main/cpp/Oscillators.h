@@ -26,7 +26,7 @@ public:
     }
 
     virtual float getTriangularWaveSample(){
-        return 4.0f * abs(mPhase - 0.5f) - 1.0f;
+        return mAmplitude * (((-abs(mPhase - kPi) + kPi) * kOneOverPi) - 0.5f);
     }
 
     virtual float getSquareWaveSample(){
@@ -74,24 +74,30 @@ public:
         waveType = type;
     }
 
+    virtual void setSampleRate(float sampleRate){
+        mSampleRate = sampleRate;
+    }
+
 protected:
     enum Waves {Sine = 0, Triangular = 1, Square = 2};
 
-    int waveType = Waves::Square;
+    int waveType = Waves::Sine;
 
     static double constexpr kDefaultFrequency = 440.0;
     static double constexpr kPi = M_PI;
     static double constexpr kTwoPi = kPi * 2;
+    static double constexpr kOneOverPi = 1/kPi;
 
     float mPhase = 0.0;
     std::atomic<float> mAmplitude{1.0f};
     std::atomic<double> mPhaseIncrement{0.0};
     double mFrequency = kDefaultFrequency;
+    double mSampleRate = 48000.0f;
 
     float ret = 0.0f;
 
     void updatePhaseIncrement() {
-        mPhaseIncrement.store((kTwoPi * mFrequency) / static_cast<double>(mSampleRate));
+        mPhaseIncrement.store((kTwoPi * mFrequency) / mSampleRate);
     };
 };
 
@@ -121,13 +127,50 @@ protected:
     float kBaseDepth = 1.0f;
 };
 
-// Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift
-class DynamicOscillator : public NaiveOscillator{
+class PWMOsc : public LFO{
 public:
-    DynamicOscillator() = default;
+    PWMOsc(){
+        waveType = Waves::Square;
+        triangleModulator.setWaveType(Waves::Triangular);
+        triangleModulator.setDepth(kPi * 0.05f);
+    }
+
+    float getSquareWaveSample() override {
+        float threshold = (baseDutyCycle * kTwoPi);
+                //+ triangleModulator.getNextSample();
+        threshold = threshold >= 1.0f ? 0.9999f : threshold;
+        if(mPhase <= threshold){
+            return -mAmplitude;
+        } else {
+            return mAmplitude;
+        }
+    }
+
+    void setDutyCycle(float dutyCycle){
+        baseDutyCycle = dutyCycle;
+    }
+
+    void setSampleRate(float sampleRate) override{
+        triangleModulator.setSampleRate(sampleRate);
+        NaiveOscillator::setSampleRate(sampleRate);
+    }
+
+    LFO triangleModulator;
+
+protected:
+    float baseDutyCycle = 0.5f; //between 0 and 1
+};
+
+// Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift
+class DynamicOscillator : public PWMOsc{
+public:
+    DynamicOscillator(){
+        PWMOsc();
+    };
     DynamicOscillator(std::shared_ptr<SmoothedFrequency> & smoothedFrequency, std::shared_ptr<LFO> & oscillator){
         setSmoothedFreq(smoothedFrequency);
         setLFO(oscillator);
+        PWMOsc();
     }
     ~DynamicOscillator() = default;
 
@@ -168,10 +211,6 @@ private:
     std::shared_ptr<LFO> mLFO;
     std::shared_ptr<PitchEnvelope> mPitchEnvelope;
     std::atomic<float> pitchShift {0.0f};
-};
-
-class PWMOsc{
-
 };
 
 #endif //HMI_OSCILLATORS_H

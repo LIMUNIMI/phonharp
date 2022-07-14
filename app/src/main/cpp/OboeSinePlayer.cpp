@@ -135,6 +135,8 @@ void OboeSinePlayer::controlReset() {
     oscillator->setPitchShift(0);
     vibratoLFO->resetDepth();
     smoothedFrequency->reset(kFrequency);
+    oscillator->resetDepth();
+    oscillator->triangleModulator.resetDepth();
 }
 
 void OboeSinePlayer::setPortamento(float seconds) {
@@ -176,11 +178,12 @@ void OboeSinePlayer::setTremolo(float frequency, float depth) {
 }
 
 void OboeSinePlayer::setPWM(float frequency, float depth) {
-    //TODO
+    oscillator->triangleModulator.setFrequency(frequency);
+    oscillator->triangleModulator.setDepth(M_PI * 2 * depth);
 }
 
 void OboeSinePlayer::setHarmonics(float percent) {
-    //TODO
+    oscillator->setDutyCycle(percent);
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {
@@ -193,7 +196,7 @@ void OboeSinePlayer::controlPWM(float deltaDepth) {
 }
 
 void OboeSinePlayer::controlHarmonics(float delta) {
-    //TODO
+    oscillator->deltaDepth(delta);
 }
 
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
