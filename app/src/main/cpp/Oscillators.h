@@ -21,8 +21,38 @@ public:
         mAmplitude = amplitude;
     };
 
+    virtual float getSineWaveSample(){
+        return sinf(mPhase) * mAmplitude;
+    }
+
+    virtual float getTriangularWaveSample(){
+        return 4.0f * abs(mPhase - 0.5f) - 1.0f;
+    }
+
+    virtual float getSquareWaveSample(){
+        if(mPhase <= kPi){
+            return -mAmplitude;
+        } else {
+            return mAmplitude;
+        }
+    }
+
     virtual float getNextSample() {
-        auto ret = sinf(mPhase) * mAmplitude;
+        switch (waveType) {
+            case Waves::Sine:
+                ret = getSineWaveSample();
+                break;
+            case Waves::Triangular:
+                ret = getTriangularWaveSample();
+                break;
+            case Waves::Square:
+                ret = getSquareWaveSample();
+                break;
+            default:
+                ret = getSineWaveSample();
+                break;
+        }
+
         // Square wave
         /*
         if (mPhase <= kPi){
@@ -31,12 +61,23 @@ public:
         audioData[i] = mAmplitude;
         }
         */
-        mPhase += mPhaseIncrement;
-        if (mPhase > kTwoPi) mPhase -= kTwoPi;
+        updatePhase();
         return ret;
     };
 
+    void updatePhase(){
+        mPhase += mPhaseIncrement;
+        if (mPhase > kTwoPi) mPhase -= kTwoPi;
+    }
+
+    void setWaveType(int type){
+        waveType = type;
+    }
+
 protected:
+    enum Waves {Sine = 0, Triangular = 1, Square = 2};
+
+    int waveType = Waves::Square;
 
     static double constexpr kDefaultFrequency = 440.0;
     static double constexpr kPi = M_PI;
@@ -46,6 +87,8 @@ protected:
     std::atomic<float> mAmplitude{1.0f};
     std::atomic<double> mPhaseIncrement{0.0};
     double mFrequency = kDefaultFrequency;
+
+    float ret = 0.0f;
 
     void updatePhaseIncrement() {
         mPhaseIncrement.store((kTwoPi * mFrequency) / static_cast<double>(mSampleRate));
@@ -127,5 +170,8 @@ private:
     std::atomic<float> pitchShift {0.0f};
 };
 
+class PWMOsc{
+
+};
 
 #endif //HMI_OSCILLATORS_H
