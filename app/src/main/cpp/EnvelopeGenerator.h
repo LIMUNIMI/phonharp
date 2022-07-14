@@ -130,4 +130,30 @@ protected:
 };
 
 
+class DeltaEnvelopeGenerator : public EnvelopeGenerator{
+public:
+    DeltaEnvelopeGenerator() {}
+
+    virtual ~DeltaEnvelopeGenerator() {
+
+    }
+
+    virtual void onWithBaseValue(const float base){
+        setStageLevels(base-attackDelta, 0, base-releaseDelta);
+        EnvelopeGenerator::on();
+    }
+
+    void setAttackDelta(const float delta){
+        attackDelta = delta;
+    }
+
+    void setReleaseDelta(const float delta){
+        releaseDelta = delta;
+    }
+
+protected:
+    float attackDelta = 0.0f;
+    float releaseDelta = 0.0f;
+};
+
 #endif //HMI_ENVELOPEGENERATOR_H

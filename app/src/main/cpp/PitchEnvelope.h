@@ -3,7 +3,7 @@
 
 #include "EnvelopeGenerator.h"
 
-class PitchEnvelope : public EnvelopeGenerator{
+class PitchEnvelope : public DeltaEnvelopeGenerator{
 public:
     PitchEnvelope() {}
 
@@ -11,18 +11,18 @@ public:
 
     }
 
+    /**
+     * Attack delta and release delta should be set in semitones
+     * @param frequency
+     */
     void onWithBaseFreq(float frequency) {
         LOGD("PitchEnvelope::onWithBaseFreq: (setStageLevels) attackDelta %f, releaseDelta %f, log2lin attack %f", attackDelta, releaseDelta, log2lin(attackDelta, frequency));
         setStageLevels(frequency-log2lin(attackDelta, frequency), 0, frequency-log2lin(releaseDelta, frequency));
         EnvelopeGenerator::on();
     }
 
-    void setAttackDelta(float semitones){
-        attackDelta = semitones;
-    }
-
-    void setReleaseDelta(float semitones){
-        releaseDelta = semitones;
+    void onWithBaseValue(float base) override{
+        onWithBaseFreq(base);
     }
 
     float log2lin(float semitonesDelta, float baseFreq) {
@@ -30,10 +30,6 @@ public:
         //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
         return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
     }
-
-private:
-    float attackDelta = 0.0f;
-    float releaseDelta = 0.0f;
 };
 
 

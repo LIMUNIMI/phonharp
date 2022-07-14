@@ -24,7 +24,7 @@ int32_t OboeSinePlayer::initEngine(){
     tremoloLFO->setDepth(20.0f);
     tremoloLFO->setSampleRate(kSampleRate);
 
-    volumeEnvelope = std::make_shared<EnvelopeGenerator>();
+    volumeEnvelope = std::make_shared<DeltaEnvelopeGenerator>();
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -43,6 +43,7 @@ int32_t OboeSinePlayer::initEngine(){
 void OboeSinePlayer::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
     pitchEnvelope->off();
+    volumeEnvelope->off();
     //ADSR envelope off
 
     if (mStream && !isPlaying) {
@@ -57,13 +58,13 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
+        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF && volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = 0.0f;
             }
         } else {
             float osc = oscillator->getNextSample();
-            float sampleValue = kAmplitude * osc * (ampMul->smoothed() + tremoloLFO->getNextSample());
+            float sampleValue = kAmplitude * osc * (ampMul->smoothed() + tremoloLFO->getNextSample() + volumeEnvelope->getNextSample());
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
             }
@@ -85,6 +86,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
         pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK); //Needs to be called here too
+        volumeEnvelope->enterStage(volumeEnvelope->ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
@@ -92,9 +94,11 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     pitchEnvelope->onWithBaseFreq(freq);
+    volumeEnvelope->onWithBaseValue(kAmplitude);
     //LOGD("startAudio: new Freq %d", isNewFreq);
     if(isNewFreq){
         pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
+        volumeEnvelope->enterStage(volumeEnvelope->ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
         result = mStream->requestStart();
@@ -195,7 +199,6 @@ void OboeSinePlayer::controlHarmonics(float delta) {
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
                                    float releaseDelta) {
     volumeEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
-    //TODO
-    //volumeEnvelope->setAttackDelta(attackDelta);
-    //volumeEnvelope->setReleaseDelta(releaseDelta);
+    volumeEnvelope->setAttackDelta(attackDelta);
+    volumeEnvelope->setReleaseDelta(releaseDelta);
 }
