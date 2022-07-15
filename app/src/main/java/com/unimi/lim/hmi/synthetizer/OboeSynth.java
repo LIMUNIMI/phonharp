@@ -118,7 +118,10 @@ public class OboeSynth implements Synthesizer {
         this.timbre = timbre;
 
         //setHarmonics
-        setHarmonics(mEngineHandle, timbre.getHarmonics()); //ret int, percent
+        Log.d(TAG, "updateSynthesizerCfg: harmonics: " + timbre.getHarmonics());
+        float harmonics = (float) timbre.getHarmonics() / 100;
+        setHarmonics(mEngineHandle,harmonics); //ret int, percent
+        // LO slider va da 0% a 50%, ma il valore passato va da 0 a 100
 
         //setTremolo
         Timbre.Lfo tremolo = timbre.getTremolo(); //ret Lfo
