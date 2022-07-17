@@ -18,7 +18,7 @@ public:
 
 
     inline void setAmplitude(const float amplitude) {
-        mAmplitude = amplitude;
+        mAmplitude.store(amplitude);
     };
 
     virtual float getSineWaveSample(){
@@ -127,19 +127,22 @@ protected:
     float kBaseDepth = 1.0f;
 };
 
-class PWMOsc : public LFO{
+class PWMOsc : public NaiveOscillator{
 public:
     PWMOsc(){
         waveType = Waves::Square;
         triangleModulator.setWaveType(Waves::Triangular);
-        triangleModulator.setDepth(kPi * 0.05f);
+        triangleModulator.setDepth(0.05f);
+        currentDutyCycle.setSecondsToTarget(0.50f);
     }
 
     float getSquareWaveSample() override {
-        float threshold = (baseDutyCycle * kTwoPi);
-                //+ triangleModulator.getNextSample();
-        threshold = threshold >= 1.0f ? 0.9999f : threshold;
-        if(mPhase <= threshold){
+        float threshold = currentDutyCycle.getNextSample() + triangleModulator.getNextSample();
+        threshold = threshold >= upperBound ? upperBound : threshold;
+        threshold = threshold <= lowerBound ? lowerBound : threshold;
+        //LOGD("Harmonics threshold: %f, currentDutyCycle %f, baseDutyCycle %f", threshold, currentDutyCycle.getCurrentValue(), baseDutyCycle);
+        threshold = threshold * kTwoPi;
+        if(mPhase > threshold){
             return -mAmplitude;
         } else {
             return mAmplitude;
@@ -147,7 +150,20 @@ public:
     }
 
     void setDutyCycle(float dutyCycle){
+        LOGD("PWMOsc::setDutyCycle: base duty cycle harmonics %f", dutyCycle);
         baseDutyCycle = dutyCycle;
+    }
+
+    float getCurrentDutyCycle(){
+        return currentDutyCycle.getCurrentValue();
+    }
+
+    void resetDutyCycle(){
+        currentDutyCycle.reset(baseDutyCycle);
+    }
+
+    void deltaDutyCycle(const float delta){
+        currentDutyCycle.setTargetValue(baseDutyCycle + delta);
     }
 
     void setSampleRate(float sampleRate) override{
@@ -158,7 +174,11 @@ public:
     LFO triangleModulator;
 
 protected:
+    const float lowerBound = 0.1f;
+    const float upperBound = 0.9999999f;
     float baseDutyCycle = 0.5f; //between 0 and 1
+    SmoothedParameter currentDutyCycle;
+    //std::atomic<float> currentDutyCycle{0.5f};
 };
 
 // Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift

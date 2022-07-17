@@ -64,7 +64,11 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             }
         } else {
             float osc = oscillator->getNextSample();
-            float sampleValue = kAmplitude * osc * (ampMul->smoothed() + tremoloLFO->getNextSample() + volumeEnvelope->getNextSample());
+            float volumeMix = ampMul->smoothed() + volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
+            if(ampMul->getCurrentValue() <= 0.0f){
+                volumeMix = 0.0f;
+            }
+            float sampleValue = kAmplitude * osc * volumeMix;
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
             }
@@ -135,7 +139,7 @@ void OboeSinePlayer::controlReset() {
     oscillator->setPitchShift(0);
     vibratoLFO->resetDepth();
     smoothedFrequency->reset(kFrequency);
-    oscillator->resetDepth();
+    oscillator->resetDutyCycle();
     oscillator->triangleModulator.resetDepth();
 }
 
@@ -179,7 +183,7 @@ void OboeSinePlayer::setTremolo(float frequency, float depth) {
 
 void OboeSinePlayer::setPWM(float frequency, float depth) {
     oscillator->triangleModulator.setFrequency(frequency);
-    oscillator->triangleModulator.setDepth(M_PI * 2 * depth);
+    oscillator->triangleModulator.setDepth(depth/150);
 }
 
 void OboeSinePlayer::setHarmonics(float percent) {
@@ -192,11 +196,12 @@ void OboeSinePlayer::controlTremolo(float deltaDepth) {
 }
 
 void OboeSinePlayer::controlPWM(float deltaDepth) {
-    //TODO
+    oscillator->triangleModulator.deltaDepth(deltaDepth/60);
 }
 
 void OboeSinePlayer::controlHarmonics(float delta) {
-    oscillator->deltaDepth(delta);
+    oscillator->deltaDutyCycle(delta/5);
+    LOGD("OboeSinePlayer::controlHarmonics: delta %f, current duty cycle %f", delta/5, oscillator->getCurrentDutyCycle());
 }
 
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,

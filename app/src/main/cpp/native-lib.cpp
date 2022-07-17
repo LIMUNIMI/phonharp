@@ -172,7 +172,7 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlPWM(JNIEnv *env, jobject thi
                                                         jfloat delta) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->controlPWM(delta);
+        engine->controlPWM(delta);
         //TODO: control PWM function with delta, look for values passed
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
@@ -253,7 +253,7 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setHarmonics(JNIEnv *env, jobject t
                                                               jfloat percentage) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //harmonics goes from -1 to +1
+        //harmonics goes from 0 to 100
         engine->setHarmonics(percentage);
         //TODO: set harmonics function with base settings
     } else {
