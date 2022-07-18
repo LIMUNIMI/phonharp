@@ -69,6 +69,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
                 volumeMix = 0.0f;
             }
             float sampleValue = kAmplitude * osc * volumeMix;
+            //TODO: applica i filtri
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
             }
@@ -209,4 +210,13 @@ void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float re
     volumeEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
     volumeEnvelope->setAttackDelta(attackDelta);
     volumeEnvelope->setReleaseDelta(releaseDelta);
+}
+
+void OboeSinePlayer::setEq(float highGain, float lowGain) {
+    //TODO: scrivere filtri.
+}
+
+void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
+                                      float releaseDelta) {
+    //TODO: inviluppo armonico
 }

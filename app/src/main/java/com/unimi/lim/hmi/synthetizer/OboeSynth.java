@@ -55,6 +55,10 @@ public class OboeSynth implements Synthesizer {
 
     private native void setVolumeAdsr(long engineHandle, float attackTime, float attackDelta, float releaseTime, float releaseDelta);
 
+    private native void setHarmonicsAdsr(long engineHandle, float attackTime, float attackDelta, float releaseTime, float releaseDelta);
+
+    private native void setEq(long engineHandle, float highGain, float lowGain);
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -147,8 +151,9 @@ public class OboeSynth implements Synthesizer {
 
         //setEqualizer
         Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
-        //eq.getHighShelfGain(); //ret int, dB
-        //eq.getLowShelfGain(); //ret int, dB
+        float highGain = eq.getHighShelfGain(); //ret int, dB
+        float lowGain = eq.getLowShelfGain(); //ret int, dB
+        setEq(mEngineHandle, highGain, lowGain);
 
         //setPortamento
         float portamentoSeconds = timbre.getPortamento(); //float set
@@ -170,6 +175,14 @@ public class OboeSynth implements Synthesizer {
             setVolumeAdsr(mEngineHandle, volumeEnvelope.getAttackTime(), volumeEnvelope.getInitialValue(), volumeEnvelope.getReleaseTime(), volumeEnvelope.getFinalValue());
         } else {
             setVolumeAdsr(mEngineHandle, 0, 0, 0, 0);
+        }
+
+        //set harmonics envelope
+        Timbre.Asr harmonicsEnvelope = timbre.getHarmonicsAsr();
+        if(harmonicsEnvelope != null){
+            setHarmonicsAdsr(mEngineHandle, harmonicsEnvelope.getAttackTime(), harmonicsEnvelope.getInitialValue(), harmonicsEnvelope.getReleaseTime(), harmonicsEnvelope.getFinalValue());
+        } else {
+            setHarmonicsAdsr(mEngineHandle, 0, 0, 0, 0);
         }
     }
 

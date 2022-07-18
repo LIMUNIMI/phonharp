@@ -30,6 +30,8 @@ public:
     void setPWM(float frequency, float depth);
     void setHarmonics(float percent);
     void setVolumeAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
+    void setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
+    void setEq(float highGain, float lowGain);
 
     // real time controls
     int32_t startAudio(float freq);
