@@ -26,6 +26,9 @@ int32_t OboeSinePlayer::initEngine(){
 
     volumeEnvelope = std::make_shared<DeltaEnvelopeGenerator>();
 
+    harmoncisEnvelope = std::make_shared<DeltaEnvelopeGenerator>();
+    oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
+
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
     Result result = builder.setSharingMode(oboe::SharingMode::Exclusive)
@@ -44,6 +47,7 @@ void OboeSinePlayer::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
     pitchEnvelope->off();
     volumeEnvelope->off();
+    harmoncisEnvelope->off();
     //ADSR envelope off
 
     if (mStream && !isPlaying) {
@@ -58,7 +62,9 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF && volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
+        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF &&
+        volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF &&
+        harmoncisEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = 0.0f;
             }
@@ -90,8 +96,9 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     if(!isPlaying){
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
-        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK); //Needs to be called here too
-        volumeEnvelope->enterStage(volumeEnvelope->ENVELOPE_STAGE_ATTACK);
+        pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
+        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
@@ -102,8 +109,9 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     volumeEnvelope->onWithBaseValue(kAmplitude);
     //LOGD("startAudio: new Freq %d", isNewFreq);
     if(isNewFreq){
-        pitchEnvelope->enterStage(pitchEnvelope->ENVELOPE_STAGE_ATTACK);
-        volumeEnvelope->enterStage(volumeEnvelope->ENVELOPE_STAGE_ATTACK);
+        pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
         result = mStream->requestStart();
@@ -112,6 +120,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
 }
 
 void OboeSinePlayer::setFrequency(float frequency) {
+    //TODO: consider removing
     smoothedFrequency->setTargetFrequency(frequency);
     kFrequency.store(frequency);
 }
@@ -218,5 +227,7 @@ void OboeSinePlayer::setEq(float highGain, float lowGain) {
 
 void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
                                       float releaseDelta) {
-    //TODO: inviluppo armonico
+    harmoncisEnvelope->setStageTimes(attackTime, 0.1f, releaseTime);
+    harmoncisEnvelope->setAttackDelta(attackDelta);
+    harmoncisEnvelope->setReleaseDelta(releaseDelta);
 }

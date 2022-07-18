@@ -134,10 +134,18 @@ public:
         triangleModulator.setWaveType(Waves::Triangular);
         triangleModulator.setDepth(0.05f);
         currentDutyCycle.setSecondsToTarget(0.50f);
+
+    }
+
+    void setHarmonicsEnvelope(std::shared_ptr<DeltaEnvelopeGenerator> & harmonicsEnvelope){
+        mHarmonicsEnvelope = harmonicsEnvelope;
     }
 
     float getSquareWaveSample() override {
         float threshold = currentDutyCycle.getNextSample() + triangleModulator.getNextSample();
+        if(mHarmonicsEnvelope != nullptr ){
+            threshold += mHarmonicsEnvelope->getNextSample();
+        }
         threshold = threshold >= upperBound ? upperBound : threshold;
         threshold = threshold <= lowerBound ? lowerBound : threshold;
         //LOGD("Harmonics threshold: %f, currentDutyCycle %f, baseDutyCycle %f", threshold, currentDutyCycle.getCurrentValue(), baseDutyCycle);
@@ -178,6 +186,7 @@ protected:
     const float upperBound = 0.9999999f;
     float baseDutyCycle = 0.5f; //between 0 and 1
     SmoothedParameter currentDutyCycle;
+    std::shared_ptr<DeltaEnvelopeGenerator> mHarmonicsEnvelope;
     //std::atomic<float> currentDutyCycle{0.5f};
 };
 

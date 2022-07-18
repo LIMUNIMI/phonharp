@@ -64,5 +64,6 @@ private:
     std::shared_ptr<LFO> tremoloLFO;
     std::shared_ptr<SmoothedAmpParameter> ampMul;
     std::shared_ptr<DeltaEnvelopeGenerator> volumeEnvelope;
+    std::shared_ptr<DeltaEnvelopeGenerator> harmoncisEnvelope;
 };
 #endif //HMI_OBOESINEPLAYER_H
