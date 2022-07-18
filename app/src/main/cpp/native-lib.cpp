@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "OboeSinePlayer.h"
-#include "SoundBoardEngine.h"
 
 extern "C" {
 /**
