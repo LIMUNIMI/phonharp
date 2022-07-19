@@ -150,9 +150,14 @@ public class OboeSynth implements Synthesizer {
         setPWM(mEngineHandle, pwmFreq, pwmDepth);
 
         //setEqualizer
+        float highGain = 0;
+        float lowGain = 0;
         Timbre.Equalizer eq = timbre.getEqualizer(); //ret Equalizer
-        float highGain = eq.getHighShelfGain(); //ret int, dB
-        float lowGain = eq.getLowShelfGain(); //ret int, dB
+        if(eq != null){
+            highGain = eq.getHighShelfGain(); //ret int, dB
+            lowGain = eq.getLowShelfGain(); //ret int, dB
+        }
+
         setEq(mEngineHandle, highGain, lowGain);
 
         //setPortamento
