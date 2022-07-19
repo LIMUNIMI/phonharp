@@ -71,9 +71,12 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
         } else {
             float osc = oscillator->getNextSample();
             float volumeMix = ampMul->smoothed() + volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
-            if(ampMul->getCurrentValue() <= 0.0f){
+            if(ampMul->getCurrentValue() <= 0.00001f){
+                //LOGD("controlAmpMul: ZERO");
                 volumeMix = 0.0f;
-            }
+            } //else {
+                //LOGD("controlAmpMul: mix %f", ampMul->getCurrentValue());
+            //}
             float sampleValue = kAmplitude * osc * volumeMix;
             //TODO: applica i filtri
             for (int j = 0; j < kChannelCount; j++) {
@@ -126,6 +129,7 @@ void OboeSinePlayer::setFrequency(float frequency) {
 }
 
 void OboeSinePlayer::controlAmpMul(float deltaAmp){
+    //LOGD("controlAmpMul: delta amp %f", deltaAmp);
     ampMul->applyDeltaToTarget(deltaAmp);
 }
 

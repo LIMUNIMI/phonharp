@@ -10,8 +10,9 @@ public:
         setSecondsToTarget(seconds);
     };
 
+    //TODO: rename function because it is no longer a delta of anything. Using absolutes now.
     void applyDeltaToTarget(float delta){
-        float val = getCurrentValue()+delta;
+        float val = delta*5.0f; //getCurrentValue()+
         if(val >= 1) setTargetValue(1);
         else if(val <= 0) setTargetValue(0);
         else setTargetValue(val);
