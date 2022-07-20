@@ -22,15 +22,19 @@ public:
     };
 
     virtual float getSineWaveSample(){
-        return mAmplitude * sinf(mPhase * kTwoPi);
+        return sinf(mPhase) * mAmplitude;
     }
 
     virtual float getTriangularWaveSample(){
-        return mAmplitude * (4.0f * abs(mPhase - 0.5f) -1.0f);
+        return mAmplitude * (((-abs(mPhase - kPi) + kPi) * kOneOverPi) - 0.5f);
     }
 
     virtual float getSquareWaveSample(){
-        return mAmplitude * ((mPhase > 0.5f) - (mPhase < 0.5f));
+        if(mPhase <= kPi){
+            return -mAmplitude;
+        } else {
+            return mAmplitude;
+        }
     }
 
     virtual float getNextSample() {
@@ -48,12 +52,22 @@ public:
                 ret = getSineWaveSample();
                 break;
         }
+
+        // Square wave
+        /*
+        if (mPhase <= kPi){
+        audioData[i] = -mAmplitude;
+        } else {
+        audioData[i] = mAmplitude;
+        }
+        */
         updatePhase();
         return ret;
     };
 
     void updatePhase(){
         mPhase += mPhaseIncrement;
+        if (mPhase > kTwoPi) mPhase -= kTwoPi;
     }
 
     void setWaveType(int type){
@@ -62,7 +76,6 @@ public:
 
     virtual void setSampleRate(float sampleRate){
         mSampleRate = sampleRate;
-        updatePhaseIncrement();
     }
 
 protected:
@@ -73,33 +86,45 @@ protected:
     static double constexpr kDefaultFrequency = 440.0;
     static double constexpr kPi = M_PI;
     static double constexpr kTwoPi = kPi * 2;
+    static double constexpr kOneOverPi = 1/kPi;
 
     float mPhase = 0.0;
     std::atomic<float> mAmplitude{1.0f};
     std::atomic<double> mPhaseIncrement{0.0};
-
     double mFrequency = kDefaultFrequency;
     double mSampleRate = 48000.0f;
 
     float ret = 0.0f;
 
     void updatePhaseIncrement() {
-        mPhaseIncrement.store(mFrequency / mSampleRate);
+        mPhaseIncrement.store((kTwoPi * mFrequency) / mSampleRate);
     };
 };
 
-class DutyCycleOsc : public NaiveOscillator{
+// simple wrapper with easy initialization for LFO
+class LFO : public NaiveOscillator {
 public:
-    float getSquareWaveSample() override {
-        return mAmplitude * ((mPhase > dutyCycle) - (mPhase < dutyCycle));
+    LFO(){
+        setFrequency(5.0f);
+        setDepth(1.0f);
+    };
+    ~LFO() = default;
+
+    void setDepth(const float depth){
+        kBaseDepth = depth;
+        setAmplitude(depth);
     }
 
-    void setDutyCycle(const float amount){
-        dutyCycle.store(amount);
+    void resetDepth(){
+        setAmplitude(kBaseDepth);
+    }
+
+    void deltaDepth(const float delta){
+        setAmplitude(mAmplitude + delta);
     }
 
 protected:
-    std::atomic<float> dutyCycle{0.0f};
+    float kBaseDepth = 1.0f;
 };
 
 class PWMOsc : public NaiveOscillator{

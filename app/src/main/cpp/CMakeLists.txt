@@ -19,6 +19,8 @@ add_library( soundboard SHARED OboeSinePlayer
         SmoothedParameter.h
         SmoothedAmpParameter.h
         SmoothedFrequency.h
+        Oscillators.h
+        Mix.h
         )
 
 target_link_libraries(
