@@ -35,6 +35,7 @@ public:
     }
 
     virtual float getNextSample() {
+        //LOGD("NaiveOscillator: getting next sample");
         switch (waveType) {
             case Waves::Sine:
                 ret = getSineWaveSample();
@@ -49,7 +50,9 @@ public:
                 ret = getSineWaveSample();
                 break;
         }
+        //LOGD("NaiveOscillator: updateing phase");
         updatePhase();
+        //LOGD("NaiveOscillator: returning %f", ret);
         return ret;
     };
 
@@ -232,7 +235,7 @@ public:
     }
 
     virtual float getNextSample() override {
-        return modAmount * mSignal->getNextSample();
+        return (modAmount+mDelta) * mSignal->getNextSample();
     }
 
     void setModAmount(const float amount){
@@ -241,22 +244,6 @@ public:
 
     void setSignal(SampleGenerator* signal){
         mSignal = signal;
-    }
-
-protected:
-    SampleGenerator* mSignal;
-    std::atomic<float> modAmount{1.0f};
-};
-
-class DeltaModulatedSignal : public ModulatedSignal{
-public:
-    DeltaModulatedSignal(SampleGenerator*  signal, const float amount){
-        ModulatedSignal(signal, amount);
-    }
-    DeltaModulatedSignal(){};
-
-    virtual float getNextSample() override {
-        return (modAmount+mDelta) * mSignal->getNextSample();
     }
 
     void reset(){
@@ -268,6 +255,8 @@ public:
     }
 
 protected:
+    SampleGenerator* mSignal;
+    std::atomic<float> modAmount{1.0f};
     std::atomic<float> mDelta{0.0f};
 };
 
@@ -286,8 +275,12 @@ public:
     }
 
     float getNextSample() override {
+        ret = 0.0f;
+        //LOGD("Mix: getting sample");
         for(itr = signals.begin(); itr != signals.end(); ++itr){
+            //LOGD("Mix: cycling sources");
             ret += (*itr)->getNextSample();
+            //LOGD("Mix: mix from sources %f", ret);
         }
 
         return ret;

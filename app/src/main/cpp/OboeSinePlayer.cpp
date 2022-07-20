@@ -17,7 +17,7 @@ int32_t OboeSinePlayer::initEngine(){
     oscillator->setSampleRate(kSampleRate);
 
     freqMix = new Mix();
-    scaledVibrato = new DeltaModulatedSignal(vibratoLFO, 1.0f);
+    scaledVibrato = new ModulatedSignal(vibratoLFO, 0.2f);
     freqMix->addSignal(smoothedFrequency, 1);
     freqMix->addSignal(scaledVibrato);
     //freqMix->addSignal(spPitchEnvelope, 1);
@@ -61,9 +61,11 @@ void OboeSinePlayer::stopAudio() {
 
 oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
+    //LOGD("onAudioReady: entered audio callback");
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        if(false
+        //LOGD("onAudioReady: cycling frame %d", i);
+        if(!isPlaying
         /*
         (pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF &&
         harmoncisEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF) ||
@@ -74,16 +76,23 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
                 floatData[i * kChannelCount + j] = 0.0f;
             }
         } else {
-            oscillator->setFrequency(freqMix->getNextSample());
+            //LOGD("onAudioReady: started making sample");
+            float freq = freqMix->getNextSample();
+            LOGD("onAudioReady: got frequency from freqMix %f", freq);
+            oscillator->setFrequency(freq);
+            //LOGD("onAudioReady: set frequency from freqMix");
             float osc = oscillator->getNextSample();
+            //LOGD("onAudioReady: got sample from osc");
             float volumeMix = ampMul->smoothed(); //+ volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
+            //LOGD("onAudioReady: got smoothed amp");
             if(ampMul->getCurrentValue() <= 0.00001f){
                 //LOGD("controlAmpMul: ZERO");
                 volumeMix = 0.0f;
             } //else {
                 //LOGD("controlAmpMul: mix %f", ampMul->getCurrentValue());
             //}
-            float sampleValue = kAmplitude * osc * volumeMix;
+            float sampleValue = kAmplitude * osc * 100;// * volumeMix;
+            LOGD("onAudioReady: sample %f", sampleValue);
             //TODO: applica i filtri
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;

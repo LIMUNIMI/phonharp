@@ -61,7 +61,7 @@ private:
     SmoothedFrequency* smoothedFrequency;
 
     NaiveOscillator* vibratoLFO;
-    DeltaModulatedSignal* scaledVibrato;
+    ModulatedSignal* scaledVibrato;
 
     PitchEnvelope* pitchEnvelope;
     NaiveOscillator* tremoloLFO;

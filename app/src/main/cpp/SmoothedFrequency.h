@@ -13,7 +13,7 @@ public:
     }
 
     void setTargetFrequency(const float targetFreq){
-        setTargetValue(targetFreq);
+        setTargetValue(convertFreqToSemitones(targetFreq));
         LOGD("SmoothedFrequency::setTargetFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
     }
 
@@ -23,6 +23,11 @@ public:
 
     float getStep(){
         return step;
+    }
+
+    float convertFreqToSemitones(const float freq){
+        //16.35 è C0
+        return 12.0f * log2f(freq / 16.35f);
     }
 
     float smoothed() override{
