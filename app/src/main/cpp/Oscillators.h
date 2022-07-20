@@ -283,9 +283,9 @@ public:
         ret = 0.0f;
         //LOGD("Mix: getting sample");
         for(itr = signals.begin(); itr != signals.end(); ++itr){
-            //LOGD("Mix: cycling sources");
+            LOGD("Mix: cycling sources");
             ret += (*itr)->getNextSample();
-            //LOGD("Mix: mix from sources %f", ret);
+            LOGD("Mix: mix from sources %f", ret);
         }
 
         return ret;

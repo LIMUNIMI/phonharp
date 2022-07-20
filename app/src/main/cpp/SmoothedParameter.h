@@ -79,8 +79,9 @@ public:
         return smoothed();
     }
 
-    void reset(const float base){
+    virtual void reset(const float base){
         // Set starting values
+        LOGD("SmoothedParameter: resetting to %f", base);
         setCurrentValue(base);
         setTargetValue(base);
 

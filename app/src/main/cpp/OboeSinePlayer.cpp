@@ -11,6 +11,7 @@ int32_t OboeSinePlayer::initEngine(){
 
     vibratoLFO = new NaiveOscillator();
     vibratoLFO->setSampleRate(kSampleRate);
+    vibratoLFO->setFrequency(5.0f);
     pitchEnvelope = new PitchEnvelope();
 
     oscillator = new DutyCycleOsc();
@@ -58,6 +59,7 @@ void OboeSinePlayer::stopAudio() {
     }
 
     isPlaying.store(false);
+    mStream->stop();
 }
 
 oboe::DataCallbackResult
@@ -78,7 +80,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             }
         } else {
             //LOGD("onAudioReady: started making sample");
-            float freq = freqMix->getNextSample();
+            float freq = log2lin(freqMix->getNextSample(), 16.35f);
             LOGD("onAudioReady: got frequency from freqMix %f", freq);
             oscillator->setFrequency(freq);
             //LOGD("onAudioReady: set frequency from freqMix");
@@ -92,8 +94,8 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             } //else {
                 //LOGD("controlAmpMul: mix %f", ampMul->getCurrentValue());
             //}
-            float sampleValue = kAmplitude * osc * 100;// * volumeMix;
-            LOGD("onAudioReady: sample %f", sampleValue);
+            float sampleValue = kAmplitude * osc * 50;// * volumeMix;
+            //LOGD("onAudioReady: sample %f", sampleValue);
             //TODO: applica i filtri
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
@@ -191,7 +193,8 @@ OboeSinePlayer::~OboeSinePlayer() {
 
 float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
     //TODO: optimize, maybe remove (it's in the PitchEnvelope
-    return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
+    //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
+    return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
 }
 
 void OboeSinePlayer::setVibrato(float frequency, float depth) {
