@@ -144,7 +144,7 @@ public:
     float getSquareWaveSample() override {
         float threshold = currentDutyCycle.getNextSample() + triangleModulator.getNextSample();
         if(mHarmonicsEnvelope != nullptr ){
-            threshold += 0;mHarmonicsEnvelope->getNextSample();
+            threshold += mHarmonicsEnvelope->getNextSample();
         }
         threshold = threshold >= upperBound ? upperBound : threshold;
         threshold = threshold <= lowerBound ? lowerBound : threshold;

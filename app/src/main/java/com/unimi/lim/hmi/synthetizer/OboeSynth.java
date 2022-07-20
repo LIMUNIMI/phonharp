@@ -215,7 +215,7 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlPitch(float delta) {
-        //Log.d(TAG, "controlPitch: " + delta);
+        Log.d(TAG, "controlPitch: " + delta);
         controlPitch(mEngineHandle, delta);
     }
 
