@@ -57,7 +57,7 @@ private:
 
     std::atomic<float> kFrequency;
 
-    NaiveOscillator* oscillator;
+    DutyCycleOsc* oscillator;
     SmoothedFrequency* smoothedFrequency;
 
     NaiveOscillator* vibratoLFO;

@@ -13,8 +13,9 @@ int32_t OboeSinePlayer::initEngine(){
     vibratoLFO->setSampleRate(kSampleRate);
     pitchEnvelope = new PitchEnvelope();
 
-    oscillator = new NaiveOscillator();
+    oscillator = new DutyCycleOsc();
     oscillator->setSampleRate(kSampleRate);
+    oscillator->setWaveType(0); //TODO: remove
 
     freqMix = new Mix();
     scaledVibrato = new ModulatedSignal(vibratoLFO, 0.2f);
@@ -222,7 +223,7 @@ void OboeSinePlayer::setPWM(float frequency, float depth) {
 }
 
 void OboeSinePlayer::setHarmonics(float percent) {
-    //oscillator->setDutyCycle(percent);
+    oscillator->setDutyCycle(percent/200.0f);
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {

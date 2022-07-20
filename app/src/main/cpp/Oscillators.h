@@ -94,7 +94,12 @@ protected:
 
 class DutyCycleOsc : public NaiveOscillator{
 public:
+    DutyCycleOsc(){
+        setWaveType(Waves::Square);
+    }
+
     float getSquareWaveSample() override {
+        //TODO: FIX
         return mAmplitude * ((mPhase > dutyCycle) - (mPhase < dutyCycle));
     }
 
@@ -103,7 +108,7 @@ public:
     }
 
 protected:
-    std::atomic<float> dutyCycle{0.0f};
+    std::atomic<float> dutyCycle{0.5f};
 };
 
 /*
