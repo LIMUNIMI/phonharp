@@ -105,10 +105,12 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     if(!isPlaying){
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
+        LOGD("startAudio: reset frequency");
         //pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
         //volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
+        LOGD("startAudio: stored start playing TRUE");
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
         smoothedFrequency->setTargetFrequency(freq);
@@ -124,7 +126,9 @@ int32_t OboeSinePlayer::startAudio(float freq) {
         //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
+        LOGD("startAudio: requesting stream start");
         result = mStream->requestStart();
+        LOGD("startAudio: requested stream start");
     }
     return (int32_t) result;
 }
