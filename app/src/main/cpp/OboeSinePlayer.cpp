@@ -194,7 +194,10 @@ OboeSinePlayer::~OboeSinePlayer() {
 float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
     //TODO: optimize, maybe remove (it's in the PitchEnvelope
     //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
-    return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
+    //return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
+    //return expf(logf(baseFreq) + semitonesDelta/12);
+    //return expf(((logf(2.0f)*semitonesDelta)/12) - logf(baseFreq));
+    return expf(semitonesDelta * (logf(2)/12) ) * baseFreq;
 }
 
 void OboeSinePlayer::setVibrato(float frequency, float depth) {
