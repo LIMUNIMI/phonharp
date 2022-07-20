@@ -14,13 +14,12 @@ include_directories(./shared ./)
 
 add_library( soundboard SHARED OboeSinePlayer
         native-lib.cpp
-#        SoundBoardEngine.cpp
         OboeSinePlayer.cpp
         SmoothedParameter.h
         SmoothedAmpParameter.h
         SmoothedFrequency.h
         Oscillators.h
-        Mix.h
+        #Mix.h
         )
 
 target_link_libraries(

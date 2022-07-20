@@ -5,6 +5,7 @@
 #include "SmoothedFrequency.h"
 #include "SampleGenerator.h"
 #include "PitchEnvelope.h"
+#include <list>
 
 class NaiveOscillator : public SampleGenerator{
 public:
@@ -101,6 +102,8 @@ public:
 protected:
     std::atomic<float> dutyCycle{0.0f};
 };
+
+/*
 
 class PWMOsc : public NaiveOscillator{
 public:
@@ -215,6 +218,86 @@ private:
     std::shared_ptr<LFO> mLFO;
     std::shared_ptr<PitchEnvelope> mPitchEnvelope;
     std::atomic<float> pitchShift {0.0f};
+};
+*/
+
+class ModulatedSignal : public SampleGenerator{
+public:
+
+    ModulatedSignal(){};
+
+    ModulatedSignal(SampleGenerator*  signal, const float amount){
+        setSignal(signal);
+        setModAmount(amount);
+    }
+
+    virtual float getNextSample() override {
+        return modAmount * mSignal->getNextSample();
+    }
+
+    void setModAmount(const float amount){
+        modAmount.store(amount);
+    }
+
+    void setSignal(SampleGenerator* signal){
+        mSignal = signal;
+    }
+
+protected:
+    SampleGenerator* mSignal;
+    std::atomic<float> modAmount{1.0f};
+};
+
+class DeltaModulatedSignal : public ModulatedSignal{
+public:
+    DeltaModulatedSignal(SampleGenerator*  signal, const float amount){
+        ModulatedSignal(signal, amount);
+    }
+    DeltaModulatedSignal(){};
+
+    virtual float getNextSample() override {
+        return (modAmount+mDelta) * mSignal->getNextSample();
+    }
+
+    void reset(){
+        setModDelta(0.0f);
+    }
+
+    void setModDelta(const float delta){
+        mDelta.store(delta);
+    }
+
+protected:
+    std::atomic<float> mDelta{0.0f};
+};
+
+class Mix : public SampleGenerator{
+public:
+    Mix(){
+
+    }
+
+    void addSignal(SampleGenerator*  signal, const float modAmount){
+        signals.push_back(new ModulatedSignal(signal, modAmount));
+    }
+
+    void addSignal(ModulatedSignal *modulatedSignal){
+        signals.push_back(modulatedSignal);
+    }
+
+    float getNextSample() override {
+        for(itr = signals.begin(); itr != signals.end(); ++itr){
+            ret += (*itr)->getNextSample();
+        }
+
+        return ret;
+    }
+
+protected:
+    std::list<ModulatedSignal*> signals;
+    std::list<ModulatedSignal*>::iterator itr;
+
+    float ret = 0.0f;
 };
 
 #endif //HMI_OSCILLATORS_H

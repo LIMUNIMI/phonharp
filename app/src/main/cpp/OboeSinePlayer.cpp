@@ -4,30 +4,31 @@
 int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
-    ampMul = std::make_shared<SmoothedAmpParameter>();
-    smoothedFrequency = std::make_shared<SmoothedFrequency>(0.0f);
+    ampMul = new SmoothedAmpParameter();
+    smoothedFrequency = new SmoothedFrequency(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
     smoothedFrequency->setSmoothingType(false);
 
-    vibratoLFO = std::make_shared<LFO>();
-    vibratoLFO->setDepth(20.0f);
+    vibratoLFO = new NaiveOscillator();
     vibratoLFO->setSampleRate(kSampleRate);
-    pitchEnvelope = std::make_shared<PitchEnvelope>();
-    oscillator = std::make_unique<DynamicOscillator>();
+    pitchEnvelope = new PitchEnvelope();
 
+    oscillator = new NaiveOscillator();
     oscillator->setSampleRate(kSampleRate);
-    oscillator->setLFO(vibratoLFO);
-    oscillator->setSmoothedFreq(smoothedFrequency);
-    oscillator->setPitchEnvelope(pitchEnvelope);
 
-    tremoloLFO = std::make_shared<LFO>();
-    tremoloLFO->setDepth(20.0f);
+    freqMix = new Mix();
+    scaledVibrato = new DeltaModulatedSignal(vibratoLFO, 1.0f);
+    freqMix->addSignal(smoothedFrequency, 1);
+    freqMix->addSignal(scaledVibrato);
+    //freqMix->addSignal(spPitchEnvelope, 1);
+
+    tremoloLFO = new NaiveOscillator();
     tremoloLFO->setSampleRate(kSampleRate);
 
-    volumeEnvelope = std::make_shared<DeltaEnvelopeGenerator>();
+    volumeEnvelope = new DeltaEnvelopeGenerator();
 
-    harmoncisEnvelope = std::make_shared<DeltaEnvelopeGenerator>();
-    oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
+    harmoncisEnvelope = new DeltaEnvelopeGenerator();
+    //oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -62,15 +63,20 @@ oboe::DataCallbackResult
 OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        if((pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF &&
+        if(false
+        /*
+        (pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF &&
         harmoncisEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF) ||
-        volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
+        volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
+         */
+        ){
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = 0.0f;
             }
         } else {
+            oscillator->setFrequency(freqMix->getNextSample());
             float osc = oscillator->getNextSample();
-            float volumeMix = ampMul->smoothed() + volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
+            float volumeMix = ampMul->smoothed(); //+ volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
             if(ampMul->getCurrentValue() <= 0.00001f){
                 //LOGD("controlAmpMul: ZERO");
                 volumeMix = 0.0f;
@@ -99,23 +105,23 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     if(!isPlaying){
         LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
-        pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
-        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        //pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
+        //volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
     } else {
         LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
         smoothedFrequency->setTargetFrequency(freq);
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
-    pitchEnvelope->onWithBaseFreq(freq);
-    volumeEnvelope->onWithBaseValue(kAmplitude);
+    //pitchEnvelope->onWithBaseFreq(freq);
+    //volumeEnvelope->onWithBaseValue(kAmplitude);
     //harmonicsEnvelope->
     //LOGD("startAudio: new Freq %d", isNewFreq);
     if(isNewFreq){
-        pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        //pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        //volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
         result = mStream->requestStart();
@@ -146,16 +152,16 @@ void OboeSinePlayer::closeEngine() {
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
     //pitchBendDelta = deltaPitch*4;
-    oscillator->setPitchShift(log2lin(deltaPitch, kFrequency));
+    //oscillator->setPitchShift(log2lin(deltaPitch, kFrequency));
 }
 
 void OboeSinePlayer::controlReset() {
     LOGD("=============CONTROL RESET=============");
-    oscillator->setPitchShift(0);
-    vibratoLFO->resetDepth();
+    //oscillator->setPitchShift(0);
+    scaledVibrato->reset();
     smoothedFrequency->reset(kFrequency);
-    oscillator->resetDutyCycle();
-    oscillator->triangleModulator.resetDepth();
+    //oscillator->resetDutyCycle();
+    //oscillator->triangleModulator.resetDepth();
 }
 
 void OboeSinePlayer::setPortamento(float seconds) {
@@ -177,11 +183,12 @@ float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
 void OboeSinePlayer::setVibrato(float frequency, float depth) {
     //LOGD("Vibratofreq: %f", frequency);
     vibratoLFO->setFrequency(frequency);
-    vibratoLFO->setDepth(depth);
+    scaledVibrato->setModAmount(depth);
+    //vibratoLFO->setDepth(depth);
 }
 
 void OboeSinePlayer::controlVibrato(float deltaDepth) {
-    vibratoLFO->deltaDepth(deltaDepth);
+   scaledVibrato->setModDelta(deltaDepth);
 }
 
 void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float releaseTime,
@@ -192,31 +199,31 @@ void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float rel
 }
 
 void OboeSinePlayer::setTremolo(float frequency, float depth) {
-    tremoloLFO->setDepth(depth);
+    //tremoloLFO->setDepth(depth);
     tremoloLFO->setFrequency(frequency);
 }
 
 void OboeSinePlayer::setPWM(float frequency, float depth) {
-    oscillator->triangleModulator.setFrequency(frequency);
-    oscillator->triangleModulator.setDepth(depth/150);
+    //oscillator->triangleModulator.setFrequency(frequency);
+    //oscillator->triangleModulator.setDepth(depth/150);
 }
 
 void OboeSinePlayer::setHarmonics(float percent) {
-    oscillator->setDutyCycle(percent);
+    //oscillator->setDutyCycle(percent);
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {
-    tremoloLFO->deltaDepth(deltaDepth);
+    //tremoloLFO->deltaDepth(deltaDepth);
     //TODO: check for weird behavior
 }
 
 void OboeSinePlayer::controlPWM(float deltaDepth) {
-    oscillator->triangleModulator.deltaDepth(deltaDepth/60);
+    //oscillator->triangleModulator.deltaDepth(deltaDepth/60);
 }
 
 void OboeSinePlayer::controlHarmonics(float delta) {
-    oscillator->deltaDutyCycle(delta/5);
-    LOGD("OboeSinePlayer::controlHarmonics: delta %f, current duty cycle %f", delta/5, oscillator->getCurrentDutyCycle());
+    //oscillator->deltaDutyCycle(delta/5);
+    //LOGD("OboeSinePlayer::controlHarmonics: delta %f, current duty cycle %f", delta/5, oscillator->getCurrentDutyCycle());
 }
 
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,

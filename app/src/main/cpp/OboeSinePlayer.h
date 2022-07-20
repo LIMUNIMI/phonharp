@@ -57,13 +57,17 @@ private:
 
     std::atomic<float> kFrequency;
 
-    std::unique_ptr<DynamicOscillator> oscillator;
-    std::shared_ptr<SmoothedFrequency> smoothedFrequency;
-    std::shared_ptr<LFO> vibratoLFO;
-    std::shared_ptr<PitchEnvelope> pitchEnvelope;
-    std::shared_ptr<LFO> tremoloLFO;
-    std::shared_ptr<SmoothedAmpParameter> ampMul;
-    std::shared_ptr<DeltaEnvelopeGenerator> volumeEnvelope;
-    std::shared_ptr<DeltaEnvelopeGenerator> harmoncisEnvelope;
+    NaiveOscillator* oscillator;
+    SmoothedFrequency* smoothedFrequency;
+
+    NaiveOscillator* vibratoLFO;
+    DeltaModulatedSignal* scaledVibrato;
+
+    PitchEnvelope* pitchEnvelope;
+    NaiveOscillator* tremoloLFO;
+    SmoothedAmpParameter* ampMul;
+    DeltaEnvelopeGenerator* volumeEnvelope;
+    DeltaEnvelopeGenerator* harmoncisEnvelope;
+    Mix* freqMix;
 };
 #endif //HMI_OBOESINEPLAYER_H

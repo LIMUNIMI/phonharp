@@ -1,8 +1,36 @@
 #ifndef HMI_MIX_H
 #define HMI_MIX_H
 
-#include <map>
 #include "SampleGenerator.h"
+#include <list>
+
+
+class ModulatedSignal : public SampleGenerator{
+public:
+
+    ModulatedSignal(){};
+
+    ModulatedSignal(std::shared_ptr<SampleGenerator> & signal, const float amount){
+        setSignal(signal);
+        setModAmount(amount);
+    }
+
+    float getNextSample() override {
+        return modAmount * mSignal->getNextSample();
+    }
+
+    void setModAmount(const float amount){
+        modAmount.store(amount);
+    }
+
+    void setSignal(std::shared_ptr<SampleGenerator> & signal){
+        mSignal = signal;
+    }
+
+protected:
+    std::shared_ptr<SampleGenerator> mSignal;
+    std::atomic<float> modAmount{1.0f};
+};
 
 class Mix : public SampleGenerator{
 public:
@@ -10,21 +38,21 @@ public:
 
     }
 
-    void addElement(SampleGenerator element, const float modAmount){
-        elements.insert(pair<SampleGenerator, modAmount>(element, modAmount));
+    void addSignal(std::shared_ptr<SampleGenerator> & signal, const float modAmount){
+        signals.push_back(new ModulatedSignal(signal, modAmount));
     }
 
     float getNextSample() override {
-        for(itr = elements.begin(); itr != elements.end(); ++itr){
-            ret += itr->first.getNextSample() * itr->second;
+        for(itr = signals.begin(); itr != signals.end(); ++itr){
+            ret += (*itr)->getNextSample();
         }
 
         return ret;
     }
 
 protected:
-    std::map<SampleGenerator, modAmount> elements;
-    std::map<SampleGenerator, modAmount>::iterator itr;
+    std::list<ModulatedSignal*> signals;
+    std::list<ModulatedSignal*>::iterator itr;
 
     float ret = 0.0f;
 };
