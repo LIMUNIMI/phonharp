@@ -63,7 +63,7 @@ private:
     NaiveOscillator* vibratoLFO;
     ModulatedSignal* scaledVibrato;
 
-    PitchEnvelope* pitchEnvelope;
+    EnvelopeGenerator* pitchEnvelope;
     NaiveOscillator* tremoloLFO;
     SmoothedAmpParameter* ampMul;
     DeltaEnvelopeGenerator* volumeEnvelope;

@@ -3,19 +3,28 @@
 
 #include "SmoothedFrequency.h"
 
+/**
+ * Very simple. Three stages, attack, sustain, relase
+ * Attack, starts from a value called attackLevel sustainLevel
+ * Once sustainLevel is reached, we will be in sustain stage. Will stay there until the off() method
+ * is called, and then the release stage will kick in. Release stage can kick in also from the attack if off is called.
+ * Release goes from whatever level it is in to the releaseLevel.
+ *
+ * We have attackTime and releaseTime to regulate the length of these stages.
+ */
 class EnvelopeGenerator : public SmoothedParameter{
 public:
     enum EnvelopeStage {
         ENVELOPE_STAGE_OFF = 0,
         ENVELOPE_STAGE_ATTACK,
-        ENVELOPE_STAGE_DECAY,
         ENVELOPE_STAGE_SUSTAIN,
         ENVELOPE_STAGE_RELEASE
     };
 
     EnvelopeGenerator() {
-        setStageTimes(0.2f, 0.1f, 0.2f);
-        setStageLevels(1.0f, 0.9f, 0.0f);
+        setStageTimes(0.2f, 0.2f);
+        setStageLevels(0.0f, 1.0f, 0.0f);
+        //setSmoothingType(false);
     }
 
     virtual ~EnvelopeGenerator() {}
@@ -47,15 +56,10 @@ public:
                 //( (stageLevels[0] <= stageLevels[1]) && (getCurrentValue() <= stageLevels[0])) )
                 if(kCountDown <= 0)
                 {
-                    enterStage(ENVELOPE_STAGE_DECAY);
-                }
-                break;
-            case ENVELOPE_STAGE_DECAY:
-                //if( ((stageLevels[1] <= stageLevels[0]) && (getCurrentValue() <= stageLevels[1]) ) ||
-                //    ( (stageLevels[0] >= stageLevels[1]) && (getCurrentValue() >= stageLevels[1])) )
-                if(kCountDown <= 0)
-                {
                     enterStage(ENVELOPE_STAGE_SUSTAIN);
+                }
+                if(!active){
+                    enterStage(ENVELOPE_STAGE_RELEASE);
                 }
                 break;
             case ENVELOPE_STAGE_SUSTAIN:
@@ -81,19 +85,17 @@ public:
         currentStage = stage;
         switch (stage) {
             case ENVELOPE_STAGE_OFF:
-                setStaticLevel(stageLevels[2]);
+                setStaticLevel(attackLevel);
                 break;
             case ENVELOPE_STAGE_ATTACK:
-                setTargetWithSeconds(stageLevels[0], stageTimes[0]);
-                break;
-            case ENVELOPE_STAGE_DECAY:
-                setTargetWithSeconds(stageLevels[1], stageTimes[1]);
+                setStaticLevel(attackLevel);
+                setTargetWithSeconds(sustainLevel, attackTime);
                 break;
             case ENVELOPE_STAGE_SUSTAIN:
-                setStaticLevel(stageLevels[1]);
+                setStaticLevel(sustainLevel);
                 break;
             case ENVELOPE_STAGE_RELEASE:
-                setTargetWithSeconds(stageLevels[2], stageTimes[2]);
+                setTargetWithSeconds(releaseLevel, releaseTime);
                 break;
         }
         LOGD("EnvelopeGenerator::enterStage: Entered stage %d, currentValue %f, leftover steps %d, target %f", stage, getCurrentValue(), kCountDown, getTargetValue());
@@ -106,17 +108,16 @@ public:
         reset(level);
     }
 
-    void setStageTimes(const float attack, const float decay, const float release){
-        stageTimes[0] = attack;
-        stageTimes[1] = decay;
-        stageTimes[2] = release;
-        LOGD("EnvelopeGenerator::setStageTimes: attack %f, decay %f, release %f", attack, decay, release);
+    void setStageTimes(const float attack, const float release){
+        attackTime = attack;
+        releaseTime = release;
+        LOGD("EnvelopeGenerator::setStageTimes: attack %f, release %f", attack, release);
     }
 
     void setStageLevels(const float attack, const float sustain, const float release){
-        stageLevels[0] = attack;
-        stageLevels[1] = sustain;
-        stageLevels[2] = release;
+        attackLevel = attack;
+        sustainLevel = sustain;
+        releaseLevel = release;
         LOGD("EnvelopeGenerator::setStageLevels: attack %f, sustain %f, release %f", attack, sustain, release);
     }
 protected:
@@ -124,9 +125,12 @@ protected:
 
     std::atomic<bool> active {false};
 
-    // Attack, decay, release
-    float stageTimes[3];// = {0.2f, 0.1f, 0.2f}
-    float stageLevels[3];// = {1.0f, 0.9f, 0.0f};
+    float attackTime = 0.0f;
+    float releaseTime = 0.0f;
+
+    float attackLevel = 0.0f;
+    float releaseLevel = 0.0f;
+    float sustainLevel = 0.0f;
 };
 
 
