@@ -133,21 +133,21 @@ public class OboeSynth implements Synthesizer {
         float tremoloDepth = tremolo != null ? (float) tremolo.getDepth() : 0; //ret int, percent
         float tremoloFreq =  tremolo != null ? tremolo.getRate() : 0; //ret float, frequency in Hz
         Log.d(TAG, "updateSynthesizerCfg: tremoloDepth: " + tremoloDepth + " tremoloFreq: " + tremoloFreq);
-        setTremolo(mEngineHandle, tremoloFreq, tremoloDepth);
+        setTremolo(mEngineHandle, tremoloFreq, tremoloDepth/100);
 
         //setVibrato
         Timbre.Lfo vibrato = timbre.getVibrato(); //ret Lfo
         float vibratoDepth = vibrato != null ? (float) vibrato.getDepth() : 0; //ret int, percent
         float vibratoFreq =  vibrato != null ? vibrato.getRate() : 0; //ret float, frequency in Hz
         Log.d(TAG, "updateSynthesizerCfg: vibratoDepth: " + vibratoDepth + " vibratoFreq: " + vibratoFreq);
-        setVibrato(mEngineHandle, vibratoFreq, vibratoDepth);
+        setVibrato(mEngineHandle, vibratoFreq, vibratoDepth/100);
 
         //setPwm
         Timbre.Lfo pwm = timbre.getPwm(); //ret Lfo
         float pwmDepth = pwm != null ? (float) pwm.getDepth() : 0; //ret int, percent
         float pwmFreq =  pwm != null ? pwm.getRate() : 0; //ret float, frequency in Hz
         Log.d(TAG, "updateSynthesizerCfg: pwmDepth: " + pwmDepth + " pwmFreq: " + pwmFreq);
-        setPWM(mEngineHandle, pwmFreq, pwmDepth);
+        setPWM(mEngineHandle, pwmFreq, pwmDepth/100);
 
         //setEqualizer
         float highGain = 0;

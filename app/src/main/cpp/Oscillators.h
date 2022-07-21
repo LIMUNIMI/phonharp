@@ -59,6 +59,7 @@ public:
 
     void updatePhase(){
         mPhase += mPhaseIncrement;
+        mPhase = fmod(mPhase, 1.0f);
     }
 
     void setWaveType(int type){
@@ -103,6 +104,7 @@ public:
 
     float getSquareWaveSample() override {
         //TODO: FIX
+        //LOGD("DutyCycleOsc: (%f > %f = %d) - (%f < %f = %d)  = %d", mPhase, dutyCycle.load(), mPhase > dutyCycle, mPhase, dutyCycle.load(), mPhase < dutyCycle, ((mPhase > dutyCycle) - (mPhase < dutyCycle)));
         return mAmplitude * ((mPhase > dutyCycle) - (mPhase < dutyCycle));
     }
 

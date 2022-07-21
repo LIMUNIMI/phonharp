@@ -7,7 +7,7 @@ int32_t OboeSinePlayer::initEngine(){
     oscillator = new DutyCycleOsc();
     oscillator->id = 21;
     oscillator->setSampleRate(kSampleRate);
-    oscillator->setWaveType(0); //TODO: remove
+    //oscillator->setWaveType(0);
 
     harmoncisEnvelope = new EnvelopeGenerator();
     harmoncisEnvelope->setSampleRate(kSampleRate);
@@ -31,7 +31,7 @@ int32_t OboeSinePlayer::initEngine(){
 
     freqMix = new Mix();
     //Initialize ModulatedSignal here if you want to change the scaling later. If not, use AddSignal with two parameters and be happy with a static value
-    scaledVibrato = new ModulatedSignal(vibratoLFO, 0.2f); //mod amount controlled in settings and real time
+    scaledVibrato = new ModulatedSignal(vibratoLFO, 1.0f); //mod amount controlled in settings and real time
     freqMix->addSignal(smoothedFrequency, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(scaledVibrato);
     freqMix->addSignal(pitchEnvelope, 1); //Already in semitones, doesn't need to be scaled
@@ -47,17 +47,17 @@ int32_t OboeSinePlayer::initEngine(){
     ampMul->setSampleRate(kSampleRate);
     ampMul->setSecondsToTarget(0.1f);
 
-    volumeEnvelope = new EnvelopeGenerator();
+    volumeEnvelope = new EnvelopeGenerator(); //TODO: clipping after two notes. Consider adding smoothing
     volumeEnvelope->setSampleRate(kSampleRate);
     volumeEnvelope->id = 42;
 
-    //auto static1 = new StaticSignal();
-    //static1->setValue(1);
+    auto static1 = new StaticSignal();
+    static1->setValue(1);
 
     ampMix = new Mix();
     ampMix->setMixMode(Mix::Mul);
-    ampMix->addSignal(ampMul, 1.0f); //Static scaling is okay
-    scaledTremolo = new ModulatedSignal(tremoloLFO, 0.2f);
+    ampMix->addSignal(static1, 1.0f); //Static scaling is okay
+    scaledTremolo = new ModulatedSignal(tremoloLFO, 1.0f);
     scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
     scaledVolumeEnvelope = new ModulatedSignal(volumeEnvelope, 1.0f);
@@ -123,7 +123,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             //LOGD("onAudioReady: set frequency from freqMix");
             float osc = oscillator->getNextSample();
             //LOGD("onAudioReady: got sample from osc");
-            float volumeMix = ampMix->getNextSample();//ampMul->getNextSample();
+            float volumeMix = ampMix->getNextSample() * 2;//ampMul->getNextSample();
             //LOGD("onAudioReady: got volume mix %f", volumeMix);
             //volumeMix = volumeMix <= 0.0000001f ? 0.0000001f : volumeMix;
             //volumeMix = volumeMix * ampMix->getNextSample();
@@ -260,6 +260,7 @@ void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float rel
 
 void OboeSinePlayer::setTremolo(float frequency, float depth) {
     tremoloLFO->setFrequency(frequency);
+    LOGD("OboeSinePlayer: setting tremolo depth %f", depth);
     scaledVibrato->setModAmount(depth);
 }
 
@@ -269,7 +270,7 @@ void OboeSinePlayer::setPWM(float frequency, float depth) {
 }
 
 void OboeSinePlayer::setHarmonics(float percent) {
-    oscillator->setDutyCycle(percent/200.0f);
+    oscillator->setDutyCycle(percent);
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {
@@ -288,7 +289,7 @@ void OboeSinePlayer::controlHarmonics(float delta) {
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
                                    float releaseDelta) {
     volumeEnvelope->setStageTimes(attackTime, releaseTime);
-    LOGD("OboeSinePlayers: id 42, volume ASR levels: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
+    //LOGD("OboeSinePlayers: id 42, volume ASR levels: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
     volumeEnvelope->setStageLevels(attackDelta-1.0f, 0, releaseDelta-1.0f); //gets scaled up
 }
 
