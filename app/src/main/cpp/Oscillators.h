@@ -8,6 +8,8 @@
 
 class NaiveOscillator : public SampleGenerator{
 public:
+    enum Waves {Sine = 0, Triangular = 1, Square = 2};
+
     NaiveOscillator() = default;
     virtual ~NaiveOscillator() = default;
 
@@ -72,7 +74,6 @@ public:
     }
 
 protected:
-    enum Waves {Sine = 0, Triangular = 1, Square = 2};
 
     int waveType = Waves::Sine;
 
@@ -116,123 +117,6 @@ protected:
     std::atomic<float> dutyCycle{0.5f};
 };
 
-/*
-
-class PWMOsc : public NaiveOscillator{
-public:
-    PWMOsc(){
-        waveType = Waves::Square;
-        triangleModulator.setWaveType(Waves::Triangular);
-        triangleModulator.setDepth(0.05f);
-        currentDutyCycle.setSecondsToTarget(0.50f);
-
-    }
-
-    void setHarmonicsEnvelope(std::shared_ptr<DeltaEnvelopeGenerator> & harmonicsEnvelope){
-        mHarmonicsEnvelope = harmonicsEnvelope;
-    }
-
-    float getSquareWaveSample() override {
-        float threshold = currentDutyCycle.getNextSample() + triangleModulator.getNextSample();
-        if(mHarmonicsEnvelope != nullptr ){
-            threshold += mHarmonicsEnvelope->getNextSample();
-        }
-        threshold = threshold >= upperBound ? upperBound : threshold;
-        threshold = threshold <= lowerBound ? lowerBound : threshold;
-        //LOGD("Harmonics threshold: %f, currentDutyCycle %f, baseDutyCycle %f", threshold, currentDutyCycle.getCurrentValue(), baseDutyCycle);
-        threshold = threshold * kTwoPi;
-        if(mPhase > threshold){
-            return -mAmplitude;
-        } else {
-            return mAmplitude;
-        }
-    }
-
-    void setDutyCycle(float dutyCycle){
-        LOGD("PWMOsc::setDutyCycle: base duty cycle harmonics %f", dutyCycle);
-        baseDutyCycle = dutyCycle;
-    }
-
-    float getCurrentDutyCycle(){
-        return currentDutyCycle.getCurrentValue();
-    }
-
-    void resetDutyCycle(){
-        currentDutyCycle.reset(baseDutyCycle);
-    }
-
-    void deltaDutyCycle(const float delta){
-        currentDutyCycle.setTargetValue(baseDutyCycle + delta);
-    }
-
-    void setSampleRate(float sampleRate) override{
-        triangleModulator.setSampleRate(sampleRate);
-        NaiveOscillator::setSampleRate(sampleRate);
-    }
-
-    LFO triangleModulator;
-
-protected:
-    const float lowerBound = 0.1f;
-    const float upperBound = 0.9999999f;
-    float baseDutyCycle = 0.5f; //between 0 and 1
-    SmoothedParameter currentDutyCycle;
-    std::shared_ptr<DeltaEnvelopeGenerator> mHarmonicsEnvelope;
-    //std::atomic<float> currentDutyCycle{0.5f};
-};
-
-// Oscillator with frequency controlled by a smoothed value, by a vibrato LFO, by pitch shift
-class DynamicOscillator : public PWMOsc{
-public:
-    DynamicOscillator(){
-        PWMOsc();
-    };
-    DynamicOscillator(std::shared_ptr<SmoothedFrequency> & smoothedFrequency, std::shared_ptr<LFO> & oscillator){
-        setSmoothedFreq(smoothedFrequency);
-        setLFO(oscillator);
-        PWMOsc();
-    }
-    ~DynamicOscillator() = default;
-
-    void setSmoothedFreq(std::shared_ptr<SmoothedFrequency> & smoothedFrequency){
-        mSmoothedFrequency = smoothedFrequency;
-    }
-
-    void setPitchShift(const float shift){
-        pitchShift.store(shift);
-    }
-
-    void setLFO(std::shared_ptr<LFO> & oscillator){
-        mLFO = oscillator;
-    }
-
-    void setPitchEnvelope(std::shared_ptr<PitchEnvelope> & pitchEnvelope){
-        mPitchEnvelope = pitchEnvelope;
-    }
-
-    void updateFreq(){
-        //CAREFUL, breaks sound
-        //LOGD("Oscillators::updateFreq: current smoothed freq: %f", mSmoothedFrequency->getCurrentValue());
-        setFrequency(
-                mSmoothedFrequency->smoothed()
-              + mLFO->getNextSample()
-              + pitchShift
-              + mPitchEnvelope->getNextSample() // goes from a delta to freq to a delta
-        );
-    }
-
-    float getNextSample() override{
-        updateFreq();
-        return NaiveOscillator::getNextSample();
-    }
-
-private:
-    std::shared_ptr<SmoothedFrequency> mSmoothedFrequency;
-    std::shared_ptr<LFO> mLFO;
-    std::shared_ptr<PitchEnvelope> mPitchEnvelope;
-    std::atomic<float> pitchShift {0.0f};
-};
-*/
 
 class ModulatedSignal : public SampleGenerator{
 public:

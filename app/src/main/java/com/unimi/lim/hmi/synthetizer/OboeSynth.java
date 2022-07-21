@@ -185,7 +185,7 @@ public class OboeSynth implements Synthesizer {
         //set harmonics envelope
         Timbre.Asr harmonicsEnvelope = timbre.getHarmonicsAsr();
         if(harmonicsEnvelope != null){
-            setHarmonicsAdsr(mEngineHandle, harmonicsEnvelope.getAttackTime(), harmonicsEnvelope.getInitialValue(), harmonicsEnvelope.getReleaseTime(), harmonicsEnvelope.getFinalValue());
+            setHarmonicsAdsr(mEngineHandle, harmonicsEnvelope.getAttackTime(), harmonicsEnvelope.getInitialValue()/200-harmonics, harmonicsEnvelope.getReleaseTime(), harmonicsEnvelope.getFinalValue()/200-harmonics);
         } else {
             setHarmonicsAdsr(mEngineHandle, 0, 0, 0, 0);
         }

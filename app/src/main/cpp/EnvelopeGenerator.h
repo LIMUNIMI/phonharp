@@ -85,7 +85,7 @@ public:
         currentStage = stage;
         switch (stage) {
             case ENVELOPE_STAGE_OFF:
-                setStaticLevel(attackLevel);
+                setStaticLevel(releaseLevel);
                 break;
             case ENVELOPE_STAGE_ATTACK:
                 setStaticLevel(attackLevel);

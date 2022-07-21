@@ -59,7 +59,14 @@ private:
 
     //Oscillator stuff
     DutyCycleOsc* oscillator;
+
+    //Harmonics stuff
     EnvelopeGenerator* harmoncisEnvelope;
+    StaticSignal* harmonicsBaseLevel; //between 0.0 and 0.5
+    SmoothedParameter* harmonicsShift;
+    NaiveOscillator* pwmOsc;
+    ModulatedSignal* scaledPwmOsc;
+    Mix* harmMix;
 
     //Frequency stuff
     SmoothedFrequency* smoothedFrequency;
