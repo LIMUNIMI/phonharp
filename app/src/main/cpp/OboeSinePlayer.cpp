@@ -4,7 +4,15 @@
 int32_t OboeSinePlayer::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
-    ampMul = new SmoothedAmpParameter();
+    oscillator = new DutyCycleOsc();
+    oscillator->id = 21;
+    oscillator->setSampleRate(kSampleRate);
+    oscillator->setWaveType(0); //TODO: remove
+
+    harmoncisEnvelope = new EnvelopeGenerator();
+    //oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
+
+
     smoothedFrequency = new SmoothedFrequency(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
     smoothedFrequency->setSmoothingType(false);
@@ -19,26 +27,29 @@ int32_t OboeSinePlayer::initEngine(){
     pitchShift = new SmoothedParameter();
     pitchShift->setSecondsToTarget(0.1f);
 
-    oscillator = new DutyCycleOsc();
-    oscillator->id = 21;
-    oscillator->setSampleRate(kSampleRate);
-    oscillator->setWaveType(0); //TODO: remove
-
     freqMix = new Mix();
+    //Initialize ModulatedSignal here if you want to change the scaling later. If not, use AddSignal with two parameters and be happy with a static value
     scaledVibrato = new ModulatedSignal(vibratoLFO, 0.2f); //mod amount controlled in settings and real time
     freqMix->addSignal(smoothedFrequency, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(scaledVibrato);
     freqMix->addSignal(pitchEnvelope, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(pitchShift, 3.0f);
 
+
+
     tremoloLFO = new NaiveOscillator();
     tremoloLFO->id = 3;
     tremoloLFO->setSampleRate(kSampleRate);
 
+    ampMul = new SmoothedAmpParameter();
+
     volumeEnvelope = new EnvelopeGenerator();
 
-    harmoncisEnvelope = new EnvelopeGenerator();
-    //oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
+    ampMix = new Mix();
+    ampMix->addSignal(ampMul, 1.0f); //Static scaling is okay
+    scaledTremolo = new ModulatedSignal(tremoloLFO, 0.2f);
+    ampMix->addSignal(scaledTremolo);
+    ampMix->addSignal(volumeEnvelope, 1.0f);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.

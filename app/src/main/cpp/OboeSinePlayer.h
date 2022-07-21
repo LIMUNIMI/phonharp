@@ -57,19 +57,23 @@ private:
 
     std::atomic<float> kFrequency;
 
+    //Oscillator stuff
     DutyCycleOsc* oscillator;
-    SmoothedFrequency* smoothedFrequency;
+    EnvelopeGenerator* harmoncisEnvelope;
 
+    //Frequency stuff
+    SmoothedFrequency* smoothedFrequency;
+    SmoothedParameter* pitchShift; //can be a StaticSignal too, but it was choppy.
     NaiveOscillator* vibratoLFO;
     ModulatedSignal* scaledVibrato;
-
     EnvelopeGenerator* pitchEnvelope;
-    NaiveOscillator* tremoloLFO;
-    SmoothedAmpParameter* ampMul;
-    EnvelopeGenerator* volumeEnvelope;
-    EnvelopeGenerator* harmoncisEnvelope;
-    Mix* freqMix;
+    Mix* freqMix; //Mix is in semitones
 
-    SmoothedParameter* pitchShift; //can be a StaticSignal too, but it was choppy.
+    //Amp stuff
+    NaiveOscillator* tremoloLFO;
+    ModulatedSignal* scaledTremolo;
+    SmoothedAmpParameter* ampMul; //controlled by volume shift with fingers or accellerometer
+    EnvelopeGenerator* volumeEnvelope;
+    Mix* ampMix;
 };
 #endif //HMI_OBOESINEPLAYER_H
