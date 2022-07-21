@@ -56,6 +56,18 @@ private:
 
     static float constexpr kAmplitude = 1.0f;
 
+    static float constexpr kHarmonicsBaseLevelScale = 0.5f;
+    static float constexpr kHarmonicsShiftSmoothingTime = 0.1f;
+    static float constexpr kPwmScaling = 0.1f;
+    static float constexpr kPitchShiftSmoothingTime = 0.1f;
+    static float constexpr kPitchShiftScaling = 3.0f;
+    static float constexpr kVibratoScaling = 0.5f;
+    static float constexpr kAmpControlSmoothingTime = 0.1f;
+    static float constexpr kTremoloScaling = 0.5f;
+    static float constexpr kLowShelfFreq = 10.0f;
+    static float constexpr kHighShelfFreq = 10000.0f;
+    static float constexpr kShelfQ = 1.0f;
+
     std::atomic<float> kFrequency;
 
     //Oscillator stuff

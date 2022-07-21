@@ -14,17 +14,17 @@ int32_t OboeSinePlayer::initEngine(){
     pwmOsc->setSampleRate(kSampleRate);
 
     harmonicsBaseLevel = new StaticSignal();
-    harmonicsBaseLevel->setValue(0.5f);
+    harmonicsBaseLevel->setValue(kHarmonicsBaseLevelScale);
 
     harmonicsEnvelope = new EnvelopeGenerator();
     harmonicsEnvelope->setSampleRate(kSampleRate);
     harmonicsEnvelope->id = 56;
 
     harmonicsShift = new SmoothedParameter();
-    harmonicsShift->setSecondsToTarget(0.1f);
+    harmonicsShift->setSecondsToTarget(kHarmonicsShiftSmoothingTime);
     harmonicsShift->setSampleRate(kSampleRate);
 
-    scaledPwmOsc = new ModulatedSignal(pwmOsc, 0.1f);
+    scaledPwmOsc = new ModulatedSignal(pwmOsc, kPwmScaling);
     harmMix = new Mix();
     harmMix->addSignal(scaledPwmOsc, 1.0f);
     harmMix->addSignal(harmonicsBaseLevel, 1.0f);
@@ -45,15 +45,15 @@ int32_t OboeSinePlayer::initEngine(){
 
     pitchShift = new SmoothedParameter();
     pitchShift->setSampleRate(kSampleRate);
-    pitchShift->setSecondsToTarget(0.1f);
+    pitchShift->setSecondsToTarget(kPitchShiftSmoothingTime);
 
     freqMix = new Mix();
     //Initialize ModulatedSignal here if you want to change the scaling later. If not, use AddSignal with two parameters and be happy with a static value
-    scaledVibrato = new ModulatedSignal(vibratoLFO, 0.5f); //mod amount controlled in settings and real time
+    scaledVibrato = new ModulatedSignal(vibratoLFO, kVibratoScaling); //mod amount controlled in settings and real time
     freqMix->addSignal(smoothedFrequency, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(scaledVibrato);
     freqMix->addSignal(pitchEnvelope, 1); //Already in semitones, doesn't need to be scaled
-    freqMix->addSignal(pitchShift, 3.0f);
+    freqMix->addSignal(pitchShift, kPitchShiftScaling);
 
 
 
@@ -63,7 +63,7 @@ int32_t OboeSinePlayer::initEngine(){
 
     ampMul = new SmoothedAmpParameter();
     ampMul->setSampleRate(kSampleRate);
-    ampMul->setSecondsToTarget(0.1f);
+    ampMul->setSecondsToTarget(kAmpControlSmoothingTime);
 
     volumeEnvelope = new EnvelopeGenerator(); //TODO: clipping after two notes. Consider adding smoothing
     volumeEnvelope->setSampleRate(kSampleRate);
@@ -75,7 +75,7 @@ int32_t OboeSinePlayer::initEngine(){
     ampMix = new Mix();
     ampMix->setMixMode(Mix::Mul);
     ampMix->addSignal(static1, 1.0f); //Static scaling is okay
-    scaledTremolo = new ModulatedSignal(tremoloLFO, 0.5f);
+    scaledTremolo = new ModulatedSignal(tremoloLFO, kTremoloScaling);
     scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
     scaledVolumeEnvelope = new ModulatedSignal(volumeEnvelope, 1.0f);
@@ -84,10 +84,10 @@ int32_t OboeSinePlayer::initEngine(){
 
     lowShelf = new Shelf();
     lowShelf->setSampleRate(kSampleRate);
-    lowShelf->configure(200, 1, 0);
+    lowShelf->configure(kLowShelfFreq, kShelfQ, 0);
     highShelf = new Shelf();
     highShelf->setSampleRate(kSampleRate);
-    highShelf->configure(4000, 1, 0);
+    highShelf->configure(kHighShelfFreq, kShelfQ, 0);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -324,8 +324,8 @@ void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float re
 }
 
 void OboeSinePlayer::setEq(float highGain, float lowGain) {
-    lowShelf->configure(10, 1, lowGain);
-    lowShelf->configure(10000, 1, -highGain);
+    lowShelf->configure(kLowShelfFreq, kShelfQ, lowGain);
+    lowShelf->configure(kHighShelfFreq, kShelfQ, -highGain);
 }
 
 void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
