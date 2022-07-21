@@ -82,6 +82,12 @@ int32_t OboeSinePlayer::initEngine(){
     scaledVolumeEnvelope->setBaseOffset(1.0f);
     ampMix->addSignal(scaledVolumeEnvelope);
 
+    lowShelf = new Shelf();
+    lowShelf->setSampleRate(kSampleRate);
+    lowShelf->configure(200, 1, 0);
+    highShelf = new Shelf();
+    highShelf->setSampleRate(kSampleRate);
+    highShelf->configure(4000, 1, 0);
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -141,7 +147,12 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             //LOGD("onAudioReady: set frequency from freqMix");
 
             float osc = oscillator->getNextSample();
-            //LOGD("onAudioReady: got sample from osc");
+            //LOGD("onAudioReady: got sample from osc %f", osc);
+
+            osc = lowShelf->getFilteredSample(osc);
+            osc = highShelf->getFilteredSample(osc);
+            //LOGD("onAudioReady: filtered sample from osc %f", osc);
+
             float volumeMix = ampMix->getNextSample() * 2;//ampMul->getNextSample();
             //LOGD("onAudioReady: got volume mix %f", volumeMix);
             //volumeMix = volumeMix <= 0.0000001f ? 0.0000001f : volumeMix;
@@ -313,7 +324,8 @@ void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float re
 }
 
 void OboeSinePlayer::setEq(float highGain, float lowGain) {
-    //TODO: scrivere filtri.
+    lowShelf->configure(10, 1, lowGain);
+    lowShelf->configure(10000, 1, -highGain);
 }
 
 void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,

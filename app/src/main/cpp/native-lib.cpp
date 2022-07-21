@@ -144,7 +144,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlHarmonics(JNIEnv *env, jobje
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
         engine->controlHarmonics(delta);
-        //TODO: control harmonics delta function, look for values passed, should be an envelope
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }
@@ -181,8 +180,7 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setEQ(JNIEnv *env, jobject thiz,
                                                            jlong engine_handle, jfloat lowDb, jfloat highDb) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //TODO: eq function and settings
-        //engine->setEQ(lowDb, highDb);
+        engine->setEq(lowDb, highDb);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }

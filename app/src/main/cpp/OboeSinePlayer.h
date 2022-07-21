@@ -8,6 +8,7 @@
 #include "SmoothedFrequency.h"
 #include "Oscillators.h"
 #include "EnvelopeGenerator.h"
+#include "Filters.h"
 
 using namespace oboe;
 
@@ -83,5 +84,9 @@ private:
     EnvelopeGenerator* volumeEnvelope;
     ModulatedSignal* scaledVolumeEnvelope;
     Mix* ampMix;
+
+    //Eq stuff
+    Shelf* lowShelf;
+    Shelf* highShelf;
 };
 #endif //HMI_OBOESINEPLAYER_H
