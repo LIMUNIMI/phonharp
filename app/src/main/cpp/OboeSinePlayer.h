@@ -62,7 +62,7 @@ private:
     DutyCycleOsc* oscillator;
 
     //Harmonics stuff
-    EnvelopeGenerator* harmoncisEnvelope;
+    EnvelopeGenerator* harmonicsEnvelope;
     StaticSignal* harmonicsBaseLevel; //between 0.0 and 0.5
     SmoothedParameter* harmonicsShift;
     NaiveOscillator* pwmOsc;
