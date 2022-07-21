@@ -38,7 +38,7 @@ public:
 
     float convertFreqToSemitones(const float freq){
         //16.35 è C0
-        LOGD("SmoothedFrequency: freq %f to semitons %f", freq,  12.0f * log2f(freq / 16.35f) );
+        //LOGD("SmoothedFrequency: freq %f to semitons %f", freq,  12.0f * log2f(freq / 16.35f) );
         return 12.0f * log2f(freq / 16.35f);
     }
 

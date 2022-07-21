@@ -4,7 +4,6 @@
 #include <math.h>
 #include "SmoothedFrequency.h"
 #include "SampleGenerator.h"
-#include "PitchEnvelope.h"
 #include <list>
 
 class NaiveOscillator : public SampleGenerator{

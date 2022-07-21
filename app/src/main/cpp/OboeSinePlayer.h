@@ -7,7 +7,7 @@
 #include "SmoothedAmpParameter.h"
 #include "SmoothedFrequency.h"
 #include "Oscillators.h"
-#include "PitchEnvelope.h"
+#include "EnvelopeGenerator.h"
 
 using namespace oboe;
 
@@ -66,8 +66,10 @@ private:
     EnvelopeGenerator* pitchEnvelope;
     NaiveOscillator* tremoloLFO;
     SmoothedAmpParameter* ampMul;
-    DeltaEnvelopeGenerator* volumeEnvelope;
-    DeltaEnvelopeGenerator* harmoncisEnvelope;
+    EnvelopeGenerator* volumeEnvelope;
+    EnvelopeGenerator* harmoncisEnvelope;
     Mix* freqMix;
+
+    SmoothedParameter* pitchShift; //can be a StaticSignal too, but it was choppy.
 };
 #endif //HMI_OBOESINEPLAYER_H

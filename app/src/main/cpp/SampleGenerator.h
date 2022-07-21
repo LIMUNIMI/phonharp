@@ -20,5 +20,24 @@ protected:
     int32_t mSampleRate = kDefaultSampleRate;
 };
 
+class StaticSignal : public SampleGenerator{
+public:
+    virtual float getNextSample() override {
+        return value;
+    };
+
+    void setValue(float val){
+        LOGD("StaticSignal: setting sample %f", val);
+        value.store(val);
+    }
+
+    void reset(){
+        value.store(0.0f);
+    }
+
+protected:
+    std::atomic<float> value{0.0f};
+};
+
 
 #endif //HMI_SAMPLEGENERATOR_H

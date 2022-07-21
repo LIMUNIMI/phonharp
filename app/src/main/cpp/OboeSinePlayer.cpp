@@ -16,6 +16,9 @@ int32_t OboeSinePlayer::initEngine(){
 
     pitchEnvelope = new EnvelopeGenerator();
 
+    pitchShift = new SmoothedParameter();
+    pitchShift->setSecondsToTarget(0.1f);
+
     oscillator = new DutyCycleOsc();
     oscillator->id = 21;
     oscillator->setSampleRate(kSampleRate);
@@ -26,14 +29,15 @@ int32_t OboeSinePlayer::initEngine(){
     freqMix->addSignal(smoothedFrequency, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(scaledVibrato);
     freqMix->addSignal(pitchEnvelope, 1); //Already in semitones, doesn't need to be scaled
+    freqMix->addSignal(pitchShift, 3.0f);
 
     tremoloLFO = new NaiveOscillator();
     tremoloLFO->id = 3;
     tremoloLFO->setSampleRate(kSampleRate);
 
-    volumeEnvelope = new DeltaEnvelopeGenerator();
+    volumeEnvelope = new EnvelopeGenerator();
 
-    harmoncisEnvelope = new DeltaEnvelopeGenerator();
+    harmoncisEnvelope = new EnvelopeGenerator();
     //oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
 
     oboe::AudioStreamBuilder builder;
@@ -175,6 +179,8 @@ void OboeSinePlayer::closeEngine() {
 void OboeSinePlayer::controlPitch(float deltaPitch) {
     //pitchBendDelta = deltaPitch*4;
     //oscillator->setPitchShift(log2lin(deltaPitch, kFrequency));
+
+    pitchShift->setTargetValue(deltaPitch);
 }
 
 void OboeSinePlayer::controlReset() {
@@ -182,6 +188,7 @@ void OboeSinePlayer::controlReset() {
     //oscillator->setPitchShift(0);
     scaledVibrato->reset();
     smoothedFrequency->reset(kFrequency);
+    pitchShift->reset(0.0f);
     //oscillator->resetDutyCycle();
     //oscillator->triangleModulator.resetDepth();
 }
@@ -254,8 +261,7 @@ void OboeSinePlayer::controlHarmonics(float delta) {
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
                                    float releaseDelta) {
     volumeEnvelope->setStageTimes(attackTime, releaseTime);
-    volumeEnvelope->setAttackDelta(attackDelta);
-    volumeEnvelope->setReleaseDelta(releaseDelta);
+    volumeEnvelope->setStageLevels(attackDelta, 1, releaseDelta);
 }
 
 void OboeSinePlayer::setEq(float highGain, float lowGain) {
@@ -265,6 +271,5 @@ void OboeSinePlayer::setEq(float highGain, float lowGain) {
 void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
                                       float releaseDelta) {
     harmoncisEnvelope->setStageTimes(attackTime, releaseTime);
-    harmoncisEnvelope->setAttackDelta(attackDelta);
-    harmoncisEnvelope->setReleaseDelta(releaseDelta);
+    volumeEnvelope->setStageLevels(attackDelta, 0, releaseDelta);
 }
