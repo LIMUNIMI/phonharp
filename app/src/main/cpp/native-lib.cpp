@@ -71,7 +71,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOff(JNIEnv *env, jobject thiz,
                                                          jlong engine_handle/*, jint noteIndex */) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->noteOff(noteIndex);
         engine->stopAudio();
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
@@ -84,7 +83,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_noteOn(JNIEnv *env, jobject thiz,
                                                     jfloat freq/*jint noteIndex */) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->noteOn(noteIndex);
         engine->startAudio(freq);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
@@ -145,7 +143,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlHarmonics(JNIEnv *env, jobje
                                                               jfloat delta) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //harmonics goes from -1 to +1
         engine->controlHarmonics(delta);
         //TODO: control harmonics delta function, look for values passed, should be an envelope
     } else {
@@ -172,7 +169,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_controlPWM(JNIEnv *env, jobject thi
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
         engine->controlPWM(delta);
-        //TODO: control PWM function with delta, look for values passed
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
     }
@@ -197,7 +193,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPortamento(JNIEnv *env, jobject 
                                                               jlong engine_handle, jfloat seconds) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->noteOn(noteIndex);
         engine->setPortamento(seconds);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");
@@ -209,7 +204,6 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setVibrato(JNIEnv *env, jobject thi
                                                            jlong engine_handle, jfloat frequency, jfloat depth) {
     auto *engine = reinterpret_cast<OboeSinePlayer*>(engine_handle);
     if (engine) {
-        //engine->noteOn(noteIndex);
         engine->setVibrato(frequency, depth);
     } else {
         LOGE("Engine handle is invalid, call createEngine() to create a new one");

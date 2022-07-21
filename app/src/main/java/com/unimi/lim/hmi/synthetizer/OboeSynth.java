@@ -221,21 +221,25 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlHarmonics(float delta) {
-        controlHarmonics(mEngineHandle, delta);
+        Log.d(TAG, "controlHarmonics: " + delta);
+        controlHarmonics(mEngineHandle, delta/200);
     }
 
     @Override
     public void controlTremoloDepth(float delta) {
-        controlTremolo(mEngineHandle, delta);
+        Log.d(TAG, "controlTremoloDepth: " + delta);
+        controlTremolo(mEngineHandle, delta/100);
     }
 
     @Override
     public void controlVibratoDepth(float delta) {
-        controlVibrato(mEngineHandle, delta);
+        Log.d(TAG, "controlVibratoDepth: " + delta);
+        controlVibrato(mEngineHandle, delta/100);
     }
 
     @Override
     public void controlPwmDepth(float delta) {
+        Log.d(TAG, "controlPwmDepth: " + delta);
         controlPWM(mEngineHandle, delta);
     }
 }

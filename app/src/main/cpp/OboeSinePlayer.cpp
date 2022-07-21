@@ -24,7 +24,7 @@ int32_t OboeSinePlayer::initEngine(){
     harmonicsShift->setSecondsToTarget(0.1f);
     harmonicsShift->setSampleRate(kSampleRate);
 
-    scaledPwmOsc = new ModulatedSignal(pwmOsc, 0.5f);
+    scaledPwmOsc = new ModulatedSignal(pwmOsc, 0.1f);
     harmMix = new Mix();
     harmMix->addSignal(scaledPwmOsc, 1.0f);
     harmMix->addSignal(harmonicsBaseLevel, 1.0f);
@@ -49,7 +49,7 @@ int32_t OboeSinePlayer::initEngine(){
 
     freqMix = new Mix();
     //Initialize ModulatedSignal here if you want to change the scaling later. If not, use AddSignal with two parameters and be happy with a static value
-    scaledVibrato = new ModulatedSignal(vibratoLFO, 1.0f); //mod amount controlled in settings and real time
+    scaledVibrato = new ModulatedSignal(vibratoLFO, 0.5f); //mod amount controlled in settings and real time
     freqMix->addSignal(smoothedFrequency, 1); //Already in semitones, doesn't need to be scaled
     freqMix->addSignal(scaledVibrato);
     freqMix->addSignal(pitchEnvelope, 1); //Already in semitones, doesn't need to be scaled
@@ -75,7 +75,7 @@ int32_t OboeSinePlayer::initEngine(){
     ampMix = new Mix();
     ampMix->setMixMode(Mix::Mul);
     ampMix->addSignal(static1, 1.0f); //Static scaling is okay
-    scaledTremolo = new ModulatedSignal(tremoloLFO, 1.0f);
+    scaledTremolo = new ModulatedSignal(tremoloLFO, 0.5f);
     scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
     scaledVolumeEnvelope = new ModulatedSignal(volumeEnvelope, 1.0f);
