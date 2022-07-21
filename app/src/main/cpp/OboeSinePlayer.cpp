@@ -10,13 +10,16 @@ int32_t OboeSinePlayer::initEngine(){
     smoothedFrequency->setSmoothingType(false);
 
     vibratoLFO = new NaiveOscillator();
+    vibratoLFO->id = 12;
     vibratoLFO->setSampleRate(kSampleRate);
     vibratoLFO->setFrequency(5.0f);
+
     pitchEnvelope = new PitchEnvelope();
 
     oscillator = new DutyCycleOsc();
+    oscillator->id = 21;
     oscillator->setSampleRate(kSampleRate);
-    oscillator->setWaveType(0); //TODO: remove
+    oscillator->setWaveType(1); //TODO: remove
 
     freqMix = new Mix();
     scaledVibrato = new ModulatedSignal(vibratoLFO, 0.2f);
@@ -25,6 +28,7 @@ int32_t OboeSinePlayer::initEngine(){
     //freqMix->addSignal(spPitchEnvelope, 1);
 
     tremoloLFO = new NaiveOscillator();
+    tremoloLFO->id = 3;
     tremoloLFO->setSampleRate(kSampleRate);
 
     volumeEnvelope = new DeltaEnvelopeGenerator();
@@ -81,7 +85,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
         } else {
             //LOGD("onAudioReady: started making sample");
             float freq = log2lin(freqMix->getNextSample(), 16.35f);
-            LOGD("onAudioReady: got frequency from freqMix %f", freq);
+            //LOGD("onAudioReady: got frequency from freqMix %f", freq);
             oscillator->setFrequency(freq);
             //LOGD("onAudioReady: set frequency from freqMix");
             float osc = oscillator->getNextSample();

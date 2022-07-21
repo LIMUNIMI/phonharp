@@ -14,6 +14,7 @@ public:
 
     void setFrequency(const double frequency) {
         mFrequency = frequency;
+        LOGD("NaiveOscillator: setting freq %f", frequency);
         updatePhaseIncrement();
     };
 
@@ -23,6 +24,7 @@ public:
     };
 
     virtual float getSineWaveSample(){
+        //LOGD("NaiveOscillator: id %d, returning a sample %f, mAmp %f, mPhase %f, sinPhase %f, phaseInc %f", id, mAmplitude * sinf(mPhase * kTwoPi), mAmplitude.load(), mPhase, sinf(mPhase * kTwoPi), mPhaseIncrement.load());
         return mAmplitude * sinf(mPhase * kTwoPi);
     }
 
@@ -69,6 +71,8 @@ public:
         updatePhaseIncrement();
     }
 
+    int id = 0;
+
 protected:
     enum Waves {Sine = 0, Triangular = 1, Square = 2};
 
@@ -88,7 +92,9 @@ protected:
     float ret = 0.0f;
 
     void updatePhaseIncrement() {
+        //LOGD("NaiveOscillator: id %d, setting phase inc %f", id, mFrequency/mSampleRate);
         mPhaseIncrement.store(mFrequency / mSampleRate);
+        //LOGD("NaiveOscillator: phase inc is %f", mPhaseIncrement.load());
     };
 };
 
@@ -240,7 +246,12 @@ public:
     }
 
     virtual float getNextSample() override {
-        return (modAmount+mDelta) * mSignal->getNextSample();
+        //float sample = mSignal->getNextSample() * (modAmount+mDelta);
+        return mSignal->getNextSample() * (modAmount+mDelta);
+        //LOGD("ModulatedSignal: sample from signal is %f", sample);
+        //sample = sample * (modAmount+mDelta);
+        //LOGD("ModulatedSignal: sample scaled is %f", sample);
+        //return sample;
     }
 
     void setModAmount(const float amount){
@@ -283,11 +294,11 @@ public:
         ret = 0.0f;
         //LOGD("Mix: getting sample");
         for(itr = signals.begin(); itr != signals.end(); ++itr){
-            LOGD("Mix: cycling sources");
+            //LOGD("Mix: cycling sources");
             ret += (*itr)->getNextSample();
-            LOGD("Mix: mix from sources %f", ret);
+            //LOGD("Mix: mix from sources %f", ret);
         }
-
+        //LOGD("Mix: mix from sources %f", ret);
         return ret;
     }
 
