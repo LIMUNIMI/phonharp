@@ -13,7 +13,7 @@ public:
 
     void setFrequency(const double frequency) {
         mFrequency = frequency;
-        LOGD("NaiveOscillator: setting freq %f", frequency);
+        //LOGD("NaiveOscillator: setting freq %f", frequency);
         updatePhaseIncrement();
     };
 
@@ -69,8 +69,6 @@ public:
         mSampleRate = sampleRate;
         updatePhaseIncrement();
     }
-
-    int id = 0;
 
 protected:
     enum Waves {Sine = 0, Triangular = 1, Square = 2};
@@ -245,12 +243,12 @@ public:
     }
 
     virtual float getNextSample() override {
-        //float sample = mSignal->getNextSample() * (modAmount+mDelta);
-        return mSignal->getNextSample() * (modAmount+mDelta);
+        float sample = baseOffset + (mSignal->getNextSample() * (modAmount+mDelta));
+        //return baseOffset + (mSignal->getNextSample() * (modAmount+mDelta));
         //LOGD("ModulatedSignal: sample from signal is %f", sample);
         //sample = sample * (modAmount+mDelta);
         //LOGD("ModulatedSignal: sample scaled is %f", sample);
-        //return sample;
+        return sample;
     }
 
     void setModAmount(const float amount){
@@ -269,14 +267,21 @@ public:
         mDelta.store(delta);
     }
 
+    void setBaseOffset(const float value){
+        baseOffset.store(value);
+    }
+
 protected:
     SampleGenerator* mSignal;
     std::atomic<float> modAmount{1.0f};
     std::atomic<float> mDelta{0.0f};
+    std::atomic<float> baseOffset{0.0f};
 };
 
 class Mix : public SampleGenerator{
 public:
+    enum MixMode {Sum = 0, Mul = 1};
+
     Mix(){
 
     }
@@ -290,20 +295,41 @@ public:
     }
 
     float getNextSample() override {
-        ret = 0.0f;
+        switch (mode) {
+            case MixMode::Mul:
+                ret = 1.0f;
+                break;
+            case MixMode::Sum:
+                ret = 0.0f;
+                break;
+        }
+
         //LOGD("Mix: getting sample");
         for(itr = signals.begin(); itr != signals.end(); ++itr){
             //LOGD("Mix: cycling sources");
-            ret += (*itr)->getNextSample();
+            switch (mode) {
+                case MixMode::Mul:
+                    ret *= (*itr)->getNextSample();
+                    break;
+                case MixMode::Sum:
+                    ret += (*itr)->getNextSample();
+                    break;
+            }
             //LOGD("Mix: mix from sources %f", ret);
         }
         //LOGD("Mix: mix from sources %f", ret);
         return ret;
     }
 
+    void setMixMode(MixMode type){
+        mode = type;
+    }
+
 protected:
     std::list<ModulatedSignal*> signals;
     std::list<ModulatedSignal*>::iterator itr;
+
+    MixMode mode = MixMode::Sum;
 
     float ret = 0.0f;
 };

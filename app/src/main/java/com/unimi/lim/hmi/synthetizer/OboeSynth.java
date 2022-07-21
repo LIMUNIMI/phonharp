@@ -177,7 +177,7 @@ public class OboeSynth implements Synthesizer {
         //set volume envelope
         Timbre.Asr volumeEnvelope = timbre.getVolumeAsr();
         if(volumeEnvelope != null){
-            setVolumeAdsr(mEngineHandle, volumeEnvelope.getAttackTime(), volumeEnvelope.getInitialValue(), volumeEnvelope.getReleaseTime(), volumeEnvelope.getFinalValue());
+            setVolumeAdsr(mEngineHandle, volumeEnvelope.getAttackTime(), 0, volumeEnvelope.getReleaseTime(), 0);
         } else {
             setVolumeAdsr(mEngineHandle, 0, 0, 0, 0);
         }

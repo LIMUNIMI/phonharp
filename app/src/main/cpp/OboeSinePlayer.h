@@ -74,6 +74,7 @@ private:
     ModulatedSignal* scaledTremolo;
     SmoothedAmpParameter* ampMul; //controlled by volume shift with fingers or accellerometer
     EnvelopeGenerator* volumeEnvelope;
+    ModulatedSignal* scaledVolumeEnvelope;
     Mix* ampMix;
 };
 #endif //HMI_OBOESINEPLAYER_H

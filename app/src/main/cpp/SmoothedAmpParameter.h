@@ -3,28 +3,19 @@
 
 #include "SmoothedParameter.h"
 
+/**
+ * Applies a lower bound
+ */
 class SmoothedAmpParameter : public SmoothedParameter {
 public:
-    SmoothedAmpParameter(const float seconds = 0.01, const float sampleRate = 48000): SmoothedParameter() {
-        setSampleRate(sampleRate);
-        setSecondsToTarget(seconds);
-    };
-
-    //TODO: rename function because it is no longer a delta of anything. Using absolutes now.
     void applyDeltaToTarget(float delta){
-        float val = delta*5.0f; //getCurrentValue()+
-        if(val >= 1) setTargetValue(1);
-        else if(val <= 0) setTargetValue(0);
-        else setTargetValue(val);
+        //TODO: use it in a way to apply a delta, to use with the fingers control. Would need a new interface.
     }
 
 
     float smoothed() override {
-        /*
-        setCurrentValue(getTargetValue());
-        return getCurrentValue();
-         */
-        return SmoothedParameter::smoothed();
+        float val = SmoothedParameter::smoothed();
+        return val <= 0.0000001f ? 0.0000001f : val;
     }
 };
 

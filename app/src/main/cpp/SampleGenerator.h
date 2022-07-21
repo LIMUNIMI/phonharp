@@ -14,6 +14,8 @@ public:
 
     virtual float getNextSample() = 0;
 
+    int id = 0;
+
 protected:
     static int32_t constexpr kDefaultSampleRate = 48000;
 

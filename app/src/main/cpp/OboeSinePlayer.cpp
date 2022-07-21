@@ -10,6 +10,7 @@ int32_t OboeSinePlayer::initEngine(){
     oscillator->setWaveType(0); //TODO: remove
 
     harmoncisEnvelope = new EnvelopeGenerator();
+    harmoncisEnvelope->setSampleRate(kSampleRate);
     //oscillator->setHarmonicsEnvelope(harmoncisEnvelope);
 
 
@@ -20,11 +21,12 @@ int32_t OboeSinePlayer::initEngine(){
     vibratoLFO = new NaiveOscillator();
     vibratoLFO->id = 12;
     vibratoLFO->setSampleRate(kSampleRate);
-    vibratoLFO->setFrequency(5.0f);
 
     pitchEnvelope = new EnvelopeGenerator();
+    pitchEnvelope->setSampleRate(kSampleRate);
 
     pitchShift = new SmoothedParameter();
+    pitchShift->setSampleRate(kSampleRate);
     pitchShift->setSecondsToTarget(0.1f);
 
     freqMix = new Mix();
@@ -42,14 +44,26 @@ int32_t OboeSinePlayer::initEngine(){
     tremoloLFO->setSampleRate(kSampleRate);
 
     ampMul = new SmoothedAmpParameter();
+    ampMul->setSampleRate(kSampleRate);
+    ampMul->setSecondsToTarget(0.1f);
 
     volumeEnvelope = new EnvelopeGenerator();
+    volumeEnvelope->setSampleRate(kSampleRate);
+    volumeEnvelope->id = 42;
+
+    //auto static1 = new StaticSignal();
+    //static1->setValue(1);
 
     ampMix = new Mix();
+    ampMix->setMixMode(Mix::Mul);
     ampMix->addSignal(ampMul, 1.0f); //Static scaling is okay
     scaledTremolo = new ModulatedSignal(tremoloLFO, 0.2f);
+    scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
-    ampMix->addSignal(volumeEnvelope, 1.0f);
+    scaledVolumeEnvelope = new ModulatedSignal(volumeEnvelope, 1.0f);
+    scaledVolumeEnvelope->setBaseOffset(1.0f);
+    ampMix->addSignal(scaledVolumeEnvelope);
+
 
     oboe::AudioStreamBuilder builder;
     // The builder set methods can be chained for convenience.
@@ -91,9 +105,11 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
 
         //(
                 pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
+                &&
+                volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
                 /*&&
                 harmoncisEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF) ||
-                volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
+
                  */
         ){
             for (int j = 0; j < kChannelCount; j++) {
@@ -107,15 +123,15 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
             //LOGD("onAudioReady: set frequency from freqMix");
             float osc = oscillator->getNextSample();
             //LOGD("onAudioReady: got sample from osc");
-            float volumeMix = ampMul->smoothed(); //+ volumeEnvelope->getNextSample() + tremoloLFO->getNextSample();
-            //LOGD("onAudioReady: got smoothed amp");
-            if(ampMul->getCurrentValue() <= 0.00001f){
-                //LOGD("controlAmpMul: ZERO");
-                volumeMix = 0.0f;
-            } //else {
-                //LOGD("controlAmpMul: mix %f", ampMul->getCurrentValue());
-            //}
-            float sampleValue = kAmplitude * osc * 50;// * volumeMix;
+            float volumeMix = ampMix->getNextSample();//ampMul->getNextSample();
+            //LOGD("onAudioReady: got volume mix %f", volumeMix);
+            //volumeMix = volumeMix <= 0.0000001f ? 0.0000001f : volumeMix;
+            //volumeMix = volumeMix * ampMix->getNextSample();
+
+            //LOGD("onAudioReady: capped volume mix %f", volumeMix);
+            //volumeMix = log10f(volumeMix/0.0000001f);
+            //LOGD("onAudioReady: DB volume mix %f", volumeMix);
+            float sampleValue = kAmplitude * osc * volumeMix;// * volumeMix;
             //LOGD("onAudioReady: sample %f", sampleValue);
             //TODO: applica i filtri
             for (int j = 0; j < kChannelCount; j++) {
@@ -140,7 +156,7 @@ int32_t OboeSinePlayer::startAudio(float freq) {
         smoothedFrequency->reset(freq);
         LOGD("startAudio: reset frequency");
         pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
-        //volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
         LOGD("startAudio: stored start playing TRUE");
@@ -150,12 +166,12 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
     pitchEnvelope->on();
-    //volumeEnvelope->onWithBaseValue(kAmplitude);
+    volumeEnvelope->on();
     //harmonicsEnvelope->
     //LOGD("startAudio: new Freq %d", isNewFreq);
     if(isNewFreq){
         pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
-        //volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
+        volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         //harmoncisEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
@@ -174,7 +190,10 @@ void OboeSinePlayer::setFrequency(float frequency) {
 
 void OboeSinePlayer::controlAmpMul(float deltaAmp){
     //LOGD("controlAmpMul: delta amp %f", deltaAmp);
-    ampMul->applyDeltaToTarget(deltaAmp);
+    //ampMul->applyDeltaToTarget(deltaAmp);
+    //AmpMul is being used as an absolute because in OboeSynth it takes the value from the gyro which is absolute.
+    //Consider doing something similar to the pitchShift if you want to use the fingers.
+    ampMul->setTargetValue(deltaAmp);
 }
 
 void OboeSinePlayer::closeEngine() {
@@ -188,9 +207,6 @@ void OboeSinePlayer::closeEngine() {
 }
 
 void OboeSinePlayer::controlPitch(float deltaPitch) {
-    //pitchBendDelta = deltaPitch*4;
-    //oscillator->setPitchShift(log2lin(deltaPitch, kFrequency));
-
     pitchShift->setTargetValue(deltaPitch);
 }
 
@@ -200,6 +216,7 @@ void OboeSinePlayer::controlReset() {
     scaledVibrato->reset();
     smoothedFrequency->reset(kFrequency);
     pitchShift->reset(0.0f);
+    scaledTremolo->reset();
     //oscillator->resetDutyCycle();
     //oscillator->triangleModulator.resetDepth();
 }
@@ -242,8 +259,8 @@ void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float rel
 }
 
 void OboeSinePlayer::setTremolo(float frequency, float depth) {
-    //tremoloLFO->setDepth(depth);
     tremoloLFO->setFrequency(frequency);
+    scaledVibrato->setModAmount(depth);
 }
 
 void OboeSinePlayer::setPWM(float frequency, float depth) {
@@ -256,8 +273,7 @@ void OboeSinePlayer::setHarmonics(float percent) {
 }
 
 void OboeSinePlayer::controlTremolo(float deltaDepth) {
-    //tremoloLFO->deltaDepth(deltaDepth);
-    //TODO: check for weird behavior
+    scaledTremolo->setModDelta(deltaDepth);
 }
 
 void OboeSinePlayer::controlPWM(float deltaDepth) {
@@ -272,7 +288,8 @@ void OboeSinePlayer::controlHarmonics(float delta) {
 void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
                                    float releaseDelta) {
     volumeEnvelope->setStageTimes(attackTime, releaseTime);
-    volumeEnvelope->setStageLevels(attackDelta, 1, releaseDelta);
+    LOGD("OboeSinePlayers: id 42, volume ASR levels: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
+    volumeEnvelope->setStageLevels(attackDelta-1.0f, 0, releaseDelta-1.0f); //gets scaled up
 }
 
 void OboeSinePlayer::setEq(float highGain, float lowGain) {
@@ -282,5 +299,5 @@ void OboeSinePlayer::setEq(float highGain, float lowGain) {
 void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
                                       float releaseDelta) {
     harmoncisEnvelope->setStageTimes(attackTime, releaseTime);
-    volumeEnvelope->setStageLevels(attackDelta, 0, releaseDelta);
+    //harmoncisEnvelope->setStageLevels(attackDelta, 0, releaseDelta);
 }

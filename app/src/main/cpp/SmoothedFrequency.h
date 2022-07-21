@@ -14,7 +14,7 @@ public:
 
     void setTargetFrequency(const float targetFreq){
         setTargetValue(convertFreqToSemitones(targetFreq));
-        LOGD("SmoothedFrequency::setTargetFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
+        //LOGD("SmoothedFrequency::setTargetFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
     }
 
     void reset(const float base) override{
