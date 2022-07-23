@@ -1,7 +1,7 @@
 #include <logging_macros.h>
-#include "OboeSinePlayer.h"
+#include "OboeSynthMain.h"
 
-int32_t OboeSinePlayer::initEngine(){
+int32_t OboeSynthMain::initEngine(){
     std::lock_guard <std::mutex> lock(mLock);
 
     oscillator = new DutyCycleOsc();
@@ -103,7 +103,7 @@ int32_t OboeSinePlayer::initEngine(){
     return (int32_t) result;
 }
 
-void OboeSinePlayer::stopAudio() {
+void OboeSynthMain::stopAudio() {
     std::lock_guard <std::mutex> lock(mLock);
     pitchEnvelope->off();
     volumeEnvelope->off();
@@ -111,7 +111,7 @@ void OboeSinePlayer::stopAudio() {
     //ADSR envelope off
 
     if (mStream && !isPlaying) {
-        LOGD("OboeSinePlayer:: STOPPED STREAM");
+        LOGD("OboeSynthMain:: STOPPED STREAM");
         mStream->stop();
     }
 
@@ -120,7 +120,7 @@ void OboeSinePlayer::stopAudio() {
 }
 
 oboe::DataCallbackResult
-OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
+OboeSynthMain::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
     //LOGD("onAudioReady: entered audio callback");
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
@@ -172,7 +172,7 @@ OboeSinePlayer::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int
     return oboe::DataCallbackResult::Continue;
 }
 
-int32_t OboeSinePlayer::startAudio(float freq) {
+int32_t OboeSynthMain::startAudio(float freq) {
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
 
@@ -212,13 +212,13 @@ int32_t OboeSinePlayer::startAudio(float freq) {
     return (int32_t) result;
 }
 
-void OboeSinePlayer::setFrequency(float frequency) {
+void OboeSynthMain::setFrequency(float frequency) {
     //TODO: consider removing
     smoothedFrequency->setTargetFrequency(frequency);
     kFrequency.store(frequency);
 }
 
-void OboeSinePlayer::controlAmpMul(float deltaAmp){
+void OboeSynthMain::controlAmpMul(float deltaAmp){
     //LOGD("controlAmpMul: delta amp %f", deltaAmp);
     //ampMul->applyDeltaToTarget(deltaAmp);
     //AmpMul is being used as an absolute because in OboeSynth it takes the value from the gyro which is absolute.
@@ -226,7 +226,7 @@ void OboeSinePlayer::controlAmpMul(float deltaAmp){
     ampMul->setTargetValue(deltaAmp);
 }
 
-void OboeSinePlayer::closeEngine() {
+void OboeSynthMain::closeEngine() {
     // Stop, close and delete in case not already closed.
     std::lock_guard <std::mutex> lock(mLock);
     if (mStream) {
@@ -236,11 +236,11 @@ void OboeSinePlayer::closeEngine() {
     }
 }
 
-void OboeSinePlayer::controlPitch(float deltaPitch) {
+void OboeSynthMain::controlPitch(float deltaPitch) {
     pitchShift->setTargetValue(deltaPitch);
 }
 
-void OboeSinePlayer::controlReset() {
+void OboeSynthMain::controlReset() {
     LOGD("=============CONTROL RESET=============");
     //oscillator->setPitchShift(0);
     scaledVibrato->reset();
@@ -252,18 +252,18 @@ void OboeSinePlayer::controlReset() {
     harmonicsShift->reset(0.0f);
 }
 
-void OboeSinePlayer::setPortamento(float seconds) {
+void OboeSynthMain::setPortamento(float seconds) {
     smoothedFrequency->setPortamento(seconds);
 }
 
-OboeSinePlayer::~OboeSinePlayer() {
+OboeSynthMain::~OboeSynthMain() {
     if (mStream) {
         LOGE("OboeSynth destructed without closing stream. Resource leak.");
         closeEngine();
     }
 }
 
-float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
+float OboeSynthMain::log2lin(float semitonesDelta, float baseFreq) {
     //TODO: optimize, maybe remove (it's in the PitchEnvelope
     //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
     //return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
@@ -272,64 +272,64 @@ float OboeSinePlayer::log2lin(float semitonesDelta, float baseFreq) {
     return expf(semitonesDelta * (logf(2)/12) ) * baseFreq;
 }
 
-void OboeSinePlayer::setVibrato(float frequency, float depth) {
+void OboeSynthMain::setVibrato(float frequency, float depth) {
     //LOGD("Vibratofreq: %f", frequency);
     vibratoLFO->setFrequency(frequency);
     scaledVibrato->setModAmount(depth);
     //vibratoLFO->setDepth(depth);
 }
 
-void OboeSinePlayer::controlVibrato(float deltaDepth) {
+void OboeSynthMain::controlVibrato(float deltaDepth) {
    scaledVibrato->setModDelta(deltaDepth);
 }
 
-void OboeSinePlayer::setPitchAdsr(float attackTime, float attackDelta, float releaseTime,
-                                  float releaseDelta) {
+void OboeSynthMain::setPitchAdsr(float attackTime, float attackDelta, float releaseTime,
+                                 float releaseDelta) {
     pitchEnvelope->setStageTimes(attackTime, releaseTime);
     pitchEnvelope->setStageLevels(attackDelta, 0.0f, releaseDelta);
 }
 
-void OboeSinePlayer::setTremolo(float frequency, float depth) {
+void OboeSynthMain::setTremolo(float frequency, float depth) {
     tremoloLFO->setFrequency(frequency);
-    //LOGD("OboeSinePlayer: setting tremolo depth %f", depth);
+    //LOGD("OboeSynthMain: setting tremolo depth %f", depth);
     scaledVibrato->setModAmount(depth);
 }
 
-void OboeSinePlayer::setPWM(float frequency, float depth) {
+void OboeSynthMain::setPWM(float frequency, float depth) {
     pwmOsc->setFrequency(frequency);
     scaledPwmOsc->setModDelta(depth);
 }
 
-void OboeSinePlayer::setHarmonics(float percent) {
+void OboeSynthMain::setHarmonics(float percent) {
     harmonicsBaseLevel->setValue(percent);
 }
 
-void OboeSinePlayer::controlTremolo(float deltaDepth) {
+void OboeSynthMain::controlTremolo(float deltaDepth) {
     scaledTremolo->setModDelta(deltaDepth);
 }
 
-void OboeSinePlayer::controlPWM(float deltaDepth) {
+void OboeSynthMain::controlPWM(float deltaDepth) {
     //oscillator->triangleModulator.deltaDepth(deltaDepth/60);
 }
 
-void OboeSinePlayer::controlHarmonics(float delta) {
+void OboeSynthMain::controlHarmonics(float delta) {
     harmonicsShift->setTargetValue(delta);
 }
 
-void OboeSinePlayer::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
-                                   float releaseDelta) {
+void OboeSynthMain::setVolumeAdsr(float attackTime, float attackDelta, float releaseTime,
+                                  float releaseDelta) {
     volumeEnvelope->setStageTimes(attackTime, releaseTime);
     //LOGD("OboeSinePlayers: id 42, volume ASR levels: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
     volumeEnvelope->setStageLevels(attackDelta-1.0f, 0, releaseDelta-1.0f); //gets scaled up
 }
 
-void OboeSinePlayer::setEq(float highGain, float lowGain) {
+void OboeSynthMain::setEq(float highGain, float lowGain) {
     lowShelf->configure(kLowShelfFreq, kShelfQ, lowGain);
     lowShelf->configure(kHighShelfFreq, kShelfQ, -highGain);
 }
 
-void OboeSinePlayer::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
-                                      float releaseDelta) {
+void OboeSynthMain::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
+                                     float releaseDelta) {
     harmonicsEnvelope->setStageTimes(attackTime, releaseTime);
     LOGD("OboeSinePlayers: harmonics levels parameters: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
     harmonicsEnvelope->setStageLevels(attackDelta, 0, releaseDelta);

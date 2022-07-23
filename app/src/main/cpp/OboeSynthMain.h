@@ -1,5 +1,5 @@
-#ifndef HMI_OBOESINEPLAYER_H
-#define HMI_OBOESINEPLAYER_H
+#ifndef HMI_OBOESYNTHMAIN_H
+#define HMI_OBOESYNTHMAIN_H
 
 #include <oboe/Oboe.h>
 #include <math.h>
@@ -12,9 +12,9 @@
 
 using namespace oboe;
 
-class OboeSinePlayer : public AudioStreamDataCallback {
+class OboeSynthMain : public AudioStreamDataCallback {
 public:
-    virtual ~OboeSinePlayer();
+    virtual ~OboeSynthMain();
 
     // internal
     int32_t initEngine();
@@ -101,4 +101,4 @@ private:
     Shelf* lowShelf;
     Shelf* highShelf;
 };
-#endif //HMI_OBOESINEPLAYER_H
+#endif //HMI_OBOESYNTHMAIN_H
