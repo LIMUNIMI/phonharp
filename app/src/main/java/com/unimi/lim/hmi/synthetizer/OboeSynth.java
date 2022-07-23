@@ -62,7 +62,7 @@ public class OboeSynth implements Synthesizer {
 
     // Used to load the 'native-lib' library on application startup.
     static {
-        System.loadLibrary("soundboard");
+        System.loadLibrary("OboeSynthMain");
     }
 
     public OboeSynth(Context context, Timbre timbre) {
@@ -210,6 +210,7 @@ public class OboeSynth implements Synthesizer {
 
     @Override
     public void controlVolume(float delta) {
+        //Log.d(TAG, "controlVolume: delta "+delta);
         controlAmpMul(mEngineHandle, delta);
     }
 

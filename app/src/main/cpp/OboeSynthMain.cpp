@@ -69,12 +69,12 @@ int32_t OboeSynthMain::initEngine(){
     volumeEnvelope->setSampleRate(kSampleRate);
     volumeEnvelope->id = 42;
 
-    auto static1 = new StaticSignal();
-    static1->setValue(1);
+    //auto static1 = new StaticSignal();
+    //static1->setValue(1);
 
     ampMix = new Mix();
     ampMix->setMixMode(Mix::Mul);
-    ampMix->addSignal(static1, 1.0f); //Static scaling is okay
+    ampMix->addSignal(ampMul, 1.0f); //Static scaling is okay
     scaledTremolo = new ModulatedSignal(tremoloLFO, kTremoloScaling);
     scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
@@ -121,49 +121,26 @@ void OboeSynthMain::stopAudio() {
 
 oboe::DataCallbackResult
 OboeSynthMain::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int32_t numFrames) {
-    //LOGD("onAudioReady: entered audio callback");
     auto *floatData = (float *) audioData;
     for (int i = 0; i < numFrames; ++i) {
-        //LOGD("onAudioReady: cycling frame %d", i);
-        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
-            &&
-            volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
-            &&
-                harmonicsEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF
-        ){
+        if(pitchEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF && volumeEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF && harmonicsEnvelope->getCurrentStage() == EnvelopeGenerator::ENVELOPE_STAGE_OFF){
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = 0.0f;
             }
         } else {
-            //LOGD("onAudioReady: started making sample");
             float freq = log2lin(freqMix->getNextSample(), 16.35f);
-            //LOGD("onAudioReady: got frequency from freqMix %f", freq);
             float dutyCycle = harmMix->getNextSample();
-
-            //LOGD("onAudioReady: harmonics level %f", dutyCycle);
 
             oscillator->setFrequency(freq);
             oscillator->setDutyCycle(dutyCycle);
-            //LOGD("onAudioReady: set frequency from freqMix");
 
             float osc = oscillator->getNextSample();
-            //LOGD("onAudioReady: got sample from osc %f", osc);
 
             osc = lowShelf->getFilteredSample(osc);
             osc = highShelf->getFilteredSample(osc);
-            //LOGD("onAudioReady: filtered sample from osc %f", osc);
 
-            float volumeMix = ampMix->getNextSample() * 2;//ampMul->getNextSample();
-            //LOGD("onAudioReady: got volume mix %f", volumeMix);
-            //volumeMix = volumeMix <= 0.0000001f ? 0.0000001f : volumeMix;
-            //volumeMix = volumeMix * ampMix->getNextSample();
-
-            //LOGD("onAudioReady: capped volume mix %f", volumeMix);
-            //volumeMix = log10f(volumeMix/0.0000001f);
-            //LOGD("onAudioReady: DB volume mix %f", volumeMix);
-            float sampleValue = kAmplitude * osc * volumeMix;// * volumeMix;
-            //LOGD("onAudioReady: sample %f", sampleValue);
-            //TODO: applica i filtri
+            float volumeMix = ampMix->getNextSample() * 2;
+            float sampleValue = kAmplitude * osc * volumeMix;
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
             }
