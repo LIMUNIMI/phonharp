@@ -59,6 +59,8 @@ public class OboeSynth implements Synthesizer {
 
     private native void setEq(long engineHandle, float highGain, float lowGain);
 
+    private native void setVolume(long enginHandle, float volume);
+
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -120,6 +122,10 @@ public class OboeSynth implements Synthesizer {
     @Override
     public void updateSynthesizerCfg(Timbre timbre) {
         this.timbre = timbre;
+
+        // volume
+        float volume = (float)timbre.getVolume()/100;
+        setVolume(mEngineHandle, volume);
 
         //setHarmonics
         Log.d(TAG, "updateSynthesizerCfg: harmonics: " + timbre.getHarmonics());

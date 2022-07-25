@@ -306,3 +306,7 @@ void OboeSynthMain::setHarmonicsAdsr(float attackTime, float attackDelta, float 
     LOGD("OboeSinePlayers: harmonics levels parameters: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
     harmonicsEnvelope->setStageLevels(attackDelta, 0, releaseDelta);
 }
+
+void OboeSynthMain::setVolume(float volume) {
+    kAmplitude = volume;
+}

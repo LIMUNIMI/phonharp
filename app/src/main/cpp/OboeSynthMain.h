@@ -33,6 +33,7 @@ public:
     void setVolumeAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
     void setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime, float releaseDelta);
     void setEq(float highGain, float lowGain);
+    void setVolume(float volume);
 
     // real time controls
     int32_t startAudio(float freq);
@@ -54,7 +55,7 @@ private:
     static int constexpr kChannelCount = 2;
     static int constexpr kSampleRate = 48000;
 
-    static float constexpr kAmplitude = 1.0f;
+    float kAmplitude = 1.0f;
 
     //COSTANTS
     static float constexpr kHarmonicsBaseLevelScale = 0.5f;

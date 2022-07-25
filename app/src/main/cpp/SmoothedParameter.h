@@ -81,7 +81,7 @@ public:
 
     virtual void reset(const float base){
         // Set starting values
-        LOGD("SmoothedParameter: resetting to %f", base);
+        //LOGD("SmoothedParameter: resetting to %f", base);
         setCurrentValue(base);
         setTargetValue(base);
 

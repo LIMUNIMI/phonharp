@@ -224,12 +224,24 @@ Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setPitchAdsr(JNIEnv *env, jobject t
 }
 
 JNIEXPORT void JNICALL
-Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setVolumeAdsr(JNIEnv *env, jobject thiz,
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setVolume(JNIEnv *env, jobject thiz,
                                                           jlong engine_handle,
-                                                          jfloat attackTime,
-                                                          jfloat attackDelta,
-                                                          jfloat releaseTime,
-                                                          jfloat releaseDelta) {
+                                                          jfloat volume) {
+    auto *engine = reinterpret_cast<OboeSynthMain*>(engine_handle);
+    if (engine) {
+        engine->setVolume(volume);
+    } else {
+        LOGE("Engine handle is invalid, call createEngine() to create a new one");
+    }
+}
+
+JNIEXPORT void JNICALL
+Java_com_unimi_lim_hmi_synthetizer_OboeSynth_setVolumeAdsr(JNIEnv *env, jobject thiz,
+                                                           jlong engine_handle,
+                                                           jfloat attackTime,
+                                                           jfloat attackDelta,
+                                                           jfloat releaseTime,
+                                                           jfloat releaseDelta) {
     auto *engine = reinterpret_cast<OboeSynthMain*>(engine_handle);
     if (engine) {
         engine->setVolumeAdsr(attackTime, attackDelta, releaseTime, releaseDelta);
