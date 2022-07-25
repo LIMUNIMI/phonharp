@@ -1,10 +1,17 @@
 package com.unimi.lim.hmi.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,6 +20,7 @@ import android.view.ViewConfiguration;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -28,9 +36,7 @@ import com.unimi.lim.hmi.music.Scale;
 import com.unimi.lim.hmi.synthetizer.KeyHandler;
 import com.unimi.lim.hmi.synthetizer.OboeSynth;
 import com.unimi.lim.hmi.synthetizer.Synthesizer;
-import com.unimi.lim.hmi.synthetizer.jsyn.JsynSynthesizer;
 import com.unimi.lim.hmi.ui.model.TimbreViewModel;
-import com.unimi.lim.hmi.util.AndroidPropertyUtils;
 import com.unimi.lim.hmi.util.TimbreUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +63,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
     private Synthesizer synth;
     private KeyHandler keyHandler;
+    private Vibrator vibrator;
+
+    protected SensorManager sensorManager;
+    protected SensorEventListener gameRotationListener;
 
     private final static List<Integer> playableKeyIds = Arrays.asList(R.id.key_frst, R.id.key_scnd, R.id.key_thrd, R.id.key_frth);
 
@@ -70,6 +80,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keyboard);
+
+        // Instance SensorManager
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         // Handle preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -108,8 +121,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         */
 
 
-        synth = new OboeSynth(this);
-        //synth.start();
+        synth = new OboeSynth(this, timbre);
+        synth.start();
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         keyHandler = new KeyHandler(synth, scale, Integer.valueOf(selectedOffset), timbre);
 
@@ -119,6 +134,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         // Setup half tone key listener
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
+
+        // Setup Rotation Listener
+        gameRotationListener = new GameRotationListener(synth);
 
 
         // TODO Remove code below, used just for debug system property values
@@ -133,12 +151,23 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     @Override
     public void onResume() {
         synth.start();
+
+        // register listener for sensor
+        Sensor gameRotationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        if(gameRotationSensor != null){
+            sensorManager.registerListener(gameRotationListener, gameRotationSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+
         super.onResume();
     }
 
     @Override
     public void onPause() {
         synth.stop();
+
+        // Unregister sensor to avoid wasting battery
+        sensorManager.unregisterListener(gameRotationListener);
+
         super.onPause();
     }
 
@@ -260,6 +289,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     view.setAlpha(0.5f);
                     setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
+                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
                     break;
                 case MotionEvent.ACTION_UP:
                     view.setAlpha(1.0f);
@@ -337,4 +367,27 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         }
     }
 
+    private class GameRotationListener implements SensorEventListener {
+
+        Synthesizer synthesizer;
+
+        GameRotationListener(Synthesizer synthesizer){
+            this.synthesizer = synthesizer;
+        }
+
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
+                //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
+                synthesizer.controlVolume(-sensorEvent.values[0]);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+            // Do something here if sensor accuracy changes.
+            // You must implement this callback in your code.
+
+        }
+    }
 }
