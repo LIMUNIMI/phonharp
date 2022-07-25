@@ -64,6 +64,7 @@ int32_t OboeSynthMain::initEngine(){
     ampMul = new SmoothedAmpParameter();
     ampMul->setSampleRate(kSampleRate);
     ampMul->setSecondsToTarget(kAmpControlSmoothingTime);
+    ampMul->reset(1.0f);
 
     volumeEnvelope = new EnvelopeGenerator(); //TODO: clipping after two notes. Consider adding smoothing
     volumeEnvelope->setSampleRate(kSampleRate);
@@ -196,8 +197,7 @@ void OboeSynthMain::setFrequency(float frequency) {
 }
 
 void OboeSynthMain::controlAmpMul(float deltaAmp){
-    LOGD("controlAmpMul: delta amp %f", deltaAmp);
-    //TODO: scale
+    //LOGD("controlAmpMul: delta amp %f", deltaAmp);
     //ampMul->applyDeltaToTarget(deltaAmp);
     //AmpMul is being used as an absolute because in OboeSynth it takes the value from the gyro which is absolute.
     //Consider doing something similar to the pitchShift if you want to use the fingers.

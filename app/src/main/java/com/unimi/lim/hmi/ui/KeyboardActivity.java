@@ -375,6 +375,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
 
         Synthesizer synthesizer;
         boolean enabled;
+        float val;
 
         GameRotationListener(Synthesizer synthesizer, SharedPreferences sharedPreferences){
             // Gyro controls
@@ -386,7 +387,14 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         public void onSensorChanged(SensorEvent sensorEvent) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
                 //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
-                synthesizer.controlVolume(enabled ? -sensorEvent.values[0] : 1); //TODO: scalare
+                if(enabled){
+                    val = -sensorEvent.values[0] >= 0 ? -sensorEvent.values[0] : 0;
+                    val /= 0.4; //TODO: costant maybe
+                    //0.4 is around 45 down from the mouth horizon
+                    val = -sensorEvent.values[0] <= 1 ? -sensorEvent.values[0] : 1;
+                    synthesizer.controlVolume(val);
+                }
+                 //TODO: scalare
             }
         }
 
