@@ -95,7 +95,8 @@ private:
     //Amp stuff
     NaiveOscillator* tremoloLFO;
     ModulatedSignal* scaledTremolo;
-    SmoothedAmpParameter* ampMul; //controlled by volume shift with fingers or accellerometer
+    SmoothedAmpParameter* ampMul;
+    ModulatedSignal* scaledAmpMul;
     EnvelopeGenerator* volumeEnvelope;
     ModulatedSignal* scaledVolumeEnvelope;
     Mix* ampMix;

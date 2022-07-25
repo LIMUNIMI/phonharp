@@ -4,17 +4,13 @@
 #include "SmoothedParameter.h"
 
 /**
- * Applies a lower bound
+ * Applies a lower and upper bound
  */
 class SmoothedAmpParameter : public SmoothedParameter {
 public:
-    void applyDeltaToTarget(float delta){
-        //TODO: use it in a way to apply a delta, to use with the fingers control. Would need a new interface.
-    }
-
-
     float smoothed() override {
         float val = SmoothedParameter::smoothed();
+        val = val <= 1.0f ? val : 1.0f;
         return val <= 0.0000001f ? 0.0000001f : val;
     }
 };

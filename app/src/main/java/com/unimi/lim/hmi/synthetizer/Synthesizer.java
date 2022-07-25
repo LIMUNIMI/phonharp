@@ -53,6 +53,13 @@ public interface Synthesizer {
     void controlVolume(float delta);
 
     /**
+     * Sets base volume (volume range is 0-1)
+     *
+     * @param volume , between 0 and 1
+     */
+    void setVolume(float volume);
+
+    /**
      * Control pitch, specified delta is added to current pitch
      *
      * @param delta in semitones

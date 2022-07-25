@@ -76,7 +76,8 @@ int32_t OboeSynthMain::initEngine(){
 
     ampMix = new Mix();
     ampMix->setMixMode(Mix::Mul);
-    ampMix->addSignal(ampMul, 1.0f); //Static scaling is okay
+    scaledAmpMul = new ModulatedSignal(ampMul, 1.0f);
+    ampMix->addSignal(scaledAmpMul); //Static scaling is okay
     scaledTremolo = new ModulatedSignal(tremoloLFO, kTremoloScaling);
     scaledTremolo->setBaseOffset(1.000001f);
     ampMix->addSignal(scaledTremolo);
@@ -202,7 +203,7 @@ void OboeSynthMain::controlAmpMul(float deltaAmp){
     //ampMul->applyDeltaToTarget(deltaAmp);
     //AmpMul is being used as an absolute because in OboeSynth it takes the value from the gyro which is absolute.
     //Consider doing something similar to the pitchShift if you want to use the fingers.
-    ampMul->setTargetValue(deltaAmp);
+    scaledAmpMul->setModDelta(deltaAmp);
 }
 
 void OboeSynthMain::closeEngine() {
@@ -309,5 +310,6 @@ void OboeSynthMain::setHarmonicsAdsr(float attackTime, float attackDelta, float 
 }
 
 void OboeSynthMain::setVolume(float volume) {
-    kAmplitude = volume;
+    ampMul->setTargetValue(volume);
+    //kAmplitude = volume;
 }

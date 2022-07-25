@@ -374,6 +374,11 @@ public class JsynSynthesizer implements Synthesizer {
         volumeController.set(value);
     }
 
+    @Override
+    public void setVolume(float volume) {
+        //TODO
+    }
+
     /**
      * Control pitch, specified delta is added to current pitch
      *

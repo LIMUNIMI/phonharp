@@ -392,7 +392,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     val /= 0.4; //TODO: costant maybe
                     //0.4 is around 45 down from the mouth horizon
                     val = -sensorEvent.values[0] <= 1 ? -sensorEvent.values[0] : 1;
-                    synthesizer.controlVolume(val);
+                    synthesizer.setVolume(val);
                 }
                  //TODO: scalare
             }

@@ -217,7 +217,12 @@ public class OboeSynth implements Synthesizer {
     @Override
     public void controlVolume(float delta) {
         //Log.d(TAG, "controlVolume: delta "+delta);
-        controlAmpMul(mEngineHandle, delta);
+        controlAmpMul(mEngineHandle, delta/100);
+    }
+
+    @Override
+    public void setVolume(float volume){
+        setVolume(mEngineHandle, volume);
     }
 
     @Override
