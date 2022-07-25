@@ -31,7 +31,7 @@ public:
     };
 
     void setValue(float val){
-        LOGD("StaticSignal: setting sample %f", val);
+        //LOGD("StaticSignal: setting sample %f", val);
         value.store(val);
     }
 
@@ -54,12 +54,7 @@ public:
     }
 
     virtual float getNextSample() override {
-        float sample = baseOffset + (mSignal->getNextSample() * (modAmount+mDelta));
-        //return baseOffset + (mSignal->getNextSample() * (modAmount+mDelta));
-        //LOGD("ModulatedSignal: sample from signal is %f", sample);
-        //sample = sample * (modAmount+mDelta);
-        //LOGD("ModulatedSignal: sample scaled is %f", sample);
-        return sample;
+        return baseOffset + (mSignal->getNextSample() * (modAmount+mDelta));
     }
 
     void setModAmount(const float amount){
