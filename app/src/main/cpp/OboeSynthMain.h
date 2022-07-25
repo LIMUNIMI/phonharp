@@ -56,6 +56,7 @@ private:
 
     static float constexpr kAmplitude = 1.0f;
 
+    //COSTANTS
     static float constexpr kHarmonicsBaseLevelScale = 0.5f;
     static float constexpr kHarmonicsShiftSmoothingTime = 0.1f;
     static float constexpr kPwmScaling = 0.1f;

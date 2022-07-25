@@ -219,7 +219,6 @@ void OboeSynthMain::controlPitch(float deltaPitch) {
 
 void OboeSynthMain::controlReset() {
     LOGD("=============CONTROL RESET=============");
-    //oscillator->setPitchShift(0);
     scaledVibrato->reset();
     smoothedFrequency->reset(kFrequency);
     pitchShift->reset(0.0f);
@@ -241,11 +240,6 @@ OboeSynthMain::~OboeSynthMain() {
 }
 
 float OboeSynthMain::log2lin(float semitonesDelta, float baseFreq) {
-    //TODO: optimize, maybe remove (it's in the PitchEnvelope
-    //return exp((logf(2)*(semitonesDelta + 12 * logf(baseFreq)))/12);
-    //return expf(logf(baseFreq)-(logf(2.0f)*semitonesDelta)/12);
-    //return expf(logf(baseFreq) + semitonesDelta/12);
-    //return expf(((logf(2.0f)*semitonesDelta)/12) - logf(baseFreq));
     return expf(semitonesDelta * (logf(2)/12) ) * baseFreq;
 }
 
@@ -286,7 +280,7 @@ void OboeSynthMain::controlTremolo(float deltaDepth) {
 }
 
 void OboeSynthMain::controlPWM(float deltaDepth) {
-    //oscillator->triangleModulator.deltaDepth(deltaDepth/60);
+    scaledPwmOsc->setModDelta(deltaDepth);
 }
 
 void OboeSynthMain::controlHarmonics(float delta) {
