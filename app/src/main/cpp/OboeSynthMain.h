@@ -21,7 +21,7 @@ public:
     void closeEngine();
     void setFrequency(float frequency);
     DataCallbackResult onAudioReady(AudioStream *oboeStream, void *audioData, int32_t numFrames) override;
-    float log2lin(float semitonesDelta, float baseFreq);
+    float log2lin(float semitonesDelta);
 
     // settings
     void setPortamento(float seconds);
@@ -69,6 +69,7 @@ private:
     static float constexpr kLowShelfFreq = 10.0f;
     static float constexpr kHighShelfFreq = 10000.0f;
     static float constexpr kShelfQ = 1.0f;
+    static float constexpr kBaseFreq = 16.35f;
 
     std::atomic<float> kFrequency;
 

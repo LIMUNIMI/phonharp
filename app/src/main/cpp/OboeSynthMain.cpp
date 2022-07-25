@@ -35,6 +35,7 @@ int32_t OboeSynthMain::initEngine(){
     smoothedFrequency = new SmoothedFrequency(0.0f);
     smoothedFrequency->setSampleRate(kSampleRate);
     smoothedFrequency->setSmoothingType(false);
+    smoothedFrequency->setFreqBase(kBaseFreq);
 
     vibratoLFO = new NaiveOscillator();
     vibratoLFO->id = 12;
@@ -129,7 +130,7 @@ OboeSynthMain::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int3
                 floatData[i * kChannelCount + j] = 0.0f;
             }
         } else {
-            float freq = log2lin(freqMix->getNextSample(), 16.35f);
+            float freq = log2lin(freqMix->getNextSample());
             float dutyCycle = harmMix->getNextSample();
 
             oscillator->setFrequency(freq);
@@ -240,8 +241,8 @@ OboeSynthMain::~OboeSynthMain() {
     }
 }
 
-float OboeSynthMain::log2lin(float semitonesDelta, float baseFreq) {
-    return expf(semitonesDelta * (logf(2)/12) ) * baseFreq;
+float OboeSynthMain::log2lin(float semitonesDelta) {
+    return expf(semitonesDelta * (logf(2)/12) ) * kBaseFreq;
 }
 
 void OboeSynthMain::setVibrato(float frequency, float depth) {

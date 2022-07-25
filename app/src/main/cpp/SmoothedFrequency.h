@@ -12,6 +12,10 @@ public:
         setSmoothingType(true);
     }
 
+    void setFreqBase(const float base){
+        freqBase = base;
+    }
+
     void setTargetFrequency(const float targetFreq){
         setTargetValue(convertFreqToSemitones(targetFreq));
         //LOGD("SmoothedFrequency::setTargetFrequency: Smoothing %f to %f, leftover steps %d, increment %f", getCurrentValue(), getTargetValue(), kCountDown, getStep());
@@ -19,7 +23,7 @@ public:
 
     void reset(const float base) override{
         // Set starting values
-        LOGD("SmoothedFrequency: resetting to %f", base);
+        //LOGD("SmoothedFrequency: resetting to %f", base);
         setCurrentValue(convertFreqToSemitones(base));
         setTargetValue(convertFreqToSemitones(base));
 
@@ -49,6 +53,9 @@ public:
         }
         return SmoothedParameter::smoothed();
     }
+
+protected:
+    float freqBase = 16.35f;
 };
 
 #endif //HMI_SMOOTHEDFREQUENCY_H
