@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.unimi.lim.hmi.util.Constant.Settings.DEFAULT_TIMBRE_ID;
+import static com.unimi.lim.hmi.util.Constant.Settings.GYRO;
 import static com.unimi.lim.hmi.util.Constant.Settings.HALF_TONE;
 import static com.unimi.lim.hmi.util.Constant.Settings.HANDEDNESS;
 import static com.unimi.lim.hmi.util.Constant.Settings.NOTE;
@@ -76,6 +77,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             .put(Scale.Type.MINOR, 1)
             .build();
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +138,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         findViewById(R.id.key_modifier).setOnTouchListener(new HalfToneKeyListener());
 
         // Setup Rotation Listener
-        gameRotationListener = new GameRotationListener(synth);
+        gameRotationListener = new GameRotationListener(synth, sharedPreferences);
 
 
         // TODO Remove code below, used just for debug system property values
@@ -202,6 +204,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     // *********************************************************************************************
     // PREFERENCES
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void applyKeyboardPreferences(SharedPreferences sharedPreferences) {
 
         // Half-tone button
@@ -265,6 +268,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             Log.d(getClass().getName(), "TouchSlop " + touchSlop);
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public boolean onTouch(View view, MotionEvent event) {
             int keyNum;
@@ -370,8 +374,11 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
     private class GameRotationListener implements SensorEventListener {
 
         Synthesizer synthesizer;
+        boolean enabled;
 
-        GameRotationListener(Synthesizer synthesizer){
+        GameRotationListener(Synthesizer synthesizer, SharedPreferences sharedPreferences){
+            // Gyro controls
+            enabled = sharedPreferences.getBoolean(GYRO, true);
             this.synthesizer = synthesizer;
         }
 
@@ -379,7 +386,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         public void onSensorChanged(SensorEvent sensorEvent) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
                 //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
-                synthesizer.controlVolume(-sensorEvent.values[0]);
+                synthesizer.controlVolume(enabled ? -sensorEvent.values[0] : 1); //TODO: scalare
             }
         }
 

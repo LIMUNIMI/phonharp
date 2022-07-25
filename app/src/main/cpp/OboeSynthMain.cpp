@@ -139,7 +139,7 @@ OboeSynthMain::onAudioReady(oboe::AudioStream *oboeStream, void *audioData, int3
             osc = lowShelf->getFilteredSample(osc);
             osc = highShelf->getFilteredSample(osc);
 
-            float volumeMix = ampMix->getNextSample() * 2;
+            float volumeMix = ampMix->getNextSample();
             float sampleValue = kAmplitude * osc * volumeMix;
             for (int j = 0; j < kChannelCount; j++) {
                 floatData[i * kChannelCount + j] = sampleValue;
@@ -196,7 +196,8 @@ void OboeSynthMain::setFrequency(float frequency) {
 }
 
 void OboeSynthMain::controlAmpMul(float deltaAmp){
-    //LOGD("controlAmpMul: delta amp %f", deltaAmp);
+    LOGD("controlAmpMul: delta amp %f", deltaAmp);
+    //TODO: scale
     //ampMul->applyDeltaToTarget(deltaAmp);
     //AmpMul is being used as an absolute because in OboeSynth it takes the value from the gyro which is absolute.
     //Consider doing something similar to the pitchShift if you want to use the fingers.

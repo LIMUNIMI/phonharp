@@ -19,6 +19,15 @@
 
     <PreferenceCategory app:title="@string/keyboard_header">
         <SwitchPreferenceCompat
+            android:id="@+id/SwitchPreferenceCompatGyro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultValue="false"
+            app:key="gyro"
+            app:summaryOff="@string/gyro_summary_off"
+            app:summaryOn="@string/gyro_summary_on"
+            app:title="@string/gyro_title" />
+        <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="halftone"
             app:summaryOff="@string/halftone_summary_off"

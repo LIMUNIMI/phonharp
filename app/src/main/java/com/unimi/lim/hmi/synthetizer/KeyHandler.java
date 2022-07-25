@@ -138,7 +138,6 @@ public class KeyHandler {
      * Provides to invoke synthesizer press or release functions. Note that synth is invoked after hysteresis time, or immediately if hysteresis time is 0
      */
     private void play() {
-        //TODO: sistemare qui
         if (timbre.getTapHysteresis() == 0) {
             invokeSynth();
         } else if (!delayedPlayInvoked) {

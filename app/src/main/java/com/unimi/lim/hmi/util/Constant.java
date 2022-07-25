@@ -27,6 +27,7 @@ public class Constant {
         public static final String DEFAULT_TIMBRE_ID = "04b1be44-78b0-4a8a-84c5-12be11027e51";
 
         // Keyboard
+        public static final String GYRO = "gyro";
         public static final String HALF_TONE = "halftone";
         public static final String HANDEDNESS = "handedness";
         public static final String RIGHT_HANDED = "right-handed";
