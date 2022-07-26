@@ -403,7 +403,6 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                 if (enabled) {
                     val = oMatrix[1] >= 0 ? oMatrix[1] : 0;
                     val /= 45; //TODO: costant maybe
-                    //0.4 is around 45 down from the mouth horizon
                     val = val <= 1 ? val : 1;
                     synthesizer.setVolume(val);
                 }
