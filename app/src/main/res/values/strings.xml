@@ -97,7 +97,7 @@
     <string name="halftone_title">Show half-tone button</string>
     <string name="halftone_summary_on">Show</string>
     <string name="halftone_summary_off">Hide</string>
-    <string name="gyro_title">Enable gyro control</string>
+    <string name="gyro_title">Enable rotation control</string>
     <string name="gyro_summary_on">Enabled</string>
     <string name="gyro_summary_off">Disabled</string>
 

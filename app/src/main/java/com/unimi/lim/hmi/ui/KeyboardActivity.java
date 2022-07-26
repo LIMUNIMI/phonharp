@@ -290,7 +290,7 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
             }
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    view.setAlpha(0.5f);
+                    view.setAlpha(0.2f);
                     setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
                     vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
@@ -377,7 +377,10 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         boolean enabled;
         float val;
 
-        GameRotationListener(Synthesizer synthesizer, SharedPreferences sharedPreferences){
+        private float[] rMatrix = new float[9];
+        private float[] oMatrix = new float[9];
+
+        GameRotationListener(Synthesizer synthesizer, SharedPreferences sharedPreferences) {
             // Gyro controls
             enabled = sharedPreferences.getBoolean(GYRO, true);
             this.synthesizer = synthesizer;
@@ -386,15 +389,31 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
-                //Log.d(getClass().getName(), "setting : "+ Arrays.toString(sensorEvent.values));
-                if(enabled){
-                    val = -sensorEvent.values[0] >= 0 ? -sensorEvent.values[0] : 0;
-                    val /= 0.4; //TODO: costant maybe
+                //caculate rotation matrix from rotation vector first
+                SensorManager.getRotationMatrixFromVector(rMatrix, sensorEvent.values);
+
+                //calculate Euler angles now
+                SensorManager.getOrientation(rMatrix, oMatrix);
+
+                //The results are in radians, need to convert it to degrees
+                convertToDegrees(oMatrix);
+
+                //Log.d(getClass().getName(), "setting : X: "+oMatrix[0]+" Y:"+oMatrix[1]+" Z:"+oMatrix[2]);
+
+                if (enabled) {
+                    val = oMatrix[1] >= 0 ? oMatrix[1] : 0;
+                    val /= 45; //TODO: costant maybe
                     //0.4 is around 45 down from the mouth horizon
-                    val = -sensorEvent.values[0] <= 1 ? -sensorEvent.values[0] : 1;
+                    val = val <= 1 ? val : 1;
                     synthesizer.setVolume(val);
                 }
-                 //TODO: scalare
+                //TODO: scalare
+            }
+        }
+
+        private void convertToDegrees(float[] vector){
+            for (int i = 0; i < vector.length; i++){
+                vector[i] = Math.round(Math.toDegrees(vector[i]));
             }
         }
 
