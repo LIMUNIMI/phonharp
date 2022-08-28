@@ -156,22 +156,22 @@ int32_t OboeSynthMain::startAudio(float freq) {
     std::lock_guard <std::mutex> lock(mLock);
     Result result = Result::ErrorInternal;
 
-    LOGD("Pressed note: %f", freq);
+    //LOGD("Pressed note: %f", freq);
     bool isNewFreq = kFrequency != freq;
     kFrequency.store(freq);
 
 
     if(!isPlaying){
-        LOGD("startAudio: Start playing, freq: %f", freq);
+        //LOGD("startAudio: Start playing, freq: %f", freq);
         smoothedFrequency->reset(freq);
-        LOGD("startAudio: reset frequency");
+        //LOGD("startAudio: reset frequency");
         pitchEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK); //Needs to be called here too
         volumeEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         harmonicsEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
         isPlaying.store(true);
-        LOGD("startAudio: stored start playing TRUE");
+        //LOGD("startAudio: stored start playing TRUE");
     } else {
-        LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
+        //LOGD("startAudio: Smoothing, destFreq: %f, currentFreq: %f", freq, smoothedFrequency->getCurrentValue());
         smoothedFrequency->setTargetFrequency(freq);
     }
     // Typically, start the stream after querying some stream information, as well as some input from the user
@@ -185,9 +185,9 @@ int32_t OboeSynthMain::startAudio(float freq) {
         harmonicsEnvelope->enterStage(EnvelopeGenerator::ENVELOPE_STAGE_ATTACK);
     }
     if (mStream) {
-        LOGD("startAudio: requesting stream start");
+        //LOGD("startAudio: requesting stream start");
         result = mStream->requestStart();
-        LOGD("startAudio: requested stream start");
+        //LOGD("startAudio: requested stream start");
     }
     return (int32_t) result;
 }
@@ -221,7 +221,7 @@ void OboeSynthMain::controlPitch(float deltaPitch) {
 }
 
 void OboeSynthMain::controlReset() {
-    LOGD("=============CONTROL RESET=============");
+    //LOGD("=============CONTROL RESET=============");
     scaledVibrato->reset();
     smoothedFrequency->reset(kFrequency);
     pitchShift->reset(0.0f);
@@ -305,7 +305,7 @@ void OboeSynthMain::setEq(float highGain, float lowGain) {
 void OboeSynthMain::setHarmonicsAdsr(float attackTime, float attackDelta, float releaseTime,
                                      float releaseDelta) {
     harmonicsEnvelope->setStageTimes(attackTime, releaseTime);
-    LOGD("OboeSinePlayers: harmonics levels parameters: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
+    //LOGD("OboeSinePlayers: harmonics levels parameters: attackDelta %f, releaseDelta %f", attackDelta, releaseDelta);
     harmonicsEnvelope->setStageLevels(attackDelta, 0, releaseDelta);
 }
 

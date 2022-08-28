@@ -31,7 +31,7 @@ public:
 
     virtual void on(){
         //enterStage(ENVELOPE_STAGE_ATTACK);
-        LOGD("EnvelopeGenerator::on: targetValue %f, currentValue %f", getTargetValue(), getCurrentValue());
+        //LOGD("EnvelopeGenerator::on: targetValue %f, currentValue %f", getTargetValue(), getCurrentValue());
         active.store(true);
     }
 
@@ -81,7 +81,7 @@ public:
     }
 
     virtual void enterStage(EnvelopeStage stage){
-        LOGD("EnvelopeGenerator::enterStage: id %d, Entering stage %d, currentValue %f, leftover steps %d, target %f",id, stage, getCurrentValue(), kCountDown, getTargetValue());
+        //LOGD("EnvelopeGenerator::enterStage: id %d, Entering stage %d, currentValue %f, leftover steps %d, target %f",id, stage, getCurrentValue(), kCountDown, getTargetValue());
         currentStage = stage;
         switch (stage) {
             case ENVELOPE_STAGE_OFF:
@@ -98,7 +98,7 @@ public:
                 setTargetWithSeconds(releaseLevel, releaseTime);
                 break;
         }
-        LOGD("EnvelopeGenerator::enterStage: id %d, Entered stage %d, currentValue %f, leftover steps %d, target %f", id, stage, getCurrentValue(), kCountDown, getTargetValue());
+        //LOGD("EnvelopeGenerator::enterStage: id %d, Entered stage %d, currentValue %f, leftover steps %d, target %f", id, stage, getCurrentValue(), kCountDown, getTargetValue());
     }
 
     void setStaticLevel(const float level){
@@ -111,14 +111,14 @@ public:
     void setStageTimes(const float attack, const float release){
         attackTime = attack;
         releaseTime = release;
-        LOGD("EnvelopeGenerator::setStageTimes: id %d attack %f, release %f",id, attack, release);
+        //LOGD("EnvelopeGenerator::setStageTimes: id %d attack %f, release %f",id, attack, release);
     }
 
     void setStageLevels(const float attack, const float sustain, const float release){
         attackLevel = attack;
         sustainLevel = sustain;
         releaseLevel = release;
-        LOGD("EnvelopeGenerator::setStageLevels: id %d, attack %f, sustain %f, release %f", id, attack, sustain, release);
+        //LOGD("EnvelopeGenerator::setStageLevels: id %d, attack %f, sustain %f, release %f", id, attack, sustain, release);
     }
 protected:
     EnvelopeStage currentStage = ENVELOPE_STAGE_OFF;
