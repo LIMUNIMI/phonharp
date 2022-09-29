@@ -293,7 +293,9 @@ public class KeyboardActivity extends AppCompatActivity implements PopupMenu.OnM
                     view.setAlpha(0.2f);
                     setCoords(keyNum, event);
                     keyHandler.keyPressed(keyNum);
-                    vibrator.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
                     view.setAlpha(1.0f);
