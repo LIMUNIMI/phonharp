@@ -66,8 +66,8 @@ private:
     static float constexpr kVibratoScaling = 0.5f;
     static float constexpr kAmpControlSmoothingTime = 0.15f;
     static float constexpr kTremoloScaling = 0.5f;
-    static float constexpr kLowShelfFreq = 10.0f;
-    static float constexpr kHighShelfFreq = 10000.0f;
+    static float constexpr kLowShelfFreq = 200.0f;
+    static float constexpr kHighShelfFreq = 8000.0f;
     static float constexpr kShelfQ = 1.0f;
     static float constexpr kBaseFreq = 16.35f;
 
